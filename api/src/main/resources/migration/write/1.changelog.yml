@@ -1,0 +1,194 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: oleg@briolink.com
+      changes:
+        - createTable:
+            tableName: industry
+            schemaName: ${writeSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: occupation
+            schemaName: ${writeSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: keyword
+            schemaName: ${writeSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: company
+            schemaName: ${writeSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: website
+                  type: varchar(255)
+              - column:
+                  name: logo
+                  type: varchar(255)
+              - column:
+                  name: facebook
+                  type: varchar(255)
+              - column:
+                  name: twitter
+                  type: varchar(255)
+              - column:
+                  name: about
+                  type: varchar(10240)
+              - column:
+                  name: is_type_public
+                  type: boolean
+                  defaultValue: true
+              - column:
+                  name: country
+                  type: varchar(255)
+              - column:
+                  name: state
+                  type: varchar(255)
+              - column:
+                  name: city
+                  type: varchar(255)
+              - column:
+                  name: slug
+                  type: varchar(255)
+              - column:
+                  name: created_by
+                  type: varchar(36)
+              - column:
+                  name: industry_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_company_industry_id
+                    references: industry(id)
+              - column:
+                  name: occupation_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_company_occupation_id
+                    references: occupation(id)
+        - createTable:
+            tableName: companies_keywords
+            schemaName: ${writeSchema}
+            columns:
+              - column:
+                  name: company_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_company_keyword
+                    references: company(id)
+                    nullable: false
+              - column:
+                  name: keyword_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_keyword_company
+                    references: keyword(id)
+                    nullable: false
+        - createTable:
+            tableName: user
+            schemaName: ${writeSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image
+                  type: varchar(255)
+              - column:
+                  name: company_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_emplyee_company_id
+                    references: company(id)
+                    nullable: false
+              - column:
+                  name: created
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed
+                  type: timestamp
+                  constraints:
+                    nullable: true
+        - createTable:
+            tableName: event_store
+            schemaName: ${writeSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: data
+                  type: json
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+                  

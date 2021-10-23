@@ -1,0 +1,15 @@
+configVersion: 1
+project: service-company-service
+deploy:
+  helmRelease: "[[ project ]]-[[ env ]]"
+  namespace: "[[ env ]]"
+---
+image: api
+dockerfile: api/Dockerfile
+args:
+  CI_DEPLOY_PASSWORD: {{ env "CI_DEPLOY_PASSWORD" }}
+---
+image: updater
+dockerfile: updater/Dockerfile
+args:
+  CI_DEPLOY_PASSWORD: {{ env "CI_DEPLOY_PASSWORD" }}

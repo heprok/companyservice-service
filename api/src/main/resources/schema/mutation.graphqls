@@ -1,0 +1,4 @@
+type Mutation{
+    # Service
+    deleteCompanyService(companyId: ID!, serviceId: ID!) : Boolean
+}

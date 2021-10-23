@@ -1,0 +1,50 @@
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type: TRACE
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+spring:
+  profiles:
+    active: ${env.spring_profiles_active:local}
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+  datasource:
+    url: jdbc:mariadb://${env.DB_HOST:localhost}:${env.DB_PORT:3306}/
+    username: ${env.DB_USER:ok}
+    password: ${env.DB_PASSWORD:ok}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+    generate-ddl: false
+    show-sql: false
+  liquibase:
+    change-log: migration/master.yml
+    default-schema: ${app.db.schema-prefix}_write
+    parameters:
+      readSchema: ${app.db.schema-prefix}_read
+      writeSchema: ${app.db.schema-prefix}_write
+cloud:
+  aws:
+    stack:
+      auto: false
+dgs:
+  graphql:
+    path: /
+app:
+  db:
+    schema-prefix: ${env.spring_profiles_active}_company_service
+  aws:
+    s3:
+      name: ${env.S3_BUCKET_NAME:briolink}
+event:
+  publisher:
+    sns-name: bl-network-${env.spring_profiles_active}.fifo

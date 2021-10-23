@@ -1,0 +1,178 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: oleg@briolink.com
+      changes:
+        - createTable:
+            tableName: connection
+            schemaName: ${readSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: seller_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: buyer_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seller_role_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: buyer_role_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: service_ids
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dates_start_collaboration
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dates_end_collaboration
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: industry_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: verification_stage
+                  type: tinyint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data
+                  type: json
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seller_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                  defaultValue: ""
+              - column:
+                  name: buyer_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: industry_id
+            indexName: idx_connection_industry_id
+            schemaName: ${readSchema}
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: seller_id
+            indexName: idx_connection_seller_id
+            schemaName: ${readSchema}
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: buyer_id
+            indexName: idx_connection_buyer_id
+            schemaName: ${readSchema}
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: buyer_role_id
+            indexName: idx_connection_buyer_role_id
+            schemaName: ${readSchema}
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: seller_role_id
+            indexName: idx_connection_seller_role_id
+            schemaName: ${readSchema}
+            tableName: connection
+        - createIndex:
+          columns:
+            - column:
+                name: seller_name
+          indexName: idx_connection_seller_name
+          schemaName: ${readSchema}
+          tableName: connection
+        - createIndex:
+          columns:
+           - column:
+               name: buyer_name
+          indexName: idx_connection_buyer_name
+          schemaName: ${readSchema}
+          tableName: connection
+        - sql:
+            comment: FULLTEXT index for ${readSchema}.connection table name field
+            sql: alter table ${readSchema}.connection add fulltext index idx_connection_dates_start_collaboration(dates_start_collaboration)
+            stripComments: true
+        - sql:
+            comment: FULLTEXT index for ${readSchema}.connection table name field
+            sql: alter table ${readSchema}.connection add fulltext index idx_connection_dates_end_collaboration(dates_end_collaboration)
+            stripComments: true
+        - sql:
+            comment: FULLTEXT index for ${readSchema}.connection table name field
+            sql: alter table ${readSchema}.connection add fulltext index idx_connection_service_ids(service_ids)
+            stripComments: true
+        - sql:
+            comment: FULLTEXT index for ${readSchema}.connection table name field
+            sql: alter table ${readSchema}.connection add fulltext index idx_connection_location(location)
+            stripComments: true
+        - createTable:
+            tableName: connection_role
+            schemaName: ${readSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - sql:
+            comment: FULLTEXT index for ${readSchema}.connection_role table name field
+            sql: alter table ${readSchema}.connection_role add fulltext index idx_fulltext_connection_role_name(name)
+            stripComments: true
+

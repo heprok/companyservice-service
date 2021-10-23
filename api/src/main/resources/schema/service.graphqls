@@ -1,0 +1,9 @@
+type Service {
+    id: ID!
+    companyId: ID!
+    name: String!
+    price: Float
+    image: Image
+    verifiedUses: Int
+    lastUsed: Date
+}

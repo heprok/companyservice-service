@@ -1,0 +1,46 @@
+scalar Date
+scalar Upload
+scalar Url
+scalar Year
+
+directive @skipcodegen on FIELD_DEFINITION
+
+type Image {
+    url: Url
+}
+
+type Error {
+    code: String!
+    field: [String!]
+}
+
+enum SortDirection{
+    ASC, DESC
+}
+
+input RangeInt {
+    start: Int
+    end: Int
+}
+
+input RangeYear {
+    start: Year
+    end: Year
+}
+
+input RangeFloat {
+    start: Float
+    end: Float
+}
+
+type BaseResult {
+    success: Boolean
+}
+
+interface ResultWithUserErrors {
+    userErrors: [Error]!
+}
+
+interface PaginatedList {
+    totalItems: Int!
+}
