@@ -18,6 +18,27 @@ databaseChangeLog:
                   type: json
                   constraints:
                     nullable: false
+
+        - createTable:
+            tableName: industry
+            schemaName: ${readSchema}
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - sql:
+            comment: FULLTEXT index for ${readSchema}.industry table name field
+            sql: alter table ${readSchema}.industry add fulltext index idx_fulltext_industry_name(name)
+            stripComments: true
+
         - createTable:
             tableName: service
             schemaName: ${readSchema}
@@ -34,6 +55,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: slug
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
                   name: data
                   type: json
                   constraints:
@@ -43,5 +69,12 @@ databaseChangeLog:
               - column:
                   name: company_id
             indexName: idx_service_company_id
+            schemaName: ${readSchema}
+            tableName: service
+        - createIndex:
+            columns:
+              - column:
+                  name: slug
+            indexName: idx_service_slug
             schemaName: ${readSchema}
             tableName: service

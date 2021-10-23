@@ -1,6 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 6
-      author: oleg@briolink.com
-      changes:
-
