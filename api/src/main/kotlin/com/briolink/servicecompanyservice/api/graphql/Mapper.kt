@@ -28,12 +28,12 @@ fun Industry.Companion.fromEntity(entity: IndustryReadEntity) = Industry(
 
 fun Service.Companion.fromEntity(entity: ServiceReadEntity) = Service(
         id = entity.id.toString(),
-        name = entity.name,
-        price = entity.price,
+        name = entity.data.name,
+        price = entity.data.price,
         companyId = entity.companyId.toString(),
-        verifiedUses = entity.verifiedUses,
-        lastUsed = entity.lastUsed,
-        image = entity.data.image.let { Image(url = URL(it)) },
+        verifiedUses = entity.data.verifiedUses,
+        slug = entity.slug,
+        image = entity.data.image?.let { Image(it) },
 )
 
 fun GraphicValueCompany.Companion.fromCompaniesStats(name: String, companiesStats: StatisticReadEntity.CompaniesStats, limit: Int? = 3) =

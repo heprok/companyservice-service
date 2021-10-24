@@ -1,4 +1,7 @@
 type Mutation{
+    createService(companyId: ID!, input: CreateServiceInput!) : CreateServiceResult!
+    uploadServiceImage(id: ID!, image: Upload) : Url
+    updateService(id: ID!, input: UpdateServiceInput!) : UpdateServiceResult!
     # Service
-    deleteCompanyService(companyId: ID!, serviceId: ID!) : Boolean
+    deleteService(companyId: ID!, serviceId: ID!) : Boolean
 }

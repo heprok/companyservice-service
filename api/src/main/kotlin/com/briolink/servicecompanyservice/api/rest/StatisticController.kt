@@ -1,4 +1,4 @@
-package com.briolink.servicecompanyservice.api.controller
+package com.briolink.servicecompanyservice.api.rest
 
 import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
 import com.briolink.servicecompanyservice.common.event.v1_0.StatisticRefreshEvent

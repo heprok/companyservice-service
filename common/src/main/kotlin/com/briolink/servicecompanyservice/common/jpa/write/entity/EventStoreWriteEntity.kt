@@ -1,8 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.write.entity
 
-import com.fasterxml.jackson.databind.JsonNode
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.Type
+import com.briolink.servicecompanyservice.common.domain.v1_0.Domain
 import java.time.Instant
 import javax.persistence.Column
 import javax.persistence.Entity

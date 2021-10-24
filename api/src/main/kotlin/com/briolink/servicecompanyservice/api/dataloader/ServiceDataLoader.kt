@@ -6,6 +6,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyRead
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
+import java.net.URL
 import java.util.*
 import kotlin.random.Random
 
@@ -41,15 +42,15 @@ class ServiceDataLoader(
                         ServiceReadEntity(
                                 id = UUID.randomUUID(),
                                 companyId = companyList.random().id,
-                                verifiedUses = Random.nextInt(0, 600),
-                                price = Random.nextDouble(0.0, 6000000.0),
-                                lastUsed = randomDate(2010, 2021),
-                                name = listName[(i % 9)],
-                                created = randomDate(2010, 2021),
+                                slug = StringUtil.slugify(listName[(i % 9)]),
                                 data = ServiceReadEntity.Data(
-                                        image = "https://placeimg.com/640/640/tech",
-                                        slug = StringUtil.slugify(listName[(i % 9)]),
-                                ),
+                                        image = URL("https://placeimg.com/640/640/tech"),
+                                        created = randomDate(2010, 2021),
+                                        name = listName[(i % listName.count())],
+//                                        lastUsed = randomDate(2010, 2021),
+                                        price = Random.nextDouble(0.0, 6000000.0),
+                                        verifiedUses = Random.nextInt(0, 600),
+                                        ),
                         ),
                 )
             }

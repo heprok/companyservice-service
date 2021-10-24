@@ -2,8 +2,45 @@ type Service {
     id: ID!
     companyId: ID!
     name: String!
+    slug: String!
     price: Float
+    description: String
     image: Image
     verifiedUses: Int
-    lastUsed: Date
 }
+
+type ServiceAndUserRole {
+    service: Service!
+    role: PermissionRole
+}
+
+type ServiceResultData {
+    id: ID!
+    slug: String!
+}
+
+type CreateServiceResult implements ResultWithUserErrors {
+    data: ServiceResultData
+    userErrors: [Error]!
+}
+
+type UpdateServiceResult implements ResultWithUserErrors {
+    success: Boolean
+    userErrors: [Error]!
+}
+
+input CreateServiceInput {
+    name: String!
+    price: Float
+    logoTempKey: String
+    description: String,
+
+}
+input UpdateServiceInput {
+    name: String!
+    price: Float
+    description: String
+    logoTempKey: String
+}
+
+

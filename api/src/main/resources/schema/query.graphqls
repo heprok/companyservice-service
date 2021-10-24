@@ -1,0 +1,14 @@
+type Query {
+    getService(slug: String!): ServiceAndUserRole!
+
+#    getStatistic(companyId: ID!, offset: Int = 5): GraphicStatistics!
+#    getStatisticByCountry(companyId: ID!,offset: Int = 5): GraphicStatsByCountry!
+#    getStatisticByIndustry(companyId: ID!, offset: Int = 5): GraphicStatsByIndustry!
+#    getStatisticNumberConnection(companyId: ID!): GraphicStatsByNumberConnection!
+#    getStatisticServicesProvided(companyId: ID!,offset: Int = 5): GraphicStatsByServiceProvider!
+
+#    sorting
+    getConnectionRoleSorting(companyId: ID!) : [ConnectionRoleSorting!]!
+
+#    getStatisticNumberConnectionOnYear(companyId: ID!, year: Year) : GraphicStatsByNumberConnection
+}

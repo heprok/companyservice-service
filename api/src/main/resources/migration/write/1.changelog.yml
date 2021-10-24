@@ -40,6 +40,8 @@ databaseChangeLog:
               - column:
                   name: created
                   type: timestamp
+                  constraints:
+                    nullable: false
         - createTable:
             tableName: event_store
             schemaName: ${writeSchema}

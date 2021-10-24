@@ -18,6 +18,10 @@ spring:
     url: jdbc:mariadb://${env.DB_HOST:localhost}:${env.DB_PORT:3306}/
     username: ${env.DB_USER:ok}
     password: ${env.DB_PASSWORD:ok}
+    hikari:
+      idle-timeout: 20000
+      minimum-idle: 1
+      maximum-pool-size: 8
   jpa:
     hibernate:
       ddl-auto: none
@@ -41,7 +45,7 @@ dgs:
     path: /
 app:
   db:
-    schema-prefix: ${env.spring_profiles_active}_company_service
+    schema-prefix: ${env.spring_profiles_active}_service_company
   aws:
     s3:
       name: ${env.S3_BUCKET_NAME:briolink}
