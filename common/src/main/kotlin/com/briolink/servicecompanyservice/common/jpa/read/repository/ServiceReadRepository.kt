@@ -13,6 +13,7 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpe
     fun findByCompanyIdIs(companyId: UUID, pageable: Pageable? = null): Page<ServiceReadEntity>
 
     fun existsByCompanyId(companyId: UUID): Boolean
+    fun findBySlug(slug: String): Optional<ServiceReadEntity>
 
 //    @Modifying
 //    @Query("UPDATE ServiceReadEntity s SET s.isHide = ?3 where s.id = ?1 and s.companyId = ?2")

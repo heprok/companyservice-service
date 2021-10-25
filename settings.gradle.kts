@@ -1,2 +1,2 @@
-rootProject.name = "service-company-service"
+rootProject.name = "companyservice-service"
 include(":api", ":common", ":updater")

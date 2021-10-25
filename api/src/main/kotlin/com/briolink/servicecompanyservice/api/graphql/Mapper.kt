@@ -19,6 +19,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleR
 import com.briolink.servicecompanyservice.common.jpa.read.entity.IndustryReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.StatisticReadEntity
+import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import java.net.URL
 
 fun Industry.Companion.fromEntity(entity: IndustryReadEntity) = Industry(

@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
+    abstract fun findBySlug(slug: String): Optional<ServiceWriteEntity>
 }

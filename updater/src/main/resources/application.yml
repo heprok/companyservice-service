@@ -31,4 +31,4 @@ app:
 event:
   listener:
     enabled: true
-    sqs-name: bl-network-${env.spring_profiles_active}-service-company-service.fifo
+    sqs-name: bl-network-${env.spring_profiles_active}-companyservice-service.fifo

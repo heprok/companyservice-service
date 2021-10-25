@@ -2,6 +2,9 @@ package com.briolink.servicecompanyservice.api.service
 
 import com.briolink.servicecompanyservice.common.event.v1_0.ServiceCompanyCreatedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.ServiceCompanyUpdatedEvent
+import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
@@ -23,6 +26,7 @@ class ServiceCompanyService(
     private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
     private val awsS3Service: AwsS3Service,
     private val serviceCompanyWriteRepository: ServiceWriteRepository,
+    private val serviceCompanyReadRepository: ServiceReadRepository,
 ) {
     val SERVICE_PROFILE_IMAGE_PATH = "uploads/service-company/profile-image"
     fun create(
@@ -70,6 +74,15 @@ class ServiceCompanyService(
                 applicationEventPublisher.publishEvent(ServiceCompanyUpdatedEvent(writeEntity.toDomain()))
                 writeEntity
             }
+
+    fun getServiceBySlug(slug: String): Optional<ServiceReadEntity> = serviceCompanyReadRepository.findBySlug(slug)
+    fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleReadEntity.RoleType? {
+        return userPermissionRoleReadRepository.findByAccessObjectUuidAndAccessObjectTypeAndUserId(
+                accessObjectUuid = serviceId,
+                accessObjectType = 2,
+                userId = userId,
+        )?.role
+    }
 
 //    fun uploadProfileImage(id: UUID, image: MultipartFile?): URL? {
 //        val service = serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
