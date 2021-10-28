@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 class ServiceQuery(private val serviceCompanyService: ServiceCompanyService) {
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
-    fun getCompany(@InputArgument("slug") slug: String): ServiceAndUserRole {
+    fun getService(@InputArgument("slug") slug: String): ServiceAndUserRole {
         val service = serviceCompanyService.getServiceBySlug(slug).orElseThrow { throw DgsEntityNotFoundException() }
         val role = serviceCompanyService.getPermission(service.id, SecurityUtil.currentUserAccountId)
         return ServiceAndUserRole(
