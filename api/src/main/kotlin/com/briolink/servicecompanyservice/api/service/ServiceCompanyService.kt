@@ -1,21 +1,21 @@
 package com.briolink.servicecompanyservice.api.service
 
-import com.briolink.servicecompanyservice.common.event.v1_0.ServiceCompanyCreatedEvent
-import com.briolink.servicecompanyservice.common.event.v1_0.ServiceCompanyUpdatedEvent
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceUpdatedEvent
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
+import com.briolink.servicecompanyservice.common.util.StringUtil
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
 import java.net.URL
 import java.time.Instant
-import java.time.LocalDate
 import java.util.*
 import javax.persistence.EntityNotFoundException
 
@@ -27,6 +27,7 @@ class ServiceCompanyService(
     private val awsS3Service: AwsS3Service,
     private val serviceCompanyWriteRepository: ServiceWriteRepository,
     private val serviceCompanyReadRepository: ServiceReadRepository,
+    private val companyReadRepository: CompanyReadRepository
 ) {
     val SERVICE_PROFILE_IMAGE_PATH = "uploads/service-company/profile-image"
     fun create(
@@ -35,15 +36,18 @@ class ServiceCompanyService(
         price: Double?,
         logoTempKey: String?,
         description: String?,
+        logo: URL?,
         created: Instant? = null,
-        slug: String? = null
      ): ServiceWriteEntity {
+        val slugCompany = companyReadRepository.findById(companyId).orElseThrow { throw EntityNotFoundException("$companyId company not found") }.data.slug
+
         val service = serviceCompanyWriteRepository.save(
                 ServiceWriteEntity(
                         companyId = companyId,
                         name = name,
                         created = created,
-                        slug = slug,
+                        slug = StringUtil.slugify("$slugCompany $name"),
+                        logo = logo,
                         description = description,
                         price = price,
                 ).apply {
@@ -52,7 +56,7 @@ class ServiceCompanyService(
                     }
                 },
         )
-        applicationEventPublisher.publishEvent(ServiceCompanyCreatedEvent(service.toDomain()))
+        applicationEventPublisher.publishEvent(CompanyServiceCreatedEvent(service.toDomain()))
         return service;
     }
 
@@ -71,7 +75,7 @@ class ServiceCompanyService(
                 writeEntity.price = price
                 writeEntity.description = description
                 serviceCompanyWriteRepository.save(writeEntity)
-                applicationEventPublisher.publishEvent(ServiceCompanyUpdatedEvent(writeEntity.toDomain()))
+                applicationEventPublisher.publishEvent(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
                 writeEntity
             }
 

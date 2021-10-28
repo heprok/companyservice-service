@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql
 
+import com.briolink.servicecompanyservice.api.types.Company
 import com.briolink.servicecompanyservice.api.types.Connection
 import com.briolink.servicecompanyservice.api.types.ConnectionRole
 import com.briolink.servicecompanyservice.api.types.ConnectionRoleType
@@ -31,10 +32,15 @@ fun Service.Companion.fromEntity(entity: ServiceReadEntity) = Service(
         id = entity.id.toString(),
         name = entity.data.name,
         price = entity.data.price,
-        companyId = entity.companyId.toString(),
+        company = Company(
+                id = entity.data.company.id.toString(),
+                name = entity.data.company.name,
+                slug = entity.data.company.slug,
+                logo = entity.data.company.logo?.let { Image(it) }
+        ),
         verifiedUses = entity.data.verifiedUses,
         slug = entity.slug,
-        image = entity.data.image?.let { Image(it) },
+        logo = entity.data.logo?.let { Image(it) },
 )
 
 fun GraphicValueCompany.Companion.fromCompaniesStats(name: String, companiesStats: StatisticReadEntity.CompaniesStats, limit: Int? = 3) =

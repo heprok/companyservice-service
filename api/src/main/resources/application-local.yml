@@ -1,4 +1,5 @@
 server:
+  port: 8090
   error:
     include-stacktrace: always
 spring:

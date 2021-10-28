@@ -42,6 +42,11 @@ databaseChangeLog:
                   type: timestamp
                   constraints:
                     nullable: false
+        -  addUniqueConstraint:
+             columnNames:  company_id, name
+             constraintName:  company_id_and_service_name_unique
+             schemaName:  ${writeSchema}
+             tableName:  service
         - createTable:
             tableName: event_store
             schemaName: ${writeSchema}

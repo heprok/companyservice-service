@@ -43,6 +43,22 @@ class ServiceReadEntity(
         @JsonProperty("price")
         var price: Double? = null,
         @JsonProperty("created")
-        var created: Instant
+        var created: Instant,
+        @JsonProperty("company")
+        var company: Company,
+        @JsonProperty("lastUsed")
+        val lastUsed: LocalDate? = null,
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class Company(
+        @JsonProperty("id")
+        var id: UUID,
+        @JsonProperty("name")
+        var name: String,
+        @JsonProperty("slug")
+        var slug: String,
+        @JsonProperty("logo")
+        var logo: URL?,
     )
 }

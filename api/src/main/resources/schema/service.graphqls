@@ -1,11 +1,11 @@
 type Service {
     id: ID!
-    companyId: ID!
+    company: Company!
     name: String!
     slug: String!
     price: Float
     description: String
-    image: Image
+    logo: Image
     verifiedUses: Int
 }
 

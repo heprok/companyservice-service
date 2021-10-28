@@ -6,7 +6,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.util.*
 
-data class ServiceCompany (
+data class CompanyService (
     @JsonProperty("id")
     val id: UUID,
     @JsonProperty("companyId")
@@ -22,5 +22,9 @@ data class ServiceCompany (
     @JsonProperty("description")
     val description: String? = null,
     @JsonProperty("created")
-    val created: Instant
+    val created: Instant,
+    @JsonProperty("lastUsed")
+    val lastUsed: LocalDate? = null,
+    @JsonProperty("verifiedUses")
+    val verifiedUses: Int = 0,
 ) : Domain

@@ -27,7 +27,7 @@ cloud:
       auto: false
 app:
   db:
-    schema-prefix: ${env.spring_profiles_active}_service_company
+    schema-prefix: ${env.spring_profiles_active}_company_service
 event:
   listener:
     enabled: true

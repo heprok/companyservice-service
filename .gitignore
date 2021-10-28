@@ -28,3 +28,5 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+/untilDatabase.sql
+/.run/

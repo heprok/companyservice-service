@@ -37,6 +37,7 @@ class ServiceMutation(
                 name = input.name,
                 description = input.description,
                 logoTempKey = input.logoTempKey,
+                logo = null
         )
 
         return CreateServiceResult(

@@ -8,7 +8,7 @@ type Query {
 #    getStatisticServicesProvided(companyId: ID!,offset: Int = 5): GraphicStatsByServiceProvider!
 
 #    sorting
-    getConnectionRoleSorting(companyId: ID!) : [ConnectionRoleSorting!]!
+#    getConnectionRoleSorting(companyId: ID!) : [ConnectionRoleSorting!]!
 
 #    getStatisticNumberConnectionOnYear(companyId: ID!, year: Year) : GraphicStatsByNumberConnection
 }
