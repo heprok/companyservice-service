@@ -15,27 +15,24 @@ class ServiceUpdatedEventHandler(
 ) : IEventHandler<CompanyServiceCreatedEvent> {
     override fun handle(event: CompanyServiceCreatedEvent) {
         val eventData = event.data
+        println(eventData)
         val company = companyReadRepository.findById(eventData.companyId)
                 .orElseThrow { throw EntityNotFoundException(eventData.companyId.toString() + " company not found") }
         serviceReadRepository.save(
                 serviceReadRepository.findById(eventData.id)
                         .orElseThrow { throw EntityNotFoundException(eventData.id.toString() + " company service not found") }
                         .apply {
-                            id = eventData.id
-                            slug = eventData.slug
-                            companyId = eventData.companyId
-                            data = ServiceReadEntity.Data(
-                                    name = eventData.name,
-                                    logo = eventData.logo,
-                                    price = eventData.price,
-                                    created = eventData.created,
-                                    company = ServiceReadEntity.Company(
-                                            id = company.id,
-                                            name = company.data.name,
-                                            slug = company.data.slug,
-                                            logo = company.data.logo,
-                                    ),
-                            )
+                            data.apply {
+                                    description = eventData.description
+                                    logo = eventData.logo
+                                    price = eventData.price
+                                    created = eventData.created
+                                    company.apply {
+                                        data.name = company.data.name
+                                        data.slug = company.data.slug
+                                        data.logo = company.data.logo
+                                    }
+                            }
                         },
         )
     }
@@ -60,6 +57,7 @@ class ServiceCreatedEventHandler(
                             name = eventData.name,
                             logo = eventData.logo,
                             price = eventData.price,
+                            description = eventData.description,
                             created = eventData.created,
                             company = ServiceReadEntity.Company(
                                     id = company.id,

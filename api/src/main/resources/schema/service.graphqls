@@ -33,14 +33,13 @@ input CreateServiceInput {
     name: String!
     price: Float
     logoTempKey: String
-    description: String,
+    description: String
+    logo: Upload
 
 }
 input UpdateServiceInput {
-    name: String!
     price: Float
     description: String
-    logoTempKey: String
 }
 
 

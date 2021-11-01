@@ -46,6 +46,8 @@ class ServiceReadEntity(
         var created: Instant,
         @JsonProperty("company")
         var company: Company,
+        @JsonProperty("description")
+        var description: String? = null,
         @JsonProperty("lastUsed")
         val lastUsed: LocalDate? = null,
     )

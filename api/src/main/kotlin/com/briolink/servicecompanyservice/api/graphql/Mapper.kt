@@ -20,8 +20,6 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleR
 import com.briolink.servicecompanyservice.common.jpa.read.entity.IndustryReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.StatisticReadEntity
-import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
-import java.net.URL
 
 fun Industry.Companion.fromEntity(entity: IndustryReadEntity) = Industry(
         id = entity.id.toString(),
@@ -32,6 +30,7 @@ fun Service.Companion.fromEntity(entity: ServiceReadEntity) = Service(
         id = entity.id.toString(),
         name = entity.data.name,
         price = entity.data.price,
+        description = entity.data.description,
         company = Company(
                 id = entity.data.company.id.toString(),
                 name = entity.data.company.name,

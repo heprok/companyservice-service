@@ -18,13 +18,13 @@ import java.util.*
 class ServiceMutation(
     val serviceCompanyService: ServiceCompanyService
 ) {
-//    @DgsMutation
-//    fun uploadCompanyImage(
-//        @InputArgument("id") id: String,
-//        @InputArgument("image") image: MultipartFile?
-//    ): URL? {
-//        return serviceCompanyService.uploadProfileImage(UUID.fromString(id), image)
-//    }
+    @DgsMutation
+    fun uploadServiceImage(
+        @InputArgument("id") id: String,
+        @InputArgument("image") image: MultipartFile?
+    ): URL? {
+        return serviceCompanyService.uploadProfileImage(UUID.fromString(id), image)
+    }
 
     @DgsMutation(field = "createService")
     fun create(
@@ -36,8 +36,7 @@ class ServiceMutation(
                 price = input.price,
                 name = input.name,
                 description = input.description,
-                logoTempKey = input.logoTempKey,
-                logo = null
+                fileImage = input.logo
         )
 
         return CreateServiceResult(
@@ -51,12 +50,10 @@ class ServiceMutation(
         @InputArgument("id") id: String,
         @InputArgument("input") input: UpdateServiceInput
     ): UpdateServiceResult {
-        val entity = serviceCompanyService.update(
+        serviceCompanyService.update(
                 id = UUID.fromString(id),
                 price = input.price,
-                name = input.name,
                 description = input.description,
-                logoTempKey = input.logoTempKey,
         ) ?: throw DgsEntityNotFoundException()
 
         return UpdateServiceResult(

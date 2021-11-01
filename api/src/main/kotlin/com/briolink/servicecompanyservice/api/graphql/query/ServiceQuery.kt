@@ -28,6 +28,5 @@ class ServiceQuery(private val serviceCompanyService: ServiceCompanyService) {
                     else -> null
                 },
         )
-
     }
 }

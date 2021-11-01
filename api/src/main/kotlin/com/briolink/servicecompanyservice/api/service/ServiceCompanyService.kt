@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import java.net.URL
 import java.time.Instant
 import java.util.*
@@ -34,9 +35,9 @@ class ServiceCompanyService(
         companyId: UUID,
         name: String,
         price: Double?,
-        logoTempKey: String?,
         description: String?,
-        logo: URL?,
+        fileImage: MultipartFile?,
+        logo: URL? = null,
         created: Instant? = null,
      ): ServiceWriteEntity {
         val slugCompany = companyReadRepository.findById(companyId).orElseThrow { throw EntityNotFoundException("$companyId company not found") }.data.slug
@@ -47,37 +48,37 @@ class ServiceCompanyService(
                         name = name,
                         created = created,
                         slug = StringUtil.slugify("$slugCompany $name"),
-                        logo = logo,
                         description = description,
                         price = price,
                 ).apply {
-                    this.logo = logoTempKey?.let {
-                        awsS3Service.moveFromTemp(it, SERVICE_PROFILE_IMAGE_PATH)
-                    }
+                    this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
                 },
         )
         applicationEventPublisher.publishEvent(CompanyServiceCreatedEvent(service.toDomain()))
-        return service;
+        return service
     }
 
     fun update(
         id: UUID,
-        name: String,
         price: Double?,
         description: String?,
-        logoTempKey: String?,
     ): ServiceWriteEntity? =
             serviceCompanyWriteRepository.findByIdOrNull(id)?.let { writeEntity ->
-                logoTempKey?.let {
-                    writeEntity.logo =  awsS3Service.moveFromTemp(it, SERVICE_PROFILE_IMAGE_PATH)
-                }
-                writeEntity.name = name
                 writeEntity.price = price
                 writeEntity.description = description
                 serviceCompanyWriteRepository.save(writeEntity)
                 applicationEventPublisher.publishEvent(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
                 writeEntity
             }
+
+    fun update(
+        entity: ServiceWriteEntity
+    ): ServiceWriteEntity? {
+        serviceCompanyWriteRepository.save(entity)
+        applicationEventPublisher.publishEvent(CompanyServiceUpdatedEvent(entity.toDomain()))
+        return entity
+    }
+
 
     fun getServiceBySlug(slug: String): Optional<ServiceReadEntity> = serviceCompanyReadRepository.findBySlug(slug)
     fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleReadEntity.RoleType? {
@@ -88,11 +89,11 @@ class ServiceCompanyService(
         )?.role
     }
 
-//    fun uploadProfileImage(id: UUID, image: MultipartFile?): URL? {
-//        val service = serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
-//        val imageUrl: URL? = if (image != null) awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, image) else null
-//        service.logo = imageUrl
-//        update(service)
-//        return imageUrl
-//    }
+    fun uploadProfileImage(id: UUID, image: MultipartFile?): URL? {
+        val service = serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+        val imageUrl: URL? = if (image != null) awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, image) else null
+        service.logo = imageUrl
+        update(service)
+        return imageUrl
+    }
 }
