@@ -39,7 +39,7 @@ class ServiceWriteEntity(
 ) : BaseWriteEntity() {
     @PrePersist
     fun prePersist() {
-        slug = slug ?: StringUtil.slugify("$name $companyId", false)
+        slug = slug ?: StringUtil.slugify("$name $companyId ", false)
         created = created ?: Instant.now()
     }
 
