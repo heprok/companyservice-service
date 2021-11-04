@@ -21,5 +21,4 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpe
 
 
     fun findByCompanyId(companyId: UUID): List<ServiceReadEntity>
-
 }

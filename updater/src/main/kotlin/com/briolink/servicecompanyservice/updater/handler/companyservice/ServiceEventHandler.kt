@@ -1,4 +1,4 @@
-package com.briolink.servicecompanyservice.updater.handler
+package com.briolink.servicecompanyservice.updater.handler.companyservice
 
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.event.IEventHandler
@@ -15,7 +15,6 @@ class ServiceUpdatedEventHandler(
 ) : IEventHandler<CompanyServiceCreatedEvent> {
     override fun handle(event: CompanyServiceCreatedEvent) {
         val eventData = event.data
-        println(eventData)
         val company = companyReadRepository.findById(eventData.companyId)
                 .orElseThrow { throw EntityNotFoundException(eventData.companyId.toString() + " company not found") }
         serviceReadRepository.save(
@@ -64,7 +63,7 @@ class ServiceCreatedEventHandler(
                                     name = company.data.name,
                                     slug = company.data.slug,
                                     logo = company.data.logo,
-
+                                    industry = company.data.industry
                                     ),
                     )
                 },

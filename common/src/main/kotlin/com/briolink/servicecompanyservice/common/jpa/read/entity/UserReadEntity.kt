@@ -10,39 +10,28 @@ import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
-@Table(name = "company", catalog = "schema_read")
+@Table(name = "user", catalog = "schema_read")
 @Entity
-class CompanyReadEntity(
+class UserReadEntity(
     @Id
     @Type(type = "uuid-char")
     @Column(name = "id", nullable = false, length = 36)
-    val id: UUID,
-
-    ) : BaseReadEntity() {
+    var id: UUID,
+) : BaseReadEntity() {
     @Type(type = "json")
     @Column(name = "data", nullable = false, columnDefinition = "json")
     lateinit var data: Data
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Data(
-        @JsonProperty("name")
-        var name: String,
+        @JsonProperty("firstName")
+        var firstName: String,
+        @JsonProperty("lastName")
+        var lastName: String,
+        @JsonProperty("image")
+        var image: URL? = null,
+    ) {
         @JsonProperty("slug")
-        var slug: String,
-        @JsonProperty("logo")
-        var logo: URL? = null,
-        @JsonProperty("location")
-        var location: String? = null,
-        @JsonProperty("industry")
-        var industry: Industry? = null,
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class Industry(
-        @JsonProperty("id")
-        val id: UUID,
-        @JsonProperty("name")
-        val name: String,
-    )
-
+        lateinit var slug: String
+    }
 }

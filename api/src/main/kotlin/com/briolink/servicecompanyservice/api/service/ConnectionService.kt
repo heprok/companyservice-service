@@ -1,179 +1,85 @@
-//package com.briolink.servicecompanyservice.api.service
-//
-//import com.briolink.servicecompanyservice.api.types.ConnectionFilter
-//import com.briolink.servicecompanyservice.api.types.ConnectionSort
-//import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
-//import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity_
-//import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
-//import com.briolink.servicecompanyservice.common.util.PageRequest
-//import org.springframework.data.domain.Page
-//import org.springframework.data.domain.Sort
-//import org.springframework.data.jpa.domain.Specification
-//import org.springframework.stereotype.Service
-//import java.util.UUID
-//
-//@Service
-//class ConnectionService(
-//    private val connectionReadRepository: ConnectionReadRepository,
-//) {
-////    fun getByCompanyId(id: UUID, limit: Int, offset: Int): Page<ConnectionReadEntity> =
-////            connectionReadRepository.findByBuyerIdIs(id, PageRequest(offset, limit))
-//
-//
-//    fun findAll(companyId: UUID, limit: Int, offset: Int, sort: ConnectionSort, filter: ConnectionFilter?): Page<ConnectionReadEntity> {
-//
-//        val spec = Specification<ConnectionReadEntity> { root, query, builder ->
-//
-//            builder.and(
-//                    equalsBuyerId(companyId)
-//                            .or(equalsSellerId(companyId))
-//                            .and(isInIndustryId(filter?.industryId?.map { UUID.fromString(it) }))
-//                            .and(isInBuyerRoleId(filter?.collaboratorRoleId?.map { UUID.fromString(it) }))
-//                            .or(isInSellerRoleId(filter?.collaboratorRoleId?.map { UUID.fromString(it) }))
-//                            .and(isInBuyerId(filter?.collaboratorId?.map { UUID.fromString(it) }))
-//                            .or(isInSellerId(filter?.collaboratorId?.map { UUID.fromString(it) }))
-////                            .and(containsLocation(filter.location))
-//                            .toPredicate(root, query, builder),
-//
-//                    )
-//        }
-//
-//        return connectionReadRepository.findAll(
-//                spec,
-//                PageRequest(offset, limit, Sort.by(Sort.Direction.fromString(sort.direction.name), sort.sortBy.name)),
-//        )
-//    }
-//
-//
-//    fun equalsBuyerId(companyId: UUID): Specification<ConnectionReadEntity> {
-//        return Specification<ConnectionReadEntity> { root, _, builder ->
-//            builder.equal(root.get(ConnectionReadEntity_.buyerId), companyId)
-//        }
-//    }
-//
-//    fun equalsSellerId(companyId: UUID): Specification<ConnectionReadEntity> {
-//        return Specification<ConnectionReadEntity> { root, _, builder ->
-//            builder.equal(root.get(ConnectionReadEntity_.sellerId), companyId)
-//        }
-//    }
-//
-//    fun isInIndustryId(industryIds: List<UUID>?): Specification<ConnectionReadEntity>? {
-//        return if (industryIds != null && industryIds.isNotEmpty()) {
-//            Specification<ConnectionReadEntity> { root, _, builder ->
-//                builder.and(root.get(ConnectionReadEntity_.industryId).`in`(industryIds))
-//            }
-//        } else {
-//            null
-//        }
-//    }
-//
-//    fun isInBuyerRoleId(roleIds: List<UUID>?): Specification<ConnectionReadEntity>? {
-//        return if (roleIds != null && roleIds.isNotEmpty()) {
-//            Specification<ConnectionReadEntity> { root, query, builder ->
-//                builder.and(root.get(ConnectionReadEntity_.buyerRoleId).`in`(roleIds))
-//            }
-//        } else {
-//            null
-//        }
-//    }
-//
-//    fun isInSellerRoleId(roleIds: List<UUID>?): Specification<ConnectionReadEntity>? {
-//        return if (roleIds != null && roleIds.isNotEmpty()) {
-//            Specification<ConnectionReadEntity> { root, _, builder ->
-//                builder.and(root.get(ConnectionReadEntity_.sellerRoleId).`in`(roleIds))
-//            }
-//        } else {
-//            null
-//        }
-//    }
-//
-//    fun isInBuyerId(companyIds: List<UUID>?): Specification<ConnectionReadEntity>? {
-//        return if (companyIds != null && companyIds.isNotEmpty()) {
-//            Specification<ConnectionReadEntity> { root, query, builder ->
-//                builder.and(root.get(ConnectionReadEntity_.buyerId).`in`(companyIds))
-//            }
-//        } else {
-//            null
-//        }
-//    }
-//
-//    fun isInSellerId(companyIds: List<UUID>?): Specification<ConnectionReadEntity>? {
-//        return if (companyIds != null && companyIds.isNotEmpty()) {
-//            Specification<ConnectionReadEntity> { root, _, builder ->
-//                builder.and(root.get(ConnectionReadEntity_.sellerId).`in`(companyIds))
-//            }
-//        } else {
-//            null
-//        }
-//    }
-//
-//    fun existsConnectionByCompany(companyId: UUID): Boolean {
-//        return connectionReadRepository.existsBySellerIdAndBuyerId(companyId, companyId)
-//    }
-////
-////    fun containsLocation(location: String?): Specification<ConnectionReadEntity>? {
-////        return Specification<ConnectionReadEntity> { root, query, builder ->
-////            if (location.isNotBlank() && location != null) {
-////                builder.like(builder.lower(root.get(ConnectionReadEntity_.)), "%${location.toLowerCase()}%")
-////            } else {
-////                null
-////            }
-////        }
-////    }
-////    fun isByPriceBetween(start: Double?, end: Double?): Specification<ConnectionReadEntity>? {
-////
-////        return if (start != null && end != null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.between(root.get(ConnectionReadEntity_.price), start, end)
-////            }
-////        } else if (start != null && end == null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.greaterThanOrEqualTo(root.get(ConnectionReadEntity_.price), start)
-////            }
-////        } else if (start == null && end != null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.lessThanOrEqualTo(root.get(ConnectionReadEntity_.price), end)
-////            }
-////        } else {
-////            null
-////        }
-////    }
-////
-////    fun isByNumberUsesBetween(start: Int?, end: Int?): Specification<ConnectionReadEntity>? {
-////
-////        return if (start != null && end != null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.between(root.get(ConnectionReadEntity_.verifiedUses), start, end)
-////            }
-////        } else if (start != null && end == null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.greaterThanOrEqualTo(root.get(ConnectionReadEntity_.verifiedUses), start)
-////            }
-////        } else if (start == null && end != null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.lessThanOrEqualTo(root.get(ConnectionReadEntity_.verifiedUses), end)
-////            }
-////        } else {
-////            null
-////        }
-////    }
-////
-////    fun isByLastUsedBetween(start: LocalDate?, end: LocalDate?): Specification<ConnectionReadEntity>? {
-////
-////        return if (start != null && end != null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.between(root.get(ConnectionReadEntity_.lastUsed), start, end)
-////            }
-////        } else if (start != null && end == null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.greaterThanOrEqualTo(root.get(ConnectionReadEntity_.lastUsed), start)
-////            }
-////        } else if (start == null && end != null) {
-////            Specification<ConnectionReadEntity> { root, _, builder ->
-////                builder.lessThanOrEqualTo(root.get(ConnectionReadEntity_.lastUsed), end)
-////            }
-////        } else {
-////            null
-////        }
-////    }
-//}
+package com.briolink.servicecompanyservice.api.service
+
+import com.briolink.servicecompanyservice.api.types.Collaborator
+import com.briolink.servicecompanyservice.api.types.ConnectionFilter
+import com.briolink.servicecompanyservice.api.types.ConnectionRoleType
+import com.briolink.servicecompanyservice.api.types.ConnectionSort
+import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.betweenDateCollab
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.equalsServiceId
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.fullTextSearchByLocation
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.inBuyerIds
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.inBuyerRoleIds
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.inIndustryIds
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.inVerificationStage
+import com.briolink.servicecompanyservice.common.util.PageRequest
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.domain.Specification
+import org.springframework.stereotype.Service
+import java.util.*
+import javax.persistence.EntityManager
+
+@Service
+class ConnectionService(
+    private val connectionReadRepository: ConnectionReadRepository,
+    private val entityManager: EntityManager
+) {
+    fun findAll(
+        serviceId: UUID,
+        limit: Int,
+        offset: Int,
+        sort: ConnectionSort,
+        filter: ConnectionFilter?
+    ): Page<ConnectionReadEntity> {
+        val spec = getSpecification(filter).and(equalsServiceId(serviceId))
+
+        val sortBy = Sort.by(Sort.Direction.fromString(sort.direction.name), sort.sortBy.name)
+        return connectionReadRepository.findAll(
+                spec,
+                PageRequest(offset, limit, sortBy),
+        )
+    }
+
+    fun count(serviceId: UUID, filter: ConnectionFilter?): Long {
+        val spec = getSpecification(filter).and(equalsServiceId(serviceId))
+        return connectionReadRepository.count(spec)
+    }
+
+    fun getSpecification(filter: ConnectionFilter?) = Specification<ConnectionReadEntity> { _, _, _ -> null }
+            .and(inIndustryIds(filter?.industryIds?.map { UUID.fromString(it) }))
+            .and(inBuyerRoleIds(filter?.collaboratorRoleIds?.map { UUID.fromString(it)}))
+            .and(inBuyerIds(filter?.collaboratorIds?.map { UUID.fromString(it)}))
+            .and(betweenDateCollab(start = filter?.datesOfCollaborators?.start, end = filter?.datesOfCollaborators?.end))
+            .and(inVerificationStage(filter?.verificationStages?.map { ConnectionReadEntity.ConnectionStatus.valueOf(it!!.name) }))
+            .and(fullTextSearchByLocation(filter?.location))
+
+
+    fun existsConnectionByService(serviceId: UUID): Boolean {
+        return connectionReadRepository.existsByServiceId(serviceId = serviceId)
+    }
+
+    fun getCollaboratorsUsedForCompany(serviceId: UUID, query: String, limit: Int = 10): List<Collaborator> =
+            connectionReadRepository.getCollaboratorsUsedForCompany(
+                    serviceId = serviceId,
+                    query = query,
+            ).map {
+                Collaborator(id = it.id.toString(), name = it.name)
+            }.take(limit).toList()
+
+    fun getConnectionRoleUsedForCompany(serviceId: UUID, query: String, limit: Int = 10): List<ConnectionRoleReadEntity> =
+            connectionReadRepository.getCollaboratorsRolesUsedForCompany(
+                    serviceId = serviceId,
+                    query = query,
+            ).map {
+                ConnectionRoleReadEntity(it.id, it.name, ConnectionRoleReadEntity.RoleType.Buyer)
+            }.take(limit).toList()
+
+
+    fun getIndustriesInConnectionFromCompany(serviceId: UUID, query: String): List<CompanyReadEntity.Industry> =
+            connectionReadRepository.getIndustriesUsesCompany(serviceId = serviceId, query = query)
+                    .map { CompanyReadEntity.Industry(it.id, it.name) }
+}

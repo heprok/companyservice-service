@@ -10,7 +10,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermiss
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
-import org.springframework.context.ApplicationEventPublisher
+import com.briolink.event.publisher.EventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,7 +23,7 @@ import javax.persistence.EntityNotFoundException
 @Service
 @Transactional
 class ServiceCompanyService(
-    val applicationEventPublisher: ApplicationEventPublisher,
+    val eventPublisher: EventPublisher,
     private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
     private val awsS3Service: AwsS3Service,
     private val serviceCompanyWriteRepository: ServiceWriteRepository,
@@ -54,7 +54,7 @@ class ServiceCompanyService(
                     this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
                 },
         )
-        applicationEventPublisher.publishEvent(CompanyServiceCreatedEvent(service.toDomain()))
+        eventPublisher.publishAsync(CompanyServiceCreatedEvent(service.toDomain()))
         return service
     }
 
@@ -67,7 +67,7 @@ class ServiceCompanyService(
                 writeEntity.price = price
                 writeEntity.description = description
                 serviceCompanyWriteRepository.save(writeEntity)
-                applicationEventPublisher.publishEvent(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
+                eventPublisher.publishAsync(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
                 writeEntity
             }
 
@@ -75,7 +75,7 @@ class ServiceCompanyService(
         entity: ServiceWriteEntity
     ): ServiceWriteEntity? {
         serviceCompanyWriteRepository.save(entity)
-        applicationEventPublisher.publishEvent(CompanyServiceUpdatedEvent(entity.toDomain()))
+        eventPublisher.publishAsync(CompanyServiceUpdatedEvent(entity.toDomain()))
         return entity
     }
 

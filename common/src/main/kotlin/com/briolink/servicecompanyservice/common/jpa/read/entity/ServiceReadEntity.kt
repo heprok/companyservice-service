@@ -58,6 +58,8 @@ class ServiceReadEntity(
         var id: UUID,
         @JsonProperty("name")
         var name: String,
+        @JsonProperty("industry")
+        var industry: CompanyReadEntity.Industry?,
         @JsonProperty("slug")
         var slug: String,
         @JsonProperty("logo")
