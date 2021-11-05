@@ -19,8 +19,8 @@ class UserReadEntity(
     var id: UUID,
 ) : BaseReadEntity() {
 
-    @Type(type = "com.vladmihalcea.hibernate.type.json.JsonBinaryType")
-    @Column(name = "data", nullable = false, columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    @Column(name = "data", nullable = false)
     lateinit var data: Data
 
     @JsonIgnoreProperties(ignoreUnknown = true)

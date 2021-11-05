@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.write.entity
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import com.vladmihalcea.hibernate.type.json.JsonType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
@@ -9,7 +10,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
-@TypeDefs(TypeDef(name = "json", typeClass = JsonType::class))
+@TypeDefs(TypeDef(name = "jsonb", typeClass = JsonBinaryType::class))
 @MappedSuperclass
 abstract class BaseWriteEntity {
     @Id

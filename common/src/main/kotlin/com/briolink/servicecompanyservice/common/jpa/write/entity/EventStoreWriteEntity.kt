@@ -10,8 +10,8 @@ import javax.persistence.Table
 @Table(name = "event_store", schema = "write")
 @Entity
 class EventStoreWriteEntity(
-    @Type(type = "com.vladmihalcea.hibernate.type.json.JsonBinaryType")
-    @Column(name = "data", nullable = false, columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    @Column(name = "data", nullable = false)
     val data: String,
     @Column(name = "created", nullable = false)
     var created: Instant

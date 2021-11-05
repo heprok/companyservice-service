@@ -19,14 +19,14 @@ class UserPermissionRoleReadEntity(
     var id: UUID? = null,
 
     @Type(type="pg-uuid")
-    @Column(name = "access_object_uuid", nullable = false, columnDefinition="uuid")
+    @Column(name = "access_object_uuid", nullable = false)
     var accessObjectUuid: UUID,
 
     @Column(name = "access_object_type", nullable = false)
     var accessObjectType: Int = 1,
 
     @Type(type="pg-uuid")
-    @Column(name = "user_id", nullable = false, columnDefinition="uuid")
+    @Column(name = "user_id", nullable = false)
     var userId: UUID,
 
     @Column(name = "role", nullable = false)

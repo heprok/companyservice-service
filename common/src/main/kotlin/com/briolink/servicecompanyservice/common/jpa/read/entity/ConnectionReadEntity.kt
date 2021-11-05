@@ -35,20 +35,20 @@ class ConnectionReadEntity(
 
     @Id
     @Type(type="pg-uuid")
-    @Column(name = "service_id", nullable = false, columnDefinition="uuid")
+    @Column(name = "service_id", nullable = false)
 
     var serviceId: UUID
 ) : BaseReadEntity() {
     @Type(type="pg-uuid")
-    @Column(name = "seller_id", nullable = false, columnDefinition="uuid")
+    @Column(name = "seller_id", nullable = false)
     lateinit var sellerId: UUID
 
     @Type(type="pg-uuid")
-    @Column(name = "buyer_id", nullable = false, columnDefinition="uuid")
+    @Column(name = "buyer_id", nullable = false)
     lateinit var buyerId: UUID
 
     @Type(type="pg-uuid")
-    @Column(name = "buyer_role_id", nullable = false, columnDefinition="uuid")
+    @Column(name = "buyer_role_id", nullable = false)
     lateinit var buyerRoleId: UUID
 
     @Column(name = "buyer_name", nullable = false, length = 255)
@@ -72,7 +72,7 @@ class ConnectionReadEntity(
     var endCollaboration: Year? = null
 
     @Type(type="pg-uuid")
-    @Column(name = "industry_id", columnDefinition="uuid")
+    @Column(name = "industry_id")
     var industryId: UUID? = null
 
     @Column(name = "industry_name", length = 255)
@@ -81,8 +81,8 @@ class ConnectionReadEntity(
     @Column(name = "verification_stage", nullable = false)
     lateinit var verificationStage: ConnectionStatus
 
-    @Type(type = "com.vladmihalcea.hibernate.type.json.JsonBinaryType")
-    @Column(name = "data", nullable = false, columnDefinition = "jsonb")
+    @Type(type="jsonb")
+    @Column(name = "data", nullable = false)
     lateinit var data: Data
 
     @PrePersist

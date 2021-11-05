@@ -21,7 +21,7 @@ class ServiceReadEntity(
     var id: UUID,
 
     @Type(type="pg-uuid")
-    @Column(name = "company_id", nullable = false, columnDefinition="uuid")
+    @Column(name = "company_id", nullable = false)
     var companyId: UUID,
 
     @Column(name = "slug", nullable = false, length = 255)
@@ -29,8 +29,8 @@ class ServiceReadEntity(
 
     ) : BaseReadEntity() {
 
-    @Type(type = "com.vladmihalcea.hibernate.type.json.JsonBinaryType")
-    @Column(name = "data", nullable = false, columnDefinition = "jsonb")
+    @Type(type="jsonb")
+    @Column(name = "data", nullable = false)
     lateinit var data: Data
 
     @JsonIgnoreProperties(ignoreUnknown = true)
