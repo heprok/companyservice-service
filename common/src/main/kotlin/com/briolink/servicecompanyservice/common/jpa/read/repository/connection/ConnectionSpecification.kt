@@ -3,7 +3,6 @@ package com.briolink.servicecompanyservice.common.jpa.read.repository.connection
 import com.briolink.servicecompanyservice.common.jpa.matchBoolMode
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity_
-import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
 import org.springframework.data.jpa.domain.Specification
 import java.time.Year
 import java.util.*

@@ -13,28 +13,28 @@
 //import javax.persistence.Id
 //import javax.persistence.Table
 //
-//@Table(name = "statistic", catalog = "schema_read")
+//@Table(name = "statistic", schema = "read")
 //@Entity
 //class StatisticReadEntity(
 //    @Id
-//    @Type(type = "uuid-char")
-//    @Column(name = "companyId", length = 36)
+//    @Type(type="pg-uuid")
+//    @Column(name = "companyId")
 //    var companyId: UUID? = null,
 //) : BaseReadEntity() {
 //
-//    @Type(type = "json")
+//
 //    @Column(name = "statsNumberConnection", columnDefinition = "json")
 //    var statsNumberConnection: StatsNumberConnection? = null
 //
-//    @Type(type = "json")
+//
 //    @Column(name = "statsByIndustry", columnDefinition = "json")
 //    var statsByIndustry: StatsByIndustry? = null
 //
-//    @Type(type = "json")
+//
 //    @Column(name = "statsByCountry", columnDefinition = "json")
 //    var statsByCountry: StatsByCountry? = null
 //
-//    @Type(type = "json")
+//
 //    @Column(name = "statsServiceProvided", columnDefinition = "json")
 //    var statsServiceProvided: StatsServiceProvided? = null
 //

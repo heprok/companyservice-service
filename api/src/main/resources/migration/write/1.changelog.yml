@@ -5,19 +5,20 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: service
-            schemaName: ${writeSchema}
+            schemaName: write
             columns:
               - column:
                   name: id
-                  type: varchar(36)
+                  type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: company_id
-                  type: varchar(36)
+                  type: uuid
                   constraints:
                     nullable: false
+                    primaryKey: true
               - column:
                   name: name
                   type: varchar(255)
@@ -31,35 +32,38 @@ databaseChangeLog:
                   type: text
               - column:
                   name: price
-                  type: double
+                  type: currency
               - column:
                   name: slug
                   type: varchar(255)
                   constraints:
                     nullable: false
+                    unique: true
+                    uniqueConstraintName: unique_serivce_slug
               - column:
                   name: created
                   type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
         -  addUniqueConstraint:
              columnNames:  company_id, name
              constraintName:  company_id_and_service_name_unique
-             schemaName:  ${writeSchema}
+             schemaName:  write
              tableName:  service
         - createTable:
             tableName: event_store
-            schemaName: ${writeSchema}
+            schemaName: write
             columns:
               - column:
                   name: id
-                  type: varchar(36)
+                  type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: data
-                  type: json
+                  type: jsonb
                   constraints:
                     nullable: false
               - column:

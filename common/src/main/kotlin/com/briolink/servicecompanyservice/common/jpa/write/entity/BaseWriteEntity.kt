@@ -1,6 +1,5 @@
 package com.briolink.servicecompanyservice.common.jpa.write.entity
 
-import com.briolink.servicecompanyservice.common.domain.v1_0.Domain
 import com.vladmihalcea.hibernate.type.json.JsonType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
@@ -14,7 +13,7 @@ import javax.persistence.MappedSuperclass
 @MappedSuperclass
 abstract class BaseWriteEntity {
     @Id
+    @Type(type="pg-uuid")
     @GeneratedValue
-    @Type(type = "uuid-char")
     var id: UUID? = null
 }

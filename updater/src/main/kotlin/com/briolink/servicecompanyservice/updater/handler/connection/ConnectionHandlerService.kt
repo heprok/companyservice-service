@@ -3,7 +3,6 @@ package com.briolink.servicecompanyservice.updater.handler.connection
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.IndustryReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
@@ -18,7 +17,6 @@ class ConnectionHandlerService(
     private val connectionReadRepository: ConnectionReadRepository,
     private val companyReadRepository: CompanyReadRepository,
     private val serviceReadRepository: ServiceReadRepository,
-//    private val industryReadRepository: IndustryReadRepository,
     private val userReadRepository: UserReadRepository,
 ) {
     fun createOrUpdate(connection: Connection) {
@@ -26,7 +24,6 @@ class ConnectionHandlerService(
         val buyerRead = companyReadRepository.getById(connection.participantTo.companyId!!)
         val userBuyerRead = userReadRepository.getById(connection.participantTo.userId!!)
         val userSellerRead = userReadRepository.getById(connection.participantFrom.userId!!)
-//        val industryRead = buyerRead.data.industry?.id?.let { industryReadRepository.getById(it) }
 
         connection.services.forEach { connectionService ->
 

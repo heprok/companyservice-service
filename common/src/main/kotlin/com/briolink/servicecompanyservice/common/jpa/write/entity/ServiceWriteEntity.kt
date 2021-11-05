@@ -11,18 +11,19 @@ import javax.persistence.Entity
 import javax.persistence.PrePersist
 import javax.persistence.Table
 
-@Table(name = "service", catalog = "schema_write")
+@Table(name = "service", schema = "write")
 @Entity
 class ServiceWriteEntity(
-    @Type(type = "uuid-char")
-    @Column(name = "company_id", nullable = false, length = 36)
+
+    @Type(type="pg-uuid")
+    @Column(name = "company_id", nullable = false)
     var companyId: UUID,
 
     @Column(name = "name", nullable = false, length = 255)
     var name: String,
 
     @Column(name = "slug", nullable = false, length = 255)
-    var slug: String? = null,
+    var slug: String,
 
     @Column(name = "price")
     var price: Double? = null,
@@ -39,7 +40,6 @@ class ServiceWriteEntity(
 ) : BaseWriteEntity() {
     @PrePersist
     fun prePersist() {
-        slug = slug ?: StringUtil.slugify("$name $companyId", false)
         created = created ?: Instant.now()
     }
 
@@ -51,7 +51,7 @@ class ServiceWriteEntity(
             logo = logo,
             description = description,
             created = created!!,
-            slug = slug!!,
+            slug = slug,
     )
 
 }

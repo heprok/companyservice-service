@@ -9,12 +9,12 @@ import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
-@Table(name = "connection_role", catalog = "schema_read")
+@Table(name = "connection_role", schema = "read")
 @Entity
 class ConnectionRoleReadEntity(
     @Id
-    @Type(type = "uuid-char")
-    @Column(name = "id", nullable = false, length = 36)
+    @Type(type="pg-uuid")
+    @Column(name = "id", nullable = false)
     var id: UUID,
 
     @Column(name = "name", nullable = false, length = 128)

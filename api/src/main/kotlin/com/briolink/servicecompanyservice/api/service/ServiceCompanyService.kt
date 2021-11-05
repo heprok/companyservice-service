@@ -11,6 +11,7 @@ import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEn
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.briolink.event.publisher.EventPublisher
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -38,24 +39,27 @@ class ServiceCompanyService(
         description: String?,
         fileImage: MultipartFile?,
         logo: URL? = null,
+        slug: String? = null,
         created: Instant? = null,
-     ): ServiceWriteEntity {
-        val slugCompany = companyReadRepository.findById(companyId).orElseThrow { throw EntityNotFoundException("$companyId company not found") }.data.slug
-
-        val service = serviceCompanyWriteRepository.save(
+    ): ServiceWriteEntity {
+        val nameCompany = companyReadRepository.findById(companyId)
+                .orElseThrow { throw EntityNotFoundException("$companyId company not found") }.data.name
+        serviceCompanyWriteRepository.save(
                 ServiceWriteEntity(
                         companyId = companyId,
                         name = name,
                         created = created,
-                        slug = StringUtil.slugify("$slugCompany $name"),
+                        slug = StringUtil.slugify("$nameCompany $name", false),
                         description = description,
                         price = price,
                 ).apply {
                     this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
                 },
-        )
-        eventPublisher.publishAsync(CompanyServiceCreatedEvent(service.toDomain()))
-        return service
+        ).apply {
+            eventPublisher.publishAsync(CompanyServiceCreatedEvent(this.toDomain()))
+            return this
+        }
+
     }
 
     fun update(
