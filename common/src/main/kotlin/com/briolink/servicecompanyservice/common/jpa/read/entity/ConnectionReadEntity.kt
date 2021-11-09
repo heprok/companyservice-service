@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.Type
+import org.joda.time.DateTime
 import java.io.Serializable
 import java.net.URL
+import java.time.Instant
 import java.time.Year
 import java.util.*
 import javax.persistence.Column
@@ -79,6 +81,9 @@ class ConnectionReadEntity(
     @Column(name = "buyer_role", columnDefinition = "json")
     var buyerRole: Role? = null
 
+    @Column(name = "created")
+    var created: DateTime? = null
+
     @Type(type = "json")
     @Column(name = "data", nullable = false, columnDefinition = "json")
     lateinit var data: Data
@@ -86,12 +91,12 @@ class ConnectionReadEntity(
     @PrePersist
     @PreUpdate
     private fun updateInfo() {
+        created = created ?: DateTime.now()
         buyerId = data.buyerCompany.id
         buyerRoleName = data.buyerCompany.role.name
         buyerRoleId = data.buyerCompany.role.id
         buyerRole = data.buyerCompany.role
         buyerName = data.buyerCompany.name
-
         sellerId = data.sellerCompany.id
 
         industryId = data.industry?.id

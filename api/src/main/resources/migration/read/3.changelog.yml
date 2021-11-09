@@ -27,7 +27,7 @@ databaseChangeLog:
                     name: stats_service_duration
                     type: json
                     constraints:
-                      nullable:
+                      nullable: false
                 - column:
                     name: stats_number_connection
                     type: json
