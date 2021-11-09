@@ -11,6 +11,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.StatisticRe
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Year
+import java.time.ZoneId
 import java.util.*
 import javax.persistence.EntityNotFoundException
 
@@ -60,8 +61,8 @@ class StatisticService(
                     collaborator.id,
                     IntRange(connection.startCollaboration.value, connection.endCollaboration?.value ?: Year.now().value)
             )
-            statsNumberConnection.years[connection.created!!.year] = statsNumberConnection.years.getOrDefault(
-                    connection.created!!.year,
+            statsNumberConnection.years[connection.created.atZone(ZoneId.systemDefault()).year] = statsNumberConnection.years.getOrDefault(
+                    connection.created.atZone(ZoneId.systemDefault()).year,
                     StatisticReadEntity.CompaniesStats(
                             listCompanies = mutableSetOf(),
                             totalCount = mutableMapOf(),

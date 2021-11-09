@@ -22,20 +22,20 @@ class StatisticReadEntity(
     var serviceId: UUID? = null,
 ) : BaseReadEntity() {
 
-    @Type(type = "json")
-    @Column(name = "statsNumberConnection", columnDefinition = "json")
+    @Type(type = "jsonb")
+    @Column(name = "statsNumberConnection", columnDefinition = "jsonb")
     var statsNumberConnection: StatsNumberConnection? = null
 
-    @Type(type = "json")
-    @Column(name = "statsByIndustry", columnDefinition = "json")
+    @Type(type = "jsonb")
+    @Column(name = "statsByIndustry", columnDefinition = "jsonb")
     var statsByIndustry: StatsByIndustry? = null
 
-    @Type(type = "json")
-    @Column(name = "statsByCountry", columnDefinition = "json")
+    @Type(type = "jsonb")
+    @Column(name = "statsByCountry", columnDefinition = "jsonb")
     var statsByCountry: StatsByCountry? = null
 
-    @Type(type = "json")
-    @Column(name = "stats_service_duration", columnDefinition = "json")
+    @Type(type = "jsonb")
+    @Column(name = "stats_service_duration", columnDefinition = "jsonb")
     var statsServiceDuration: StatsServiceDuration? = null
 
     @JsonIgnoreProperties(ignoreUnknown = true)
