@@ -101,7 +101,8 @@ class ConnectionHandlerService(
     }
 
     fun delete(connectionId: UUID) {
-        connectionReadRepository.deleteById(connectionId)
+        if (connectionReadRepository.existsById(connectionId))
+            connectionReadRepository.deleteById(connectionId)
     }
 
 }

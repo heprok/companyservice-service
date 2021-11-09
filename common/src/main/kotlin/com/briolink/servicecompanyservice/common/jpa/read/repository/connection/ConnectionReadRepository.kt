@@ -73,4 +73,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
     fun existsByServiceId(serviceId: UUID): Boolean
     fun findByServiceId(serviceId: UUID): List<ConnectionReadEntity>
 
+
+    fun deleteByIdAndServiceId(id: UUID, serviceId: UUID): Long
+
 }
