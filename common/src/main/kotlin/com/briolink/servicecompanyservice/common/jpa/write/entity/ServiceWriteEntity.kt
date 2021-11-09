@@ -24,7 +24,7 @@ class ServiceWriteEntity(
     @Column(name = "slug", nullable = false, length = 255)
     var slug: String,
 
-    @Column(name = "price")
+    @Column(name = "price", precision = 10, scale = 2)
     var price: Double? = null,
 
     @Column(name = "logo", length = 255)

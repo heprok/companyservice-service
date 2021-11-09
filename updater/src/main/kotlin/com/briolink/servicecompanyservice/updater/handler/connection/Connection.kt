@@ -1,6 +1,7 @@
 package com.briolink.servicecompanyservice.updater.handler.connection
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.Instant
 import java.time.Year
 import java.util.*
 
@@ -68,4 +69,6 @@ data class Connection(
     val services: ArrayList<ConnectionService> = arrayListOf(),
     @JsonProperty
     val status: ConnectionStatus,
+    @JsonProperty
+    val created: Instant
 )

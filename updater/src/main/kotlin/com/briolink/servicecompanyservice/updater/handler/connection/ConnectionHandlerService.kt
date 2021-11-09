@@ -31,6 +31,7 @@ class ConnectionHandlerService(
                 val connectionRead = connectionReadRepository.findByIdAndServiceId(connection.id, connectionService.serviceId)
                         .orElse(ConnectionReadEntity(connection.id, connectionService.serviceId)).apply {
                             verificationStage = ConnectionReadEntity.ConnectionStatus.valueOf(connection.status.name)
+                            created = connection.created
                             data = ConnectionReadEntity.Data(connectionId = connection.id, serviceId = serviceId).apply {
                                 buyerCompany = ConnectionReadEntity.ParticipantCompany(
                                         id = buyerRead.id,
@@ -84,7 +85,7 @@ class ConnectionHandlerService(
                             }
                         }
 
-                connectionReadRepository.save(connectionRead)
+                connectionReadRepository.saveAndFlush(connectionRead)
             }
         }
 

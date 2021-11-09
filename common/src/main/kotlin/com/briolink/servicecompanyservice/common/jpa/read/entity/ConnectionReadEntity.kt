@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.Type
 import java.io.Serializable
 import java.net.URL
+import java.time.Instant
 import java.time.Year
 import java.util.*
 import javax.persistence.Column
@@ -80,6 +81,9 @@ class ConnectionReadEntity(
 
     @Column(name = "verification_stage", nullable = false)
     lateinit var verificationStage: ConnectionStatus
+
+    @Column(name = "created", nullable = false)
+    lateinit var created: Instant
 
     @Type(type="jsonb")
     @Column(name = "data", nullable = false)
