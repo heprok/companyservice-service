@@ -1,7 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.write.entity
 
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
-import com.briolink.servicecompanyservice.common.util.StringUtil
 import org.hibernate.annotations.Type
 import java.net.URL
 import java.time.Instant

@@ -11,7 +11,6 @@ import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEn
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.briolink.event.publisher.EventPublisher
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -71,6 +70,13 @@ class ServiceCompanyService(
                 writeEntity.price = price
                 writeEntity.description = description
                 serviceCompanyWriteRepository.save(writeEntity)
+                serviceCompanyReadRepository.getById(id).apply {
+                    data.apply {
+                        this.price = price
+                        this.description = description
+                    }
+                    serviceCompanyReadRepository.save(this)
+                }
                 eventPublisher.publishAsync(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
                 writeEntity
             }
@@ -94,10 +100,18 @@ class ServiceCompanyService(
     }
 
     fun uploadProfileImage(id: UUID, image: MultipartFile?): URL? {
-        val service = serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+        val serviceWrite =
+                serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
         val imageUrl: URL? = if (image != null) awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, image) else null
-        service.logo = imageUrl
-        update(service)
+        serviceWrite.logo = imageUrl
+        serviceCompanyReadRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+                .apply {
+                    data.apply {
+                        logo = imageUrl
+                    }
+                    serviceCompanyReadRepository.save(this)
+                }
+        update(serviceWrite)
         return imageUrl
     }
 }

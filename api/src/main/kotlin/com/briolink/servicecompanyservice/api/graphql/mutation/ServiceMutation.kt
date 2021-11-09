@@ -41,7 +41,7 @@ class ServiceMutation(
 
         return CreateServiceResult(
                 userErrors = listOf(),
-                data = ServiceResultData(id = entity.id.toString(), slug = entity.slug!!),
+                data = ServiceResultData(id = entity.id.toString(), slug = entity.slug),
         )
     }
 
