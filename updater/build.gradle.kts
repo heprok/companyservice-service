@@ -20,12 +20,12 @@ dependencies {
     // FasterXML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    // postgtrsql JDBC Driver
+    runtimeOnly("org.postgresql:postgresql:${Versions.POSTGRESQL}")
+
     // Kotlin
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
-
-    // MariaDB JDBC Driver
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
     // kotlin-logging
     implementation("io.github.microutils:kotlin-logging-jvm:${Versions.KOTLIN_LOGGING_JVM}")

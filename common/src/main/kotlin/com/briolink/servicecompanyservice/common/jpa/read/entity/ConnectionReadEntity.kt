@@ -1,16 +1,17 @@
 package com.briolink.servicecompanyservice.common.jpa.read.entity
 
+import com.briolink.servicecompanyservice.common.jpa.converter.YearAttributeConverter
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.Type
-import org.joda.time.DateTime
 import java.io.Serializable
 import java.net.URL
 import java.time.Instant
 import java.time.Year
 import java.util.*
 import javax.persistence.Column
+import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.IdClass
@@ -24,30 +25,31 @@ class ConnectionPK(
     lateinit var serviceId: UUID
 }
 
-@Table(name = "connection", catalog = "schema_read")
+@Table(name = "connection", schema = "read")
 @Entity
 @IdClass(ConnectionPK::class)
 class ConnectionReadEntity(
     @Id
-    @Type(type = "uuid-char")
-    @Column(name = "id", nullable = false, length = 36)
+    @Type(type="pg-uuid")
+    @Column(name = "id", nullable = false)
     val id: UUID,
 
     @Id
+    @Type(type="pg-uuid")
     @Column(name = "service_id", nullable = false)
-    @Type(type = "uuid-char")
+
     var serviceId: UUID
 ) : BaseReadEntity() {
-    @Column(name = "seller_id", nullable = false, length = 36)
-    @Type(type = "uuid-char")
+    @Type(type="pg-uuid")
+    @Column(name = "seller_id", nullable = false)
     lateinit var sellerId: UUID
 
-    @Column(name = "buyer_id", nullable = false, length = 36)
-    @Type(type = "uuid-char")
+    @Type(type="pg-uuid")
+    @Column(name = "buyer_id", nullable = false)
     lateinit var buyerId: UUID
 
-    @Column(name = "buyer_role_id", nullable = false, length = 36)
-    @Type(type = "uuid-char")
+    @Type(type="pg-uuid")
+    @Column(name = "buyer_role_id", nullable = false)
     lateinit var buyerRoleId: UUID
 
     @Column(name = "buyer_name", nullable = false, length = 255)
@@ -56,19 +58,22 @@ class ConnectionReadEntity(
     @Column(name = "buyer_role_name", nullable = false, length = 255)
     var buyerRoleName: String? = null
 
+    @Column(name = "buyer_role_type", nullable = false, length = 255)
+    lateinit var buyerRoleType: ConnectionRoleReadEntity.RoleType
+
     @Column(name = "location", length = 255)
     var location: String? = null
 
-    @Type(type = "com.vladmihalcea.hibernate.type.basic.YearType")
-    @Column(name = "startCollaboration", nullable = false)
+    @Convert(converter = YearAttributeConverter::class)
+    @Column(name = "start_collaboration", columnDefinition="smallint", nullable = false)
     lateinit var startCollaboration: Year
 
-    @Type(type = "com.vladmihalcea.hibernate.type.basic.YearType")
-    @Column(name = "end_collaboration")
+    @Convert(converter = YearAttributeConverter::class)
+    @Column(name = "end_collaboration", columnDefinition="smallint")
     var endCollaboration: Year? = null
 
-    @Column(name = "industry_id", length = 36)
-    @Type(type = "uuid-char")
+    @Type(type="pg-uuid")
+    @Column(name = "industry_id")
     var industryId: UUID? = null
 
     @Column(name = "industry_name", length = 255)
@@ -77,26 +82,22 @@ class ConnectionReadEntity(
     @Column(name = "verification_stage", nullable = false)
     lateinit var verificationStage: ConnectionStatus
 
-    @Type(type = "json")
-    @Column(name = "buyer_role", columnDefinition = "json")
-    var buyerRole: Role? = null
+    @Column(name = "created", nullable = false)
+    lateinit var created: Instant
 
-    @Column(name = "created")
-    var created: DateTime? = null
-
-    @Type(type = "json")
-    @Column(name = "data", nullable = false, columnDefinition = "json")
+    @Type(type="jsonb")
+    @Column(name = "data", nullable = false)
     lateinit var data: Data
 
     @PrePersist
     @PreUpdate
     private fun updateInfo() {
-        created = created ?: DateTime.now()
         buyerId = data.buyerCompany.id
         buyerRoleName = data.buyerCompany.role.name
         buyerRoleId = data.buyerCompany.role.id
-        buyerRole = data.buyerCompany.role
+        buyerRoleType = data.buyerCompany.role.type
         buyerName = data.buyerCompany.name
+
         sellerId = data.sellerCompany.id
 
         industryId = data.industry?.id

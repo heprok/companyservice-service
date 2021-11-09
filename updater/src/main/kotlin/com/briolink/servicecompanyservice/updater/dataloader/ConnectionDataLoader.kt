@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.updater.dataloader
 
+import com.briolink.servicecompanyservice.common.dataloader.DataLoader
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
@@ -90,6 +91,7 @@ class ConnectionDataLoader(
                                     ),
                                     services = ArrayList(services),
                                     status = connectionStatusList.random(),
+                                    created = randomInstant(2010, 2020),
                             ),
                     )
                 } catch (e: DataIntegrityViolationException) {

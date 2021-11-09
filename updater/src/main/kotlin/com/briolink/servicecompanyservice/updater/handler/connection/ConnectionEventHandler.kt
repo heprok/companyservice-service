@@ -4,11 +4,13 @@ import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandler
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
+import org.springframework.transaction.annotation.Transactional
 
 @EventHandlers(
         EventHandler("ConnectionCreatedEvent", "1.0"),
         EventHandler("ConnectionUpdatedEvent", "1.0"),
 )
+@Transactional
 class ConnectionEventHandler(
     private val companyHandlerService: CompanyHandlerService,
     private val connectionHandlerService: ConnectionHandlerService,

@@ -3,7 +3,6 @@ package com.briolink.servicecompanyservice.common.jpa.read.repository.connection
 import com.briolink.servicecompanyservice.common.jpa.matchBoolMode
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity_
-import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
 import org.springframework.data.jpa.domain.Specification
 import java.time.Year
 import java.util.*
@@ -61,11 +60,10 @@ fun inIndustryIds(industryIds: List<UUID>?): Specification<ConnectionReadEntity>
 
 fun fullTextSearchByLocation(location: String?): Specification<ConnectionReadEntity>? {
     return if (location != null) Specification { root, _, criteriaBuilder ->
-        val match = criteriaBuilder.matchBoolMode(
+        criteriaBuilder.like(
                 root.get(ConnectionReadEntity_.location),
-                criteriaBuilder.literal(location),
+                "%$location%",
         )
-        criteriaBuilder.greaterThan(match, 0.0)
     } else {
         null
     }

@@ -38,24 +38,27 @@ class ServiceCompanyService(
         description: String?,
         fileImage: MultipartFile?,
         logo: URL? = null,
+        slug: String? = null,
         created: Instant? = null,
-     ): ServiceWriteEntity {
-        val slugCompany = companyReadRepository.findById(companyId).orElseThrow { throw EntityNotFoundException("$companyId company not found") }.data.slug
-
-        val service = serviceCompanyWriteRepository.save(
+    ): ServiceWriteEntity {
+        val nameCompany = companyReadRepository.findById(companyId)
+                .orElseThrow { throw EntityNotFoundException("$companyId company not found") }.data.name
+        serviceCompanyWriteRepository.save(
                 ServiceWriteEntity(
                         companyId = companyId,
                         name = name,
                         created = created,
-                        slug = StringUtil.slugify("$slugCompany $name"),
+                        slug = StringUtil.slugify("$nameCompany $name", false),
                         description = description,
                         price = price,
                 ).apply {
                     this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
                 },
-        )
-        eventPublisher.publishAsync(CompanyServiceCreatedEvent(service.toDomain()))
-        return service
+        ).apply {
+            eventPublisher.publishAsync(CompanyServiceCreatedEvent(this.toDomain()))
+            return this
+        }
+
     }
 
     fun update(
@@ -67,6 +70,13 @@ class ServiceCompanyService(
                 writeEntity.price = price
                 writeEntity.description = description
                 serviceCompanyWriteRepository.save(writeEntity)
+                serviceCompanyReadRepository.getById(id).apply {
+                    data.apply {
+                        this.price = price
+                        this.description = description
+                    }
+                    serviceCompanyReadRepository.save(this)
+                }
                 eventPublisher.publishAsync(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
                 writeEntity
             }
@@ -90,10 +100,18 @@ class ServiceCompanyService(
     }
 
     fun uploadProfileImage(id: UUID, image: MultipartFile?): URL? {
-        val service = serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+        val serviceWrite =
+                serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
         val imageUrl: URL? = if (image != null) awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, image) else null
-        service.logo = imageUrl
-        update(service)
+        serviceWrite.logo = imageUrl
+        serviceCompanyReadRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+                .apply {
+                    data.apply {
+                        logo = imageUrl
+                    }
+                    serviceCompanyReadRepository.save(this)
+                }
+        update(serviceWrite)
         return imageUrl
     }
 }

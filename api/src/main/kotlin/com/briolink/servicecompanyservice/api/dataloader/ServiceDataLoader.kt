@@ -1,10 +1,11 @@
 package com.briolink.servicecompanyservice.api.dataloader
 
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
+import com.briolink.servicecompanyservice.common.dataloader.DataLoader
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
+import com.briolink.servicecompanyservice.common.util.StringUtil
 import org.springframework.core.annotation.Order
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Component
 import java.net.URL
 import kotlin.random.Random
@@ -19,12 +20,8 @@ class ServiceDataLoader(
     val listName: List<String> = listOf(
             "Advertising on Google services",
             "Software provision",
-            "Software provision",
-            "Executive Education",
-            "Innovation culture",
             "Technology evalution",
             "Executive Education",
-            "Innovation culture",
             "Online sales",
             "Product design",
             "Development",
@@ -38,24 +35,24 @@ class ServiceDataLoader(
         ) {
             val companyList = companyReadRepository.findAll()
             for (i in 1..COUNT_SERVICE) {
-                try {
+                val randomCompany = companyList.random()
+                val nameService = listName.random()
+                val slug = StringUtil.slugify(randomCompany.data.name + " " + nameService, false)
+                if (!serviceWriteRepository.existsBySlug(slug))
                     serviceCompanyService.create(
-                            companyId = companyList.random().id,
+                            companyId = randomCompany.id,
                             logo = URL("https://placeimg.com/640/640/tech"),
-                            name = listName[(i % listName.count())],
+                            name = nameService,
                             price = Random.nextDouble(0.0, 6000000.0),
                             fileImage = null,
+                            created = randomInstant(2010, 2020),
                             description = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
                     )
-                } catch (e: DataIntegrityViolationException) {
-
-                }
-
             }
         }
     }
 
     companion object {
-        const val COUNT_SERVICE = 300
+        const val COUNT_SERVICE = 700
     }
 }

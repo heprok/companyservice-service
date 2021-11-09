@@ -10,17 +10,17 @@ import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
-@Table(name = "company", catalog = "schema_read")
+@Table(name = "company", schema = "read")
 @Entity
 class CompanyReadEntity(
     @Id
-    @Type(type = "uuid-char")
-    @Column(name = "id", nullable = false, length = 36)
+    @Type(type="pg-uuid")
+    @Column(name = "id", nullable = false)
     val id: UUID,
-
     ) : BaseReadEntity() {
-    @Type(type = "json")
-    @Column(name = "data", nullable = false, columnDefinition = "json")
+
+    @Type(type="jsonb")
+    @Column(name = "data", nullable = false)
     lateinit var data: Data
 
     @JsonIgnoreProperties(ignoreUnknown = true)

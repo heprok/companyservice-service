@@ -24,6 +24,7 @@ class CompanyHandlerService(
                     slug = company.slug,
                     logo = company.logo,
                     name = company.name,
+                    location = company.location,
                     industry = company.industry?.let { CompanyReadEntity.Industry(id = it.id, name = company.industry.name) },
             )
             companyReadRepository.save(this)
