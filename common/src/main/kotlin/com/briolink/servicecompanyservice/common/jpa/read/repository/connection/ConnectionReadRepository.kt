@@ -82,6 +82,6 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
 
     @Modifying
     @Query("DELETE from ConnectionReadEntity c where c.id = ?1")
-    fun deleteByConnectionId(id: UUID): Long
+    fun deleteByConnectionId(id: UUID): Int
 
 }
