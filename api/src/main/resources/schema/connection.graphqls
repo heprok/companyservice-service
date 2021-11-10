@@ -1,17 +1,16 @@
 type Connection {
     id: ID!
-    seller: Participant
-    buyer: Participant
+    buyer: Participant!
+    verifySeller: User!
     verificationStage: VerificationStage!
-    services: [ConnectionService!]!
+    service: ConnectionService!
     industry: Industry
 }
 
 enum VerificationStage {
     Pending
-    Progress
+    InProgress
     Verified
-    Reject
 }
 
 type Participant {
@@ -19,22 +18,28 @@ type Participant {
     name: String!
     slug: String!
     logo: Image
-    role: String!
+    role: ConnectionRole!
     verifyUser: User!
 }
 
 input ConnectionFilter {
-    collaboratorId: [ID]
-    collaboratorRoleId: [ID]
-    industryId: [ID]
+    collaboratorIds: [ID]
+    collaboratorRoleIds: [ID]
+    industryIds: [ID]
     location: String
-    datesOfCollaborators: [Date]
-    verificationStage: [VerificationStage]
+    datesOfCollaborators: RangeYear
+    verificationStages: [VerificationStage]
 }
 
 enum ConnectionSortBy {
-    Created, NameSeller, NameBuyer
+    StartCollaboration, NameBuyer
 }
+
+type Collaborator {
+    id: ID!,
+    name: String!,
+}
+
 
 input ConnectionSort{
     sortBy: ConnectionSortBy!
@@ -52,12 +57,6 @@ type ConnectionRole {
     type: ConnectionRoleType!
 }
 
-type ConnectionRoleSorting {
-    id: ID!
-    name: String!
-    type: ConnectionRoleType!
-    count: Int!
-}
 
 enum ConnectionRoleType {
     Buyer, Seller

@@ -5,42 +5,58 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: company
-            schemaName: ${readSchema}
+            schemaName: read
             columns:
               - column:
                   name: id
-                  type: varchar(36)
+                  type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: data
-                  type: json
+                  type: jsonb
                   constraints:
                     nullable: false
         - createTable:
-            tableName: service
-            schemaName: ${readSchema}
+            tableName: user
+            schemaName: read
             columns:
               - column:
                   name: id
-                  type: varchar(36)
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: data
+                  type: jsonb
+        - createTable:
+            tableName: service
+            schemaName: read
+            columns:
+              - column:
+                  name: id
+                  type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: company_id
-                  type: varchar(36)
+                  type: uuid
                   constraints:
+                    primaryKey: true
                     nullable: false
               - column:
                   name: slug
                   type: varchar(255)
                   constraints:
                     nullable: false
+                    unique: true
+                    uniqueConstraintName: unique_serivce_slug
               - column:
                   name: data
-                  type: json
+                  type: jsonb
                   constraints:
                     nullable: false
         - createIndex:
@@ -48,12 +64,12 @@ databaseChangeLog:
               - column:
                   name: company_id
             indexName: idx_service_company_id
-            schemaName: ${readSchema}
+            schemaName: read
             tableName: service
         - createIndex:
             columns:
               - column:
                   name: slug
             indexName: idx_service_slug
-            schemaName: ${readSchema}
+            schemaName: read
             tableName: service

@@ -1,7 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.write.entity
 
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
-import com.briolink.servicecompanyservice.common.util.StringUtil
 import org.hibernate.annotations.Type
 import java.net.URL
 import java.time.Instant
@@ -11,20 +10,21 @@ import javax.persistence.Entity
 import javax.persistence.PrePersist
 import javax.persistence.Table
 
-@Table(name = "service", catalog = "schema_write")
+@Table(name = "service", schema = "write")
 @Entity
 class ServiceWriteEntity(
-    @Type(type = "uuid-char")
-    @Column(name = "company_id", nullable = false, length = 36)
+
+    @Type(type="pg-uuid")
+    @Column(name = "company_id", nullable = false)
     var companyId: UUID,
 
     @Column(name = "name", nullable = false, length = 255)
     var name: String,
 
     @Column(name = "slug", nullable = false, length = 255)
-    var slug: String? = null,
+    var slug: String,
 
-    @Column(name = "price")
+    @Column(name = "price", precision = 10, scale = 2)
     var price: Double? = null,
 
     @Column(name = "logo", length = 255)
@@ -39,7 +39,6 @@ class ServiceWriteEntity(
 ) : BaseWriteEntity() {
     @PrePersist
     fun prePersist() {
-        slug = slug ?: StringUtil.slugify("$name $companyId ", false)
         created = created ?: Instant.now()
     }
 
@@ -51,7 +50,7 @@ class ServiceWriteEntity(
             logo = logo,
             description = description,
             created = created!!,
-            slug = slug!!,
+            slug = slug,
     )
 
 }

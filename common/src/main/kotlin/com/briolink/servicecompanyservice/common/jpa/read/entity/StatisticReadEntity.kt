@@ -19,24 +19,24 @@ class StatisticReadEntity(
     @Id
     @Type(type = "uuid-char")
     @Column(name = "companyId", length = 36)
-    var companyId: UUID? = null,
+    var serviceId: UUID? = null,
 ) : BaseReadEntity() {
 
-    @Type(type = "json")
-    @Column(name = "statsNumberConnection", columnDefinition = "json")
+    @Type(type = "jsonb")
+    @Column(name = "statsNumberConnection", columnDefinition = "jsonb")
     var statsNumberConnection: StatsNumberConnection? = null
 
-    @Type(type = "json")
-    @Column(name = "statsByIndustry", columnDefinition = "json")
+    @Type(type = "jsonb")
+    @Column(name = "statsByIndustry", columnDefinition = "jsonb")
     var statsByIndustry: StatsByIndustry? = null
 
-    @Type(type = "json")
-    @Column(name = "statsByCountry", columnDefinition = "json")
+    @Type(type = "jsonb")
+    @Column(name = "statsByCountry", columnDefinition = "jsonb")
     var statsByCountry: StatsByCountry? = null
 
-    @Type(type = "json")
-    @Column(name = "statsServiceProvided", columnDefinition = "json")
-    var statsServiceProvided: StatsServiceProvided? = null
+    @Type(type = "jsonb")
+    @Column(name = "stats_service_duration", columnDefinition = "jsonb")
+    var statsServiceDuration: StatsServiceDuration? = null
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class StatsNumberConnection(
@@ -57,10 +57,13 @@ class StatisticReadEntity(
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class StatsServiceProvided(
-        @JsonProperty("services")
-        var services: MutableMap<UUID, ServiceStats> = mutableMapOf(),
-    )
+    data class StatsServiceDuration(
+        @JsonProperty("listCompanies")
+        var listCompanies: MutableSet<Company> = mutableSetOf(),
+        @JsonProperty("duration")
+        var duration: MutableMap<UUID, IntRange> = mutableMapOf(),
+    ) {
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class CompaniesStats(
@@ -68,13 +71,6 @@ class StatisticReadEntity(
         var listCompanies: MutableSet<Company> = mutableSetOf(),
         @JsonProperty("totalCount")
         var totalCount: MutableMap<UUID, Int> = mutableMapOf(),
-    )
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class ServiceStats(
-        @JsonProperty("service")
-        var service: Service,
-        @JsonProperty("totalCount")
-        var totalCount: Int
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

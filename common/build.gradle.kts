@@ -19,7 +19,6 @@ dependencies {
     kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${Versions.SPRING_BOOT}")
     kapt("org.springframework.boot:spring-boot-configuration-processor:${Versions.SPRING_BOOT}")
 
-
     // FasterXML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
