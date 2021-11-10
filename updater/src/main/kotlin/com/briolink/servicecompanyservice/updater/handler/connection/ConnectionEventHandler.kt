@@ -10,11 +10,9 @@ import org.springframework.transaction.annotation.Transactional
         EventHandler("ConnectionCreatedEvent", "1.0"),
         EventHandler("ConnectionUpdatedEvent", "1.0"),
 )
-@Transactional
 class ConnectionEventHandler(
     private val companyHandlerService: CompanyHandlerService,
     private val connectionHandlerService: ConnectionHandlerService,
-//    private val statisticHandlerService: StatisticHandlerService
 ) : IEventHandler<ConnectionEvent> {
     override fun handle(event: ConnectionEvent) {
         val connection = event.data
