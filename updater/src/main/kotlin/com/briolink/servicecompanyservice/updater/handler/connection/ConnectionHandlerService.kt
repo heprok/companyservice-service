@@ -103,7 +103,7 @@ class ConnectionHandlerService(
 
     fun delete(connectionId: UUID) {
         try {
-            connectionReadRepository.deleteById(connectionId)
+            connectionReadRepository.deleteByConnectionId(connectionId)
         } catch (e: EmptyResultDataAccessException) {
 
         }

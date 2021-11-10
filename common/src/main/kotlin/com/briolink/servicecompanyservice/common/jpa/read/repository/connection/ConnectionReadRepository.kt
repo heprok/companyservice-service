@@ -6,6 +6,7 @@ import com.briolink.servicecompanyservice.common.jpa.projection.IndustryProjecti
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.util.*
@@ -75,6 +76,12 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
 
 
     fun deleteByIdAndServiceId(id: UUID, serviceId: UUID): Long
+
+
     override fun deleteById(id: UUID)
+
+    @Modifying
+    @Query("DELETE from ConnectionReadEntity c where c.id = ?1")
+    fun deleteByConnectionId(id: UUID): Long
 
 }
