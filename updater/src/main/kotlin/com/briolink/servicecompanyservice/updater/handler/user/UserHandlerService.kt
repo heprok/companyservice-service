@@ -13,10 +13,13 @@ class UserHandlerService(
 
     fun createOrUpdate(user: User) {
         userReadRepository.findById(user.id).orElse(UserReadEntity(user.id)).apply {
-            this.data.slug = user.slug
-            this.data.firstName = user.firstName
-            this.data.lastName = user.lastName
-            this.data.image = user.image
+            this.data = UserReadEntity.Data(
+                    firstName = user.firstName,
+                    lastName = user.lastName,
+                    image = user.image,
+            ).apply {
+                this.slug = user.slug
+            }
             userReadRepository.save(this)
         }
     }
