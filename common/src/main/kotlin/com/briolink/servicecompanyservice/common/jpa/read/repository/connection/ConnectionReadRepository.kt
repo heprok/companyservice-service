@@ -75,5 +75,6 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
 
 
     fun deleteByIdAndServiceId(id: UUID, serviceId: UUID): Long
+    override fun deleteById(id: UUID)
 
 }
