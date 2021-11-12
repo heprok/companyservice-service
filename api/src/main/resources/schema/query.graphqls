@@ -8,6 +8,9 @@ type Query {
     getCollaboratorRoles(serviceId: ID!, query: String!): [ConnectionRole]!
     getIndustries(query: String!, serviceId: ID!): [Industry]!
 
+
+    # -------------------------------------- charts -------------------------------------
+    getCharts(serviceId: ID!): Charts
 #    getStatistic(companyId: ID!, offset: Int = 5): GraphicStatistics!
 #    getStatisticByCountry(companyId: ID!,offset: Int = 5): GraphicStatsByCountry!
 #    getStatisticByIndustry(companyId: ID!, offset: Int = 5): GraphicStatsByIndustry!

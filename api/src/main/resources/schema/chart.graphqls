@@ -1,0 +1,52 @@
+type Charts {
+    byIndustry: Chart
+    byNumberOfConnection: Chart
+    byCountry: Chart
+    byServiceDuration: ChartByServiceDuration
+}
+
+type Chart {
+    data: [ChartItemWithHint!]!
+    listByTab(id: ID!) : [ChartCompany!]!
+    tabs: [ChartTabItem!]!
+}
+
+type ChartByServiceDuration {
+    data: [ChartItemCompanyDuration]
+}
+
+type ChartCompany {
+    name: String!
+    slug: String!
+    location: String
+    logo: Image
+    industry: String
+    serviceProvided: Int
+    serviceReceived: Int
+    numberOfUses: Int
+    roles: [String!]!
+}
+
+type ChartItemCompanyDuration {
+    name: String!
+    slug: String!
+    logo: Image
+    duration: Int!
+}
+
+type ChartItemHint {
+    name: String!
+    image: Image
+}
+
+type ChartItemWithHint {
+    key: String!
+    value: Int!
+    hints: [ChartItemHint!]!
+}
+
+type ChartTabItem {
+    id: ID!
+    name: String!
+    total: Int!
+}

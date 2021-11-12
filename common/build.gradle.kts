@@ -22,6 +22,11 @@ dependencies {
     // FasterXML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    // blaze-persistence-bom
+    api("com.blazebit:blaze-persistence-integration-spring-data-2.4:${Versions.BLAZE_PERSISTENCE}")
+    api("com.blazebit:blaze-persistence-integration-hibernate-5.4:${Versions.BLAZE_PERSISTENCE}")
+    api("com.blazebit:blaze-persistence-core-impl:${Versions.BLAZE_PERSISTENCE}")
+
     // Kotlin
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
