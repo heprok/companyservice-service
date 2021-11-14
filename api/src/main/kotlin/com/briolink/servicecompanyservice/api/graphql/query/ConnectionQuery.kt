@@ -4,9 +4,9 @@ import com.briolink.servicecompanyservice.api.graphql.fromEntity
 import com.briolink.servicecompanyservice.api.service.ConnectionService
 import com.briolink.servicecompanyservice.api.types.Collaborator
 import com.briolink.servicecompanyservice.api.types.Connection
+import com.briolink.servicecompanyservice.api.types.ConnectionCompanyRole
 import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionList
-import com.briolink.servicecompanyservice.api.types.ConnectionRole
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.api.types.Industry
 import com.briolink.servicecompanyservice.common.util.StringUtil
@@ -32,7 +32,7 @@ class ConnectionQuery(
         return if (connectionService.existsConnectionByService(
                     serviceId = UUID.fromString(serviceId),
             )) {
-            val page = connectionService.findAll(
+            val result = connectionService.findAll(
                     serviceId = UUID.fromString(serviceId),
                     sort = sort,
                     filter = filter,
@@ -40,8 +40,8 @@ class ConnectionQuery(
                     offset = offset,
             )
             ConnectionList(
-                    items = page.content.map { Connection.fromEntity(it) },
-                    totalItems = page.totalElements.toInt(),
+                    items = result.map { Connection.fromEntity(it) },
+                    totalItems = result.count(),
             )
         } else {
             ConnectionList(items = listOf(), totalItems = -1)
@@ -59,7 +59,7 @@ class ConnectionQuery(
 
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
-    fun getCollaborators(
+    fun getConnectionCollaborators(
         @InputArgument("serviceId") serviceId: String,
         @InputArgument("query") query: String,
     ): List<Collaborator> = connectionService.getCollaboratorsUsedForCompany(
@@ -69,20 +69,7 @@ class ConnectionQuery(
 
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
-    fun getCollaboratorRoles(
-        @InputArgument("serviceId") serviceId: String,
-        @InputArgument("query") query: String,
-    ): List<ConnectionRole> =
-            connectionService.getConnectionRoleUsedForCompany(
-                    serviceId = UUID.fromString(serviceId),
-                    query = StringUtil.replaceNonWord(query),
-            )
-                    .map { ConnectionRole.fromEntity(it) }
-
-
-    @DgsQuery
-    @PreAuthorize("isAuthenticated()")
-    fun getIndustries(
+    fun getConnectionIndustries(
         @InputArgument("query") query: String,
         @InputArgument("serviceId") serviceId: String
     ): List<Industry> =

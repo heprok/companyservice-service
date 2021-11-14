@@ -1,45 +1,51 @@
 type Connection {
     id: ID!
-    buyer: Participant!
-    verifySeller: User!
-    verificationStage: VerificationStage!
+    participantFrom: ConnectionParticipant!
+    participantTo: ConnectionParticipant!
     service: ConnectionService!
-    industry: Industry
+    status: ConnectionStatus!
+    industry: String
 }
 
-enum VerificationStage {
+enum ConnectionStatus {
     Pending
     InProgress
     Verified
 }
 
-type Participant {
+enum ConnectionCompanyRoleType {
+    Buyer
+    Seller
+}
+
+type ConnectionCompanyRole {
     id: ID!
     name: String!
-    slug: String!
-    logo: Image
-    role: ConnectionRole!
-    verifyUser: User!
+    type: ConnectionCompanyRoleType!
+}
+
+type ConnectionParticipant {
+    user: User!
+    company: Company!
+    companyRole: ConnectionCompanyRole!
 }
 
 input ConnectionFilter {
-    collaboratorIds: [ID]
-    collaboratorRoleIds: [ID]
-    industryIds: [ID]
+    collaboratorIds: [ID!]
+    industryIds: [ID!]
     location: String
     datesOfCollaborators: RangeYear
-    verificationStages: [VerificationStage]
+    status: [ConnectionStatus!]
 }
 
 enum ConnectionSortBy {
-    StartCollaboration, NameBuyer
+    Created
 }
 
 type Collaborator {
     id: ID!,
     name: String!,
 }
-
 
 input ConnectionSort{
     sortBy: ConnectionSortBy!
@@ -51,21 +57,10 @@ type ConnectionList implements PaginatedList {
     totalItems: Int!
 }
 
-type ConnectionRole {
-    id: ID!
-    name: String!
-    type: ConnectionRoleType!
-}
-
-
-enum ConnectionRoleType {
-    Buyer, Seller
-}
-
 type ConnectionService {
     id: ID!
     name: String!
-    startDate: Int!
-    endDate: Int
+    startDate: Year!
+    endDate: Year
 }
 

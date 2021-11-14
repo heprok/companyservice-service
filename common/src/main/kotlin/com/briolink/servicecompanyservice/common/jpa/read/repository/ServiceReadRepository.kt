@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import java.util.*
 
 interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpecificationExecutor<ServiceReadEntity> {
@@ -21,4 +22,21 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpe
 
 
     fun findByCompanyId(companyId: UUID): List<ServiceReadEntity>
+
+    @Modifying
+    @Query(
+            """update ServiceReadEntity c
+           set c.data = function('jsonb_sets', c.data,
+                '{company,name}', :name, text,
+                '{company,slug}', :slug, text,
+                '{company,image}', :logo, text
+           ) where c.companyId = :companyId""",
+    )
+    fun updateCompany(
+        @Param("companyId") companyId: UUID,
+        @Param("name") name: String,
+        @Param("slug") slug: String,
+        @Param("logo") logo: String
+    )
+
 }

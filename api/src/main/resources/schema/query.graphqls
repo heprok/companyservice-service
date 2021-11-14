@@ -3,11 +3,9 @@ type Query {
     getConnections(serviceId: ID!, filter: ConnectionFilter, sort: ConnectionSort!, limit: Int = 10, offset: Int = 0): ConnectionList!
     getConnectionsCount(serviceId: ID!,  filter: ConnectionFilter): Int!
 
-    #    -------------------------- filters ----------------------
-    getCollaborators(serviceId: ID!, query: String!): [Collaborator]!
-    getCollaboratorRoles(serviceId: ID!, query: String!): [ConnectionRole]!
-    getIndustries(query: String!, serviceId: ID!): [Industry]!
-
+    #    -------------------------- filters Connections ----------------------
+    getConnectionCollaborators(serviceId: ID!, query: String!): [Collaborator]!
+    getConnectionIndustries(query: String!, serviceId: ID!): [Industry]!
 
     # -------------------------------------- charts -------------------------------------
     getCharts(serviceId: ID!): Charts

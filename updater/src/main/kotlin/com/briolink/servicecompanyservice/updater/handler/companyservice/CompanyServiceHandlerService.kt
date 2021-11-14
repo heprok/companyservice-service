@@ -1,8 +1,10 @@
-package com.briolink.servicecompanyservice.updater.handler.company
+package com.briolink.servicecompanyservice.updater.handler.companyservice
 
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
 import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
@@ -10,28 +12,47 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermiss
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import javax.persistence.EntityNotFoundException
 
 @Transactional
 @Service
-class CompanyHandlerService(
+class CompanyServiceHandlerService(
     private val companyReadRepository: CompanyReadRepository,
     private val serviceReadRepository: ServiceReadRepository,
     private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
 ) {
 
-    fun createOrUpdate(company: Company): CompanyReadEntity {
-        companyReadRepository.findById(company.id).orElse(CompanyReadEntity(company.id)).apply {
-            data = CompanyReadEntity.Data(
-                    slug = company.slug,
-                    logo = company.logo,
-                    name = company.name,
-                    location = company.location,
-                    industry = company.industry?.let { CompanyReadEntity.Industry(id = it.id, name = company.industry.name) },
-            )
-            return companyReadRepository.save(this)
-        }
+    fun createOrUpdate(serviceCompany: CompanyService) {
+        val company = companyReadRepository.findById(serviceCompany.companyId)
+                .orElseThrow { throw EntityNotFoundException(serviceCompany.companyId.toString() + " company not found") }
+        serviceReadRepository.findById(serviceCompany.id)
+                .orElse(ServiceReadEntity(id = serviceCompany.id, slug = serviceCompany.slug, companyId = serviceCompany.companyId))
+                .apply {
+                    data = ServiceReadEntity.Data(
+                            name = serviceCompany.name,
+                            description = serviceCompany.description,
+                            logo = serviceCompany.logo,
+                            price = serviceCompany.price,
+                            created = serviceCompany.created,
+                            company = ServiceReadEntity.Company(
+                                    id = company.id,
+                                    name = company.data.name,
+                                    slug = company.data.slug,
+                                    logo = company.data.logo,
+                            ),
+                    )
+                    serviceReadRepository.save(this)
+                }
     }
 
+    fun updateCompany(company: CompanyReadEntity) {
+        serviceReadRepository.updateCompany(
+                companyId = company.id,
+                name = company.data.name,
+                slug = company.data.slug,
+                logo = company.data.logo.toString(),
+        )
+    }
 
     fun setPermission(companyId: UUID, userId: UUID, roleType: UserPermissionRoleTypeEnum) {
         userPermissionRoleReadRepository.save(

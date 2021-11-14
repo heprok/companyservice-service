@@ -3,7 +3,6 @@ package com.briolink.servicecompanyservice.api.service
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceUpdatedEvent
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
-import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
@@ -11,6 +10,7 @@ import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEn
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.briolink.event.publisher.EventPublisher
+import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -91,8 +91,8 @@ class ServiceCompanyService(
 
 
     fun getServiceBySlug(slug: String): Optional<ServiceReadEntity> = serviceCompanyReadRepository.findBySlug(slug)
-    fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleReadEntity.RoleType? {
-        return userPermissionRoleReadRepository.findByAccessObjectUuidAndAccessObjectTypeAndUserId(
+    fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
+        return userPermissionRoleReadRepository.getUserPermissionRole(
                 accessObjectUuid = serviceId,
                 accessObjectType = 2,
                 userId = userId,

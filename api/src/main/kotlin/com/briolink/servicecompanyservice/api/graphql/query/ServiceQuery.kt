@@ -6,7 +6,7 @@ import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.PermissionRole
 import com.briolink.servicecompanyservice.api.types.Service
 import com.briolink.servicecompanyservice.api.types.ServiceAndUserRole
-import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
+import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
@@ -23,8 +23,8 @@ class ServiceQuery(private val serviceCompanyService: ServiceCompanyService) {
         return ServiceAndUserRole(
                 service = Service.fromEntity(service),
                 role = when (role) {
-                    UserPermissionRoleReadEntity.RoleType.Employee -> PermissionRole.Employee
-                    UserPermissionRoleReadEntity.RoleType.Owner -> PermissionRole.Owner
+                    UserPermissionRoleTypeEnum.Employee -> PermissionRole.Employee
+                    UserPermissionRoleTypeEnum.Owner -> PermissionRole.Owner
                     else -> null
                 },
         )

@@ -38,7 +38,6 @@ class ServiceUpdatedEventHandler(
                                     name = company.data.name,
                                     slug = company.data.slug,
                                     logo = company.data.logo,
-                                    industry = company.data.industry,
                             ),
                     )
                     serviceReadRepository.save(this)

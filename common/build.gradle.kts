@@ -41,7 +41,7 @@ dependencies {
     kapt("org.hibernate:hibernate-jpamodelgen:5.4.30.Final")
 
     // Hibernate Types 55
-    implementation("com.vladmihalcea:hibernate-types-55:${Versions.HIBERNATE_TYPES_55}")
+    api("com.vladmihalcea:hibernate-types-55:${Versions.HIBERNATE_TYPES_55}")
 
     // IBM ICU4J
     implementation("com.ibm.icu:icu4j:${Versions.IBM_ICU4J}")

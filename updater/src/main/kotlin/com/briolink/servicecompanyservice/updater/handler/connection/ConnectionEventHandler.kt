@@ -4,7 +4,6 @@ import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandler
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
-import org.springframework.transaction.annotation.Transactional
 
 @EventHandlers(
         EventHandler("ConnectionCreatedEvent", "1.0"),
@@ -17,23 +16,17 @@ class ConnectionEventHandler(
     override fun handle(event: ConnectionEvent) {
         val connection = event.data
         if (connection.status != ConnectionStatus.Draft && connection.status != ConnectionStatus.Rejected) {
-            if (connection.participantFrom.companyRole!!.type == ConnectionCompanyRoleType.Buyer) {
-                connection.participantTo = connection.participantFrom.also {
-                    connection.participantFrom = connection.participantTo
-                }
-//                if (companyHandlerService.getPermission(
-//                            userId = connection.participantFrom.userId!!,
-//                            companyId = connection.participantFrom.companyId!!,
-//                    ) != null &&
-//                    companyHandlerService.getPermission(
-//                            userId = connection.participantTo.userId!!,
-//                            companyId = connection.participantTo.companyId!!,
-//                    ) != null) {
-                    connectionHandlerService.createOrUpdate(connection)
+            (connection.participantFrom.companyRole!!.type == ConnectionCompanyRoleType.Seller).let {
+                if (it)
+                    companyHandlerService.getPermission(connection.participantFrom.companyId!!, connection.participantFrom.userId!!) == null
+                else
+                    companyHandlerService.getPermission(connection.participantTo.companyId!!, connection.participantTo.userId!!) == null
+            }.let { isHiddenConnection ->
+                connectionHandlerService.createOrUpdate(connection, isHiddenConnection)
+            }
 //                    statisticHandlerService.refreshByCompany(connection.participantTo.companyId!!)
 //                    statisticHandlerService.refreshByCompany(connection.participantFrom.companyId!!)
 //                }
-            }
         } else if (connection.status == ConnectionStatus.Rejected) {
             connectionHandlerService.delete(connection.id)
         }
