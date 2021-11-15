@@ -8,7 +8,9 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.UserReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.StatisticReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
+import com.briolink.servicecompanyservice.updater.handler.statistic.StatisticHandlerService
 import com.vladmihalcea.hibernate.type.range.Range
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,6 +22,7 @@ import java.util.stream.Collectors
 class ConnectionHandlerService(
     private val connectionReadRepository: ConnectionReadRepository,
     private val companyReadRepository: CompanyReadRepository,
+    private val statisticHandlerService: StatisticHandlerService,
     private val serviceReadRepository: ServiceReadRepository,
     private val userReadRepository: UserReadRepository,
 ) {
@@ -37,6 +40,7 @@ class ConnectionHandlerService(
                     participantCompanies[connection.participantFrom.companyId]
                 else participantCompanies[connection.participantTo.companyId]
                         )?.data
+
         connection.services.forEach { connectionService ->
             if (connectionService.serviceId != null) {
                 connectionReadRepository.findByIdAndServiceId(connection.id, connectionService.serviceId)
@@ -114,11 +118,17 @@ class ConnectionHandlerService(
                                             endDate = connectionService.endDate,
                                     ),
                             )
-                            connectionReadRepository.saveAndFlush(this)
+                            connectionReadRepository.saveAndFlush(this).let {
+                                statisticHandlerService.addConnectionToStats(it)
+                            }
                         }
             }
         }
 
+    }
+
+    fun setHidden(isHide: Boolean, serviceId: UUID, connectionId: UUID) {
+        connectionReadRepository.hiddenByConnectionIdAndServiceId(connectionId = connectionId, serviceId = serviceId, isHide = isHide)
     }
 //
 //    fun setStatus(status: ConnectionReadEntity.ConnectionStatus, connectionId: UUID) {

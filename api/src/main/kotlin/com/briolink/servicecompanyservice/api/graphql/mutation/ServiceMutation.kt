@@ -36,13 +36,29 @@ class ServiceMutation(
                 price = input.price,
                 name = input.name,
                 description = input.description,
-                fileImage = input.logo
+                fileImage = input.logo,
         )
 
         return CreateServiceResult(
                 userErrors = listOf(),
                 data = ServiceResultData(id = entity.id.toString(), slug = entity.slug),
         )
+    }
+
+    @DgsMutation(field = "createServiceLocal")
+    fun createServiceLocal(
+        @InputArgument("companyId") companyId: String,
+        @InputArgument("nameService") name: String
+    ): CreateServiceResult {
+        (serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = name) ?: serviceCompanyService.create(
+                companyId = UUID.fromString(companyId),
+                name = name,
+        )).let {
+            return CreateServiceResult(
+                    data = ServiceResultData(id = it.id.toString(), slug = it.slug),
+                    userErrors = listOf(),
+            )
+        }
     }
 
     @DgsMutation(field = "updateService")

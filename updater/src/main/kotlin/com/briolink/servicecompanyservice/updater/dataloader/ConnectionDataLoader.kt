@@ -103,7 +103,7 @@ class ConnectionDataLoader(
     }
 
     companion object {
-        const val COUNT_CONNECTION = 1
+        const val COUNT_CONNECTION = 1000
     }
 }
 

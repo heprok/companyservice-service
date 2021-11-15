@@ -1,7 +1,9 @@
 package com.briolink.servicecompanyservice.api.graphql.query
 
+import com.briolink.servicecompanyservice.api.graphql.SecurityUtil
 import com.briolink.servicecompanyservice.api.graphql.fromEntity
 import com.briolink.servicecompanyservice.api.service.ConnectionService
+import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.Collaborator
 import com.briolink.servicecompanyservice.api.types.Connection
 import com.briolink.servicecompanyservice.api.types.ConnectionCompanyRole
@@ -9,6 +11,9 @@ import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionList
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.api.types.Industry
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
+import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity_.isHidden
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
@@ -18,13 +23,14 @@ import java.util.*
 
 @DgsComponent
 class ConnectionQuery(
-    private val connectionService: ConnectionService
+    private val connectionService: ConnectionService,
+    private val serviceCompanyService: ServiceCompanyService
 ) {
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
     fun getConnections(
         @InputArgument("serviceId") serviceId: String,
-        @InputArgument("filter") filter: ConnectionFilter?,
+        @InputArgument("filter") filter: ConnectionFilter,
         @InputArgument("sort") sort: ConnectionSort,
         @InputArgument("limit") limit: Int,
         @InputArgument("offset") offset: Int,
@@ -32,10 +38,17 @@ class ConnectionQuery(
         return if (connectionService.existsConnectionByService(
                     serviceId = UUID.fromString(serviceId),
             )) {
+            val securityFilter = if (SecurityUtil.currentUserAccountId.let {
+                    serviceCompanyService.getPermission(
+                            userId = it,
+                            serviceId = UUID.fromString(serviceId),
+                    ) != UserPermissionRoleTypeEnum.Owner
+                })
+                filter.copy(isHidden = false) else filter
             val result = connectionService.findAll(
                     serviceId = UUID.fromString(serviceId),
                     sort = sort,
-                    filter = filter,
+                    filter = securityFilter,
                     limit = limit,
                     offset = offset,
             )
@@ -52,7 +65,7 @@ class ConnectionQuery(
     @PreAuthorize("isAuthenticated()")
     fun getConnectionsCount(
         @InputArgument("serviceId") serviceId: String,
-        @InputArgument("filter") filter: ConnectionFilter?
+        @InputArgument("filter") filter: ConnectionFilter
     ): Int =
             connectionService.count(serviceId = UUID.fromString(serviceId), filter = filter).toInt()
 

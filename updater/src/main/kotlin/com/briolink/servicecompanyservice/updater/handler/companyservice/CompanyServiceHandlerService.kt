@@ -62,17 +62,19 @@ class CompanyServiceHandlerService(
                         userId = userId,
                 )?.apply {
                     role = roleType
-                } ?: UserPermissionRoleReadEntity(accessObjectUuid = companyId, userId = userId).apply {
+                } ?: UserPermissionRoleReadEntity().apply {
+                    accessObjectUuid = companyId
+                    this.userId = userId
                     role = roleType
                     accessObjectType = AccessObjectTypeEnum.Company
                 },
         )
     }
 
-    fun getPermission(companyId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
+    fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
         return userPermissionRoleReadRepository.getUserPermissionRole(
-                accessObjectUuid = companyId,
-                accessObjectType = AccessObjectTypeEnum.Company.value,
+                accessObjectUuid = serviceId,
+                accessObjectType = AccessObjectTypeEnum.CompanyService.value,
                 userId = userId,
         )?.role
     }

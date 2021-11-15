@@ -1,14 +1,14 @@
 type Query {
     getService(slug: String!): ServiceAndUserRole!
-    getConnections(serviceId: ID!, filter: ConnectionFilter, sort: ConnectionSort!, limit: Int = 10, offset: Int = 0): ConnectionList!
-    getConnectionsCount(serviceId: ID!,  filter: ConnectionFilter): Int!
+    getConnections(serviceId: ID!, filter: ConnectionFilter!, sort: ConnectionSort!, limit: Int = 10, offset: Int = 0): ConnectionList!
+    getConnectionsCount(serviceId: ID!,  filter: ConnectionFilter!): Int!
 
     #    -------------------------- filters Connections ----------------------
     getConnectionCollaborators(serviceId: ID!, query: String!): [Collaborator]!
     getConnectionIndustries(query: String!, serviceId: ID!): [Industry]!
 
     # -------------------------------------- charts -------------------------------------
-    getCharts(serviceId: ID!): Charts
+    getCharts(serviceId: ID!): ServiceCharts
 #    getStatistic(companyId: ID!, offset: Int = 5): GraphicStatistics!
 #    getStatisticByCountry(companyId: ID!,offset: Int = 5): GraphicStatsByCountry!
 #    getStatisticByIndustry(companyId: ID!, offset: Int = 5): GraphicStatsByIndustry!

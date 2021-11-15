@@ -36,10 +36,11 @@ input ConnectionFilter {
     location: String
     datesOfCollaborators: RangeYear
     status: [ConnectionStatus!]
+    isHidden: Boolean
 }
 
 enum ConnectionSortBy {
-    Created
+    id, created
 }
 
 type Collaborator {

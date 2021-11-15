@@ -50,6 +50,14 @@ fun ConnectionCompanyRole.Companion.fromEntity(entity: ConnectionRoleReadEntity)
         type = ConnectionCompanyRoleType.valueOf(entity.type.name),
 )
 
+fun Company.Companion.fromEntity(entity: CompanyReadEntity) = Company(
+        id = entity.id.toString(),
+        slug = entity.data.slug,
+        name = entity.data.name,
+        logo = entity.data.logo?.let { Image(url = entity.data.logo) },
+        location = entity.data.location,
+)
+
 fun Connection.Companion.fromEntity(entity: ConnectionReadEntity) = Connection(
         id = entity.id.toString(),
         participantFrom = ConnectionParticipant(

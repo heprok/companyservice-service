@@ -10,6 +10,7 @@ import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEn
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.briolink.event.publisher.EventPublisher
+import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -34,9 +35,9 @@ class ServiceCompanyService(
     fun create(
         companyId: UUID,
         name: String,
-        price: Double?,
-        description: String?,
-        fileImage: MultipartFile?,
+        price: Double? = null,
+        description: String? = null,
+        fileImage: MultipartFile? = null,
         logo: URL? = null,
         slug: String? = null,
         created: Instant? = null,
@@ -94,7 +95,15 @@ class ServiceCompanyService(
     fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
         return userPermissionRoleReadRepository.getUserPermissionRole(
                 accessObjectUuid = serviceId,
-                accessObjectType = 2,
+                accessObjectType = AccessObjectTypeEnum.CompanyService.value,
+                userId = userId,
+        )?.role
+    }
+
+    fun getPermissionOnCompany(companyId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
+        return userPermissionRoleReadRepository.getUserPermissionRole(
+                accessObjectUuid = companyId,
+                accessObjectType = AccessObjectTypeEnum.Company.value,
                 userId = userId,
         )?.role
     }
@@ -114,4 +123,9 @@ class ServiceCompanyService(
         update(serviceWrite)
         return imageUrl
     }
+
+    fun findByNameAndCompanyId(companyId: UUID, name: String): ServiceWriteEntity? {
+        return serviceCompanyWriteRepository.findByCompanyIdAndName(companyId = companyId, name = name)
+    }
+
 }

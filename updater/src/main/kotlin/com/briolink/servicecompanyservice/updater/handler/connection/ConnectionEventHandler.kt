@@ -4,6 +4,7 @@ import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandler
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
+import com.briolink.servicecompanyservice.updater.handler.companyservice.CompanyServiceHandlerService
 
 @EventHandlers(
         EventHandler("ConnectionCreatedEvent", "1.0"),
@@ -11,6 +12,7 @@ import com.briolink.event.annotation.EventHandlers
 )
 class ConnectionEventHandler(
     private val companyHandlerService: CompanyHandlerService,
+    private val companyServiceHandlerService: CompanyServiceHandlerService,
     private val connectionHandlerService: ConnectionHandlerService,
 ) : IEventHandler<ConnectionEvent> {
     override fun handle(event: ConnectionEvent) {

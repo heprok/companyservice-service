@@ -110,7 +110,6 @@ class ConnectionReadEntity(
             _participantToRoleType = value.value
         }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     data class Data(
         @JsonProperty
         val participantFrom: Participant,

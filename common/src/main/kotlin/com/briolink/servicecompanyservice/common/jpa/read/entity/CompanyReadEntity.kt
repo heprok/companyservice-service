@@ -14,12 +14,14 @@ import javax.persistence.Table
 @Entity
 class CompanyReadEntity(
     @Id
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "id", nullable = false)
     val id: UUID,
-    ) : BaseReadEntity() {
+) : BaseReadEntity() {
+    @Column(name = "name", nullable = false)
+    lateinit var name: String
 
-    @Type(type="jsonb")
+    @Type(type = "jsonb")
     @Column(name = "data", nullable = false)
     lateinit var data: Data
 
@@ -44,5 +46,4 @@ class CompanyReadEntity(
         @JsonProperty("name")
         val name: String,
     )
-
 }

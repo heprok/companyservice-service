@@ -1,37 +1,17 @@
-type Charts {
-    byIndustry: Chart
-    byNumberOfConnection: Chart
-    byCountry: Chart
-    byServiceDuration: ChartByServiceDuration
+type ServiceCharts {
+    numberUsesByYear: ChartNumberUsesConnectionByYear!
+    byCountry: ChartByCountry!
+    byIndustry: ChartByIndustry!
+    byServiceDuration: ChartByServiceDuration!
 }
 
-type Chart {
-    data: [ChartItemWithHint!]!
-    listByTab(id: ID!) : [ChartCompany!]!
-    tabs: [ChartTabItem!]!
-}
+### charts (base)
 
-type ChartByServiceDuration {
-    data: [ChartItemCompanyDuration]
-}
-
-type ChartCompany {
+type ChartItemWithHint {
+    key: String!
     name: String!
-    slug: String!
-    location: String
-    logo: Image
-    industry: String
-    serviceProvided: Int
-    serviceReceived: Int
-    numberOfUses: Int
-    roles: [String!]!
-}
-
-type ChartItemCompanyDuration {
-    name: String!
-    slug: String!
-    logo: Image
-    duration: Int!
+    value: Int!
+    hints: [ChartItemHint!]!
 }
 
 type ChartItemHint {
@@ -39,14 +19,69 @@ type ChartItemHint {
     image: Image
 }
 
-type ChartItemWithHint {
-    key: String!
-    value: Int!
-    hints: [ChartItemHint!]!
-}
-
 type ChartTabItem {
     id: ID!
     name: String!
     total: Int!
+}
+
+### charts (specific)
+
+## chart connection number of connection
+
+type ChartNumberUsesConnectionByYear {
+    data: [ChartItemWithHint!]!
+    tabs: [ChartTabItem!]!
+    listByTab(id: ID!): [ChartByNumberUsesItem!]!
+}
+#
+#type ChartNumberUsesConnectionByYearItem {
+#    company: Company!
+#    companyRole: String!
+#    numberOfUses: Int!
+#}
+
+type ChartByNumberUsesItem {
+    company: Company!
+    industry: String
+    companyRoles: [String!]!
+    numberOfUses: Int!
+}
+## chart by country
+
+type ChartByCountry {
+    data: [ChartItemWithHint!]!
+    tabs: [ChartTabItem!]!
+    listByTab(id: ID!): [ChartByNumberUsesItem!]!
+}
+
+#type ChartByCountryItem {
+#    company: Company!
+#    companyRole: String!
+#    numberOfUses: Int!
+#}
+
+## chart by industry
+
+type ChartByIndustry {
+    data: [ChartItemWithHint!]!
+    tabs: [ChartTabItem!]!
+    listByTab(id: ID!): [ChartByNumberUsesItem!]!
+}
+
+#type ChartByIndustryItem {
+#    company: Company!
+#    companyRole: String!
+#    numberOfUses: Int!
+#}
+
+## chart by service duration
+
+type ChartByServiceDuration {
+    data: [ChartByServiceDurationItem!]!
+}
+
+type ChartByServiceDurationItem {
+    company: Company!
+    duration: Int!
 }

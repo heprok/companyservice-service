@@ -20,21 +20,22 @@ class UserPermissionRoleReadEntity(
     @Column(name = "id", nullable = false)
     var id: UUID? = null,
 
-    @Type(type = "pg-uuid")
-    @Column(name = "access_object_uuid", nullable = false)
-    var accessObjectUuid: UUID,
-
     @Column(name = "access_object_type", nullable = false)
     private var _accessObjectType: Int = AccessObjectTypeEnum.CompanyService.value,
-
-    @Type(type = "pg-uuid")
-    @Column(name = "user_id", nullable = false)
-    var userId: UUID,
 
     @Column(name = "role", nullable = false)
     private var _role: Int = UserPermissionRoleTypeEnum.Employee.value
 
 ) : BaseReadEntity() {
+
+    @Type(type = "pg-uuid")
+    @Column(name = "access_object_uuid", nullable = false)
+    lateinit var accessObjectUuid: UUID
+
+    @Type(type = "pg-uuid")
+    @Column(name = "user_id", nullable = false)
+    lateinit var userId: UUID
+
     var accessObjectType: AccessObjectTypeEnum
         get() = AccessObjectTypeEnum.fromInt(_accessObjectType)
         set(value) {

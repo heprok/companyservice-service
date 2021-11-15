@@ -7,5 +7,5 @@ import java.util.*
 interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
     fun findBySlug(slug: String): Optional<ServiceWriteEntity>
     fun existsBySlug(slug: String): Boolean
-
+    fun findByCompanyIdAndName(companyId: UUID, name: String): ServiceWriteEntity?
 }
