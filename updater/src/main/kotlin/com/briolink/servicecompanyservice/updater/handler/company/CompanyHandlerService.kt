@@ -21,10 +21,10 @@ class CompanyHandlerService(
 
     fun createOrUpdate(company: Company): CompanyReadEntity {
         companyReadRepository.findById(company.id).orElse(CompanyReadEntity(company.id)).apply {
+            name = company.name
             data = CompanyReadEntity.Data(
                     slug = company.slug,
                     logo = company.logo,
-                    name = company.name,
                     location = company.location,
                     industry = company.industry?.let { CompanyReadEntity.Industry(id = it.id, name = company.industry.name) },
             )
@@ -41,8 +41,10 @@ class CompanyHandlerService(
                         userId = userId,
                 )?.apply {
                     role = roleType
-                } ?: UserPermissionRoleReadEntity(accessObjectUuid = companyId, userId = userId).apply {
+                } ?: UserPermissionRoleReadEntity().apply {
                     role = roleType
+                    accessObjectUuid = companyId
+                    this.userId = userId
                     accessObjectType = AccessObjectTypeEnum.Company
                 },
         )

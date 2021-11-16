@@ -36,7 +36,7 @@ class CompanyServiceHandlerService(
                             created = serviceCompany.created,
                             company = ServiceReadEntity.Company(
                                     id = company.id,
-                                    name = company.data.name,
+                                    name = company.name,
                                     slug = company.data.slug,
                                     logo = company.data.logo,
                             ),
@@ -48,7 +48,7 @@ class CompanyServiceHandlerService(
     fun updateCompany(company: CompanyReadEntity) {
         serviceReadRepository.updateCompany(
                 companyId = company.id,
-                name = company.data.name,
+                name = company.name,
                 slug = company.data.slug,
                 logo = company.data.logo.toString(),
         )

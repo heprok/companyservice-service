@@ -27,8 +27,6 @@ class CompanyReadEntity(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Data(
-        @JsonProperty("name")
-        var name: String,
         @JsonProperty("slug")
         var slug: String,
         @JsonProperty("logo")

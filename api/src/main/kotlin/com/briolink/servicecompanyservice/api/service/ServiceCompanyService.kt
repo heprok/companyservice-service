@@ -43,7 +43,7 @@ class ServiceCompanyService(
         created: Instant? = null,
     ): ServiceWriteEntity {
         val nameCompany = companyReadRepository.findById(companyId)
-                .orElseThrow { throw EntityNotFoundException("$companyId company not found") }.data.name
+                .orElseThrow { throw EntityNotFoundException("$companyId company not found") }.name
         serviceCompanyWriteRepository.save(
                 ServiceWriteEntity(
                         companyId = companyId,

@@ -53,7 +53,7 @@ fun ConnectionCompanyRole.Companion.fromEntity(entity: ConnectionRoleReadEntity)
 fun Company.Companion.fromEntity(entity: CompanyReadEntity) = Company(
         id = entity.id.toString(),
         slug = entity.data.slug,
-        name = entity.data.name,
+        name = entity.name,
         logo = entity.data.logo?.let { Image(url = entity.data.logo) },
         location = entity.data.location,
 )
