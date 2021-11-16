@@ -48,7 +48,7 @@ class ServiceMutation(
     @DgsMutation(field = "createServiceLocal")
     fun createServiceLocal(
         @InputArgument("companyId") companyId: String,
-        @InputArgument("nameService") name: String
+        @InputArgument("name") name: String
     ): CreateServiceResult {
         (serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = name) ?: serviceCompanyService.create(
                 companyId = UUID.fromString(companyId),

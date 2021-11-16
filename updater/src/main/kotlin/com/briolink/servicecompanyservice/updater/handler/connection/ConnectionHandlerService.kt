@@ -77,7 +77,7 @@ class ConnectionHandlerService(
                                             company = ConnectionReadEntity.Company(
                                                     id = connection.participantFrom.companyId!!,
                                                     slug = participantCompanies[connection.participantFrom.companyId]!!.data.slug,
-                                                    name = participantCompanies[connection.participantFrom.companyId]!!.data.name,
+                                                    name = participantCompanies[connection.participantFrom.companyId]!!.name,
                                                     logo = participantCompanies[connection.participantFrom.companyId]!!.data.logo.toString(),
                                             ),
                                             companyRole = ConnectionReadEntity.CompanyRole(
@@ -98,7 +98,7 @@ class ConnectionHandlerService(
                                                 company = ConnectionReadEntity.Company(
                                                         id = connection.participantTo.companyId!!,
                                                         slug = participantCompanies[connection.participantTo.companyId]!!.data.slug,
-                                                        name = participantCompanies[connection.participantTo.companyId]!!.data.name,
+                                                        name = participantCompanies[connection.participantTo.companyId]!!.name,
                                                         logo = participantCompanies[connection.participantTo.companyId]!!.data.logo.toString(),
                                                 ),
                                                 companyRole = it.companyRole.let { role ->

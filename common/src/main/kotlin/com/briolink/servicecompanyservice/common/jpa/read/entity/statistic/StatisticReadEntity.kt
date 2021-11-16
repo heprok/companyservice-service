@@ -43,9 +43,9 @@ class StatisticReadEntity(
 
     @Type(type = "jsonb")
     @Column(name = "chart_number_uses_by_year_data", nullable = false)
-    var chartNumberUsesByYearData: ChartList<ChartListItemWithNumberOfUses> =ChartList()
+    var chartNumberUsesByYearData: ChartList<ChartListItemWithNumberOfUses> = ChartList()
 
     @Type(type = "jsonb")
     @Column(name = "chart_by_service_duration_data", nullable = false)
-    var chartByServiceDurationData: ChartList<ChartListItemWithDuration> =ChartList()
+    var chartByServiceDurationData: ChartList<ChartListItemWithDuration> = ChartList()
 }

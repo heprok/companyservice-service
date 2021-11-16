@@ -10,6 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 delete from write.service;
 delete from read.service;
+delete from read.connection;
 
 Drop table read.statistic;
 delete from write.databasechangelog where orderexecuted = 6

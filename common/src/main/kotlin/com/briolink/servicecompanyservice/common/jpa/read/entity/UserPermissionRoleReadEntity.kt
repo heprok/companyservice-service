@@ -47,5 +47,4 @@ class UserPermissionRoleReadEntity(
         set(value) {
             _role = value.value
         }
-
 }

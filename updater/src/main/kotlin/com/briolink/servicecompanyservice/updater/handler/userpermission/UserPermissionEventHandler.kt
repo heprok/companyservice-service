@@ -13,7 +13,7 @@ class UserPermissionEventHandler(
 ) : IEventHandler<UserPermissionEvent> {
     override fun handle(event: UserPermissionEvent) {
         val permission = event.data
-        if(permission.accessObjectType == AccessObjectType.Company || permission.accessObjectType == AccessObjectType.CompanyService)
+        if (permission.accessObjectType == AccessObjectType.Company || permission.accessObjectType == AccessObjectType.CompanyService)
             userPermissionHandlerService.createOrUpdate(event.data)
     }
 }

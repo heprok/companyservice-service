@@ -70,7 +70,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
     @Query(
             """
         select c from ConnectionReadEntity c
-        where (c.participantFromUserId = ?1 or c.serviceId = ?1) and c._status = ?2
+        where c.serviceId = ?1 and c._status = ?2
     """
     )
     fun getByServiceIdAndStatus(serviceId: UUID, type: Int = ConnectionStatusEnum.Verified.value): Stream<ConnectionReadEntity>

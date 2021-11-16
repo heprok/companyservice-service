@@ -24,7 +24,7 @@ class ConnectionEventHandler(
                 else
                     companyHandlerService.getPermission(connection.participantTo.companyId!!, connection.participantTo.userId!!) == null
             }.let { isHiddenConnection ->
-                connectionHandlerService.createOrUpdate(connection, isHiddenConnection)
+                connectionHandlerService.createOrUpdate(connection, false)
             }
 //                    statisticHandlerService.refreshByCompany(connection.participantTo.companyId!!)
 //                    statisticHandlerService.refreshByCompany(connection.participantFrom.companyId!!)

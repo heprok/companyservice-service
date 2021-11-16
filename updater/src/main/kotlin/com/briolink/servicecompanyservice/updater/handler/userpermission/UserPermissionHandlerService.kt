@@ -4,12 +4,16 @@ import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectType
 import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
-class UserPermissionHandlerService (
+@Service
+@Transactional
+class UserPermissionHandlerService(
     private val userPermissionReadRepository: UserPermissionRoleReadRepository
-        ) {
+) {
     fun createOrUpdate(userPermission: UserPermission) {
-        userPermissionReadRepository.findById(userPermission.id).orElse( UserPermissionRoleReadEntity(userPermission.id)).apply {
+        userPermissionReadRepository.findById(userPermission.id).orElse(UserPermissionRoleReadEntity(userPermission.id)).apply {
             userId = userPermission.userId
             accessObjectUuid = userPermission.accessObjectUuid
             accessObjectType = AccessObjectTypeEnum.valueOf(userPermission.accessObjectType.name)
