@@ -28,12 +28,20 @@ class ConnectionHandlerService(
 ) {
     fun createOrUpdate(connection: Connection, isHidden: Boolean) {
         val participantUsers = userReadRepository.findByIdIsIn(
-                mutableListOf(connection.participantFrom.userId!!, connection.participantTo.userId!!),
+                mutableListOf(connection.participantFrom.userId!!).apply {
+                    if (connection.participantTo.userId != null) add(connection.participantTo.userId!!)
+                },
         ).stream().collect(Collectors.toMap(UserReadEntity::id) { v -> v })
 
-        val participantCompanies = companyReadRepository.findByIdIsIn(
-                mutableListOf(connection.participantFrom.companyId!!, connection.participantTo.companyId!!),
-        ).stream().collect(Collectors.toMap(CompanyReadEntity::id) { v -> v })
+        val participantCompanies = mutableListOf<UUID>().apply {
+            if (connection.participantFrom.companyId != null) add(connection.participantFrom.companyId!!)
+            if (connection.participantTo.companyId != null) add(connection.participantTo.companyId!!)
+        }.let {
+            if (it.size > 0)
+                companyReadRepository.findByIdIsIn(it).stream().collect(Collectors.toMap(CompanyReadEntity::id) { v -> v })
+            else
+                mapOf()
+        }
 
         val buyerCompany =
                 (if (connection.participantFrom.companyRole?.type == ConnectionCompanyRoleType.Buyer)

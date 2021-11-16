@@ -30,11 +30,117 @@ class StatisticHandlerService(
     private val companyReadRepository: CompanyReadRepository,
 ) {
     fun refreshByService(serviceId: UUID) {
-        deleteByServiceId(serviceId)
-        connectionReadRepository.getByServiceIdAndStatus(serviceId, ConnectionStatusEnum.Verified.value).forEach {
-            addConnectionToStats(it)
+        var serviceStatistic = statisticReadRepository.findByServiceId(serviceId) ?: StatisticReadEntity(
+                serviceId,
+        )
+        serviceStatistic = StatisticReadEntity(serviceId)
+        connectionReadRepository.getByServiceIdAndStatus(serviceId, ConnectionStatusEnum.Verified.value).forEach { connectionReadEntity ->
+            val collaboratorParticipant = if (connectionReadEntity.participantFromRoleType == CompanyRoleTypeEnum.Buyer)
+                connectionReadEntity.data.participantFrom else connectionReadEntity.data.participantTo
+
+            val industry = connectionReadEntity.data.industry
+            // chart data by country
+            val country = connectionReadEntity.location?.let {
+                it.split(",", ignoreCase = true, limit = 3)[0].trimStart()
+            }
+            if (!country.isNullOrBlank()) {
+                serviceStatistic.chartByCountryData.data.getOrPut(country) { ChartDataList(country, mutableListOf()) }.also { list ->
+                    when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {
+                        -1 -> list.items.add(
+                                ChartListItemWithNumberOfUses(
+                                        companyId = collaboratorParticipant.company.id,
+                                        industry = industry,
+                                        companyRoles = mutableSetOf(collaboratorParticipant.companyRole.name),
+                                        numberOfUses = 1,
+                                ),
+                        )
+                        else -> {
+                            list.items[i].numberOfUses = list.items[i].numberOfUses + 1
+                            list.items[i].companyRoles.add(collaboratorParticipant.companyRole.name)
+                        }
+                    }
+                }
+            } else {
+                serviceStatistic.chartByCountryData = ChartList()
+            }
+
+            serviceStatistic.chartByCountry = getChart(serviceStatistic.chartByCountryData)
+
+            // chart data by industry
+            if (!industry.isNullOrBlank()) {
+                serviceStatistic.chartByIndustryData.data.getOrPut(industry) { ChartDataList(industry, mutableListOf()) }.also { list ->
+                    when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {
+                        -1 -> list.items.add(
+                                ChartListItemWithNumberOfUses(
+                                        companyId = collaboratorParticipant.company.id,
+                                        industry = industry,
+                                        companyRoles = mutableSetOf(collaboratorParticipant.companyRole.name),
+                                        numberOfUses = 1,
+                                ),
+                        )
+                        else -> {
+                            list.items[i].numberOfUses = list.items[i].numberOfUses.inc()
+                            list.items[i].companyRoles.add(collaboratorParticipant.companyRole.name)
+                        }
+                    }
+                }
+            } else {
+                serviceStatistic.chartByIndustryData = ChartList()
+            }
+            serviceStatistic.chartByIndustry = getChart(serviceStatistic.chartByIndustryData)
+
+            // chart data by services provided
+            serviceStatistic.chartByServiceDurationData.data.getOrPut(collaboratorParticipant.company.id.toString()) {
+                ChartDataList(collaboratorParticipant.company.id.toString(), mutableListOf())
+            }.also { list ->
+                when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {
+                    -1 -> list.items.add(
+                            ChartListItemWithDuration(
+                                    companyId = collaboratorParticipant.company.id,
+                                    duration = connectionReadEntity.data.service.let {
+                                        if (it.endDate == null) Year.now().value - it.startDate.value else it.endDate!!.value - it.startDate.value
+                                    },
+                            ),
+                    )
+                    else -> list.items[i].duration = list.items[i].duration.let {
+                        val startDateYear = connectionReadEntity.data.service.startDate.value
+                        val endDateYear = connectionReadEntity.data.service.endDate?.value
+                        val duration = (endDateYear ?: Year.now().value) - startDateYear
+                        if (it <= duration) duration else it
+                    }
+                }
+            }
+            serviceStatistic.chartByServiceDuration = getChartDuration(serviceStatistic.chartByServiceDurationData)
+
+            // chart data by industry
+            val createdYear = connectionReadEntity.created.atZone(ZoneId.systemDefault()).year.toString()
+            serviceStatistic.chartNumberUsesByYearData.data.getOrPut(createdYear) {
+                ChartDataList(createdYear, mutableListOf())
+            }.also { list ->
+                when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {
+                    -1 -> list.items.add(
+                            ChartListItemWithNumberOfUses(
+                                    companyId = collaboratorParticipant.company.id,
+                                    industry = industry,
+                                    companyRoles = mutableSetOf(collaboratorParticipant.companyRole.name),
+                                    numberOfUses = 1,
+                            ),
+                    )
+                    else -> {
+                        list.items[i].numberOfUses = list.items[i].numberOfUses.inc()
+                        list.items[i].companyRoles.add(collaboratorParticipant.companyRole.name)
+                    }
+                }
+            }
+            serviceStatistic.chartNumberUsesByYear = getChart(
+                    serviceStatistic.chartNumberUsesByYearData,
+                    true,
+            ) { it.sortedBy { el -> el.first.toInt() } }
+
+            statisticReadRepository.save(serviceStatistic)
         }
     }
+
 
     fun addConnectionToStats(connectionReadEntity: ConnectionReadEntity) {
         if (connectionReadEntity.status == ConnectionStatusEnum.Verified) {
