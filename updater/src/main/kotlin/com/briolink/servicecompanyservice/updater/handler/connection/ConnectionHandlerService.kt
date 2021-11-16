@@ -119,7 +119,7 @@ class ConnectionHandlerService(
                                     ),
                             )
                             connectionReadRepository.saveAndFlush(this).let {
-//                                statisticHandlerService.addConnectionToStats(it)
+                                statisticHandlerService.refreshByService(it.serviceId)
                             }
                         }
             }
