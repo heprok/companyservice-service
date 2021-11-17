@@ -56,7 +56,7 @@ class ServiceCompanyService(
                     this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
                 },
         ).apply {
-            eventPublisher.publishAsync(CompanyServiceCreatedEvent(this.toDomain()))
+            eventPublisher.publish(CompanyServiceCreatedEvent(this.toDomain()))
             return this
         }
 

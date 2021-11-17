@@ -33,7 +33,7 @@ class UserDataLoader(
                             data = UserReadEntity.Data(
                                     firstName = listFirstName.random(),
                                     lastName = listLastName.random(),
-                                    image = URL("https://placeimg.com/148/148/people"),
+                                    image = if (Random().nextBoolean()) URL("https://placeimg.com/148/148/people") else  null,
                             ).apply {
                                 slug = StringUtil.slugify(
                                         listFirstName.random() + " " + listLastName.random() ,
@@ -41,6 +41,7 @@ class UserDataLoader(
                             }
                         },
                 )
+
             }
         }
     }
