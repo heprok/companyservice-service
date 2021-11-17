@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: oleg@briolink.com
+      changes:
+        - addColumn:
+            tableName: service
+            schemaName: write
+            columns:
+              - column:
+                  name: deleted
+                  type: timestamp
+              - column:
+                  name: deleted_by
+                  type: uuid

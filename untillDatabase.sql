@@ -14,7 +14,7 @@ delete from read.connection;
 delete from read.statistic;
 
 Drop table read.statistic;
-delete from write.databasechangelog where orderexecuted = 6
+delete from write.databasechangelog where orderexecuted = 8
 delete from read.statistic
 create table read.statistic (
 id    integer PRIMARY KEY

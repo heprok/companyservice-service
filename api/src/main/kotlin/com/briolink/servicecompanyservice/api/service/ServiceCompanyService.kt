@@ -10,6 +10,8 @@ import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEn
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.briolink.event.publisher.EventPublisher
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceDeletedData
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
 import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import org.springframework.data.repository.findByIdOrNull
@@ -122,6 +124,16 @@ class ServiceCompanyService(
                 }
         update(serviceWrite)
         return imageUrl
+    }
+
+    fun delete(id: UUID, deletedBy: UUID) {
+        serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+                .apply {
+                    this.deleted = Instant.now()
+                    this.deletedBy = deletedBy
+                    serviceCompanyWriteRepository.save(this)
+                }
+        eventPublisher.publishAsync(CompanyServiceDeletedEvent(CompanyServiceDeletedData(id)))
     }
 
     fun findByNameAndCompanyId(companyId: UUID, name: String): ServiceWriteEntity? {
