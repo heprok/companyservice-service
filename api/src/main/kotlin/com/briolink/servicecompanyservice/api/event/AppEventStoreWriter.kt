@@ -4,7 +4,7 @@ import com.briolink.event.publisher.EventStoreWriter
 import com.briolink.servicecompanyservice.common.jpa.write.entity.EventStoreWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.EventStoreWriteRepository
 import org.springframework.stereotype.Component
-aimport org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
