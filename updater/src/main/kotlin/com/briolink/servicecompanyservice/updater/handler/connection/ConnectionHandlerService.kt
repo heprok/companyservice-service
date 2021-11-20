@@ -71,7 +71,9 @@ class ConnectionHandlerService(
                             status = ConnectionStatusEnum.valueOf(connection.status.name)
                             created = connection.created
                             this.isHidden = isHidden
-                            location = buyerCompany?.location
+                            countryId = buyerCompany?.location?.country?.id
+                            stateId = buyerCompany?.location?.state?.id
+                            cityId = buyerCompany?.location?.city?.id
                             companyIndustryId = buyerCompany?.industry?.id
                             this.data = ConnectionReadEntity.Data(
                                     participantFrom = ConnectionReadEntity.Participant(

@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.read.entity
 
+import com.briolink.servicecompanyservice.common.jpa.dto.location.LocationInfoDto
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.Type
@@ -32,7 +33,7 @@ class CompanyReadEntity(
         @JsonProperty("logo")
         var logo: URL? = null,
         @JsonProperty("location")
-        var location: String? = null,
+        var location: LocationInfoDto? = null,
         @JsonProperty("industry")
         var industry: Industry? = null,
     )

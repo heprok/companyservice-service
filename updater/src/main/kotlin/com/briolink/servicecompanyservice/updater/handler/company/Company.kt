@@ -1,29 +1,30 @@
 package com.briolink.servicecompanyservice.updater.handler.company
 
+import com.briolink.servicecompanyservice.common.jpa.dto.location.LocationId
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URL
 import java.util.*
 
 data class Company(
-    @JsonProperty("id")
+    @JsonProperty
     val id: UUID,
-    @JsonProperty("name")
+    @JsonProperty
     val name: String,
-    @JsonProperty("slug")
+    @JsonProperty
     val slug: String,
-    @JsonProperty("location")
-    val location: String? = null,
-    @JsonProperty("industry")
+    @JsonProperty
+    val locationId: LocationId? = null,
+    @JsonProperty
     val industry: Industry? = null,
-    @JsonProperty("logo")
+    @JsonProperty
     val logo: URL? = null,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Industry(
-    @JsonProperty("id")
+    @JsonProperty
     val id: UUID,
-    @JsonProperty("name")
+    @JsonProperty
     val name: String,
 )

@@ -5,8 +5,8 @@ import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRo
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
+import com.briolink.servicecompanyservice.common.service.LocationService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -15,7 +15,7 @@ import java.util.*
 @Service
 class CompanyHandlerService(
     private val companyReadRepository: CompanyReadRepository,
-    private val serviceReadRepository: ServiceReadRepository,
+    private val locationService: LocationService,
     private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
 ) {
 
@@ -25,9 +25,10 @@ class CompanyHandlerService(
             data = CompanyReadEntity.Data(
                     slug = company.slug,
                     logo = company.logo,
-                    location = company.location,
                     industry = company.industry?.let { CompanyReadEntity.Industry(id = it.id, name = company.industry.name) },
-            )
+            ).apply{
+                location = company.locationId?.let { locationService.getLocation(it) }
+            }
             return companyReadRepository.save(this)
         }
     }

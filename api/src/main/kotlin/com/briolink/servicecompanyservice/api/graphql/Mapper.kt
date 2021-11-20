@@ -55,7 +55,7 @@ fun Company.Companion.fromEntity(entity: CompanyReadEntity) = Company(
         slug = entity.data.slug,
         name = entity.name,
         logo = entity.data.logo?.let { Image(url = entity.data.logo) },
-        location = entity.data.location,
+        location = entity.data.location?.location,
 )
 
 fun Connection.Companion.fromEntity(entity: ConnectionReadEntity) = Connection(

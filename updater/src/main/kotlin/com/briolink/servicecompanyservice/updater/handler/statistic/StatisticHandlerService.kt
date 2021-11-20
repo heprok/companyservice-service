@@ -40,9 +40,7 @@ class StatisticHandlerService(
 
             val industry = connectionReadEntity.data.industry
             // chart data by country
-            val country = connectionReadEntity.location?.let {
-                it.split(",", ignoreCase = true, limit = 3)[0].trimStart()
-            }
+            val country = connectionReadEntity.data.location?.country?.name
             if (!country.isNullOrBlank()) {
                 serviceStatistic.chartByCountryData.data.getOrPut(country) { ChartDataList(country, mutableListOf()) }.also { list ->
                     when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {
@@ -154,9 +152,7 @@ class StatisticHandlerService(
 
             val industry = connectionReadEntity.data.industry
             // chart data by country
-            val country = connectionReadEntity.location?.let {
-                it.split(",", ignoreCase = true, limit = 3)[0].trimStart()
-            }
+            val country = connectionReadEntity.data.location?.country?.name
             if (!country.isNullOrBlank()) {
                 serviceStatistic.chartByCountryData.data.getOrPut(country) { ChartDataList(country, mutableListOf()) }.also { list ->
                     when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {

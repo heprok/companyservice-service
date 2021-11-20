@@ -8,3 +8,6 @@ server:
 spring:
   jpa:
     show-sql: true
+app:
+  app-endpoints:
+    locationservice: http://192.168.0.23:8070/

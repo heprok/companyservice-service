@@ -2,7 +2,7 @@ package com.briolink.servicecompanyservice.common.jpa.read.entity
 
 import com.briolink.servicecompanyservice.common.jpa.enumration.CompanyRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumration.ConnectionStatusEnum
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.briolink.servicecompanyservice.common.jpa.dto.location.LocationInfoDto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.range.Range
 import org.hibernate.annotations.Type
@@ -70,8 +70,14 @@ class ConnectionReadEntity(
     @Column(name = "dates", columnDefinition = "int4range", nullable = false)
     lateinit var dates: Range<Int>
 
-    @Column(name = "location")
-    var location: String? = null
+    @Column(name = "country_id")
+    var countryId: Int? = null
+
+    @Column(name = "state_id")
+    var stateId: Int? = null
+
+    @Column(name = "city_id")
+    var cityId: Int? = null
 
     @Column(name = "company_industry_id")
     var companyIndustryId: UUID? = null
@@ -119,6 +125,8 @@ class ConnectionReadEntity(
         val service: Service,
         @JsonProperty
         val industry: String?,
+        @JsonProperty
+        val location: LocationInfoDto? = null
     )
 
     data class Participant(
