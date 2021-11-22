@@ -11,10 +11,10 @@ import com.briolink.servicecompanyservice.updater.handler.user.UserHandlerServic
         EventHandler("UserUpdatedEvent", "1.0"),
 )
 class UserCreatedEventHandler(
-    private val companyHandlerService: UserHandlerService
+    private val UserHandlerService: UserHandlerService
 ) : IEventHandler<UserEvent> {
     override fun handle(event: UserEvent) {
-        companyHandlerService.createOrUpdate(event.data)
+        UserHandlerService.createOrUpdate(event.data)
     }
 }
 

@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: oleg@briolink.com
+      changes:
+        - dropTable:
+            tableName: statistic
+            schemaName: read
+        - createTable:
+            tableName: statistic
+            schemaName: read
+            columns:
+              - column:
+                  name: service_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: chart_by_country
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_by_industry
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_number_uses_by_year
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_by_service_duration
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_by_country_data
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_by_industry_data
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_number_uses_by_year_data
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_by_service_duration_data
+                  type: jsonb
+                  constraints:
+                    nullable: false

@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: oleg@briolink.com
+      changes:
+        - sql:
+            sql: ALTER TABLE read.company ADD COLUMN name varchar(255)
+        - sql:
+            sql: UPDATE read.company SET name = data->>'name'
+        - addNotNullConstraint:
+            tableName: company
+            schemaName: read
+            columnName: name
+            columnDataType: varchar(255)
+            constraintName: const_name_not_null_company_name
+        - sql:
+            sql: create index idx_company_name on read.company using gin (to_tsvector('simple', name))

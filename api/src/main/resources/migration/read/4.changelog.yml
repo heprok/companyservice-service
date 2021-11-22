@@ -1,0 +1,184 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: oleg@briolink.com
+      changes:
+        - dropTable:
+            tableName: connection
+            schemaName: read
+        - createTable:
+            tableName: connection
+            schemaName: read
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: service_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: participant_from_company_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_from_user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_from_role_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_from_role_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_from_role_type
+                  type: smallint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_to_company_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_to_user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_to_role_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_to_role_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_to_role_type
+                  type: smallint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dates
+                  type: int4range
+                  constraints:
+                    nullable: false
+              - column:
+                  name: company_industry_id
+                  type: uuid
+              - column:
+                  name: location
+                  type: varchar(255)
+              - column:
+                  name: status
+                  type: smallint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_hidden
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_deleted
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data
+                  type: jsonb
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: company_industry_id
+            indexName: idx_coonnection_company_industry_id
+            schemaName: read
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: participant_to_user_id
+              - column:
+                  name: participant_to_role_type
+            indexName: idx_connection_participant_to_user_id_role_id
+            schemaName: read
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: participant_from_company_id
+              - column:
+                  name: participant_to_company_id
+            indexName: idx_connection_participant_from_to_company_id
+            schemaName: read
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: participant_from_user_id
+              - column:
+                  name: participant_to_user_id
+            indexName: idx_connection_participant_from_to_user_id
+            schemaName: read
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: participant_to_user_id
+              - column:
+                  name: participant_from_company_id
+            indexName: idx_connection_participant_to_user_id_from_company_id
+            schemaName: read
+            tableName: connection
+        - createIndex:
+            columns:
+              - column:
+                  name: participant_from_user_id
+              - column:
+                  name: participant_to_company_id
+            indexName: idx_connection_participant_from_user_id_to_company_id
+            schemaName: read
+            tableName: connection
+        - sql:
+            comment: FULLTEXT index for read.connection table location field
+            sql: CREATE INDEX idx_connection_location ON read.connection USING GIN (to_tsvector('simple', location))
+            stripComments: true
+        - createTable:
+            tableName: company_industry
+            schemaName: read
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: create index idx_company_industry_name on read.company_industry using gin (to_tsvector('simple', name))
+

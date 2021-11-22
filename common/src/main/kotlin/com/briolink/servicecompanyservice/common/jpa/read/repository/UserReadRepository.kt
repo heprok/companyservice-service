@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface UserReadRepository : JpaRepository<UserReadEntity, UUID> {
+    fun findByIdIsIn(ids: List<UUID>): List<UserReadEntity>
 }

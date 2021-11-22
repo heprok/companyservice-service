@@ -35,7 +35,6 @@ input CreateServiceInput {
     logoTempKey: String
     description: String
     logo: Upload
-
 }
 input UpdateServiceInput {
     price: Float

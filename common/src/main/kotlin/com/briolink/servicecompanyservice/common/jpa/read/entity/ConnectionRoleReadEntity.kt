@@ -1,5 +1,7 @@
 package com.briolink.servicecompanyservice.common.jpa.read.entity
 
+import com.briolink.servicecompanyservice.common.jpa.enumration.CompanyRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.hibernate.annotations.Type
 import java.util.*
@@ -21,13 +23,12 @@ class ConnectionRoleReadEntity(
     var name: String,
 
     @Column(name = "type", nullable = false)
-    var type: RoleType,
+    private var _type: Int,
 
 ) : BaseReadEntity() {
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
-    enum class RoleType(val value: Int) {
-            Buyer(0),
-            Seller(1)
-    }
-
+    var type: CompanyRoleTypeEnum
+        get() = CompanyRoleTypeEnum.fromInt(_type)
+        set(value) {
+            _type = value.value
+        }
 }

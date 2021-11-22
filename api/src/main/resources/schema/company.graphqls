@@ -2,5 +2,6 @@ type Company {
     id: ID!
     name: String!
     slug: String!
-    logo: Image
+    logo: Image,
+    location: String
 }

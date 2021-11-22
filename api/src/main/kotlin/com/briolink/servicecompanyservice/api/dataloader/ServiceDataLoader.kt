@@ -37,7 +37,7 @@ class ServiceDataLoader(
             for (i in 1..COUNT_SERVICE) {
                 val randomCompany = companyList.random()
                 val nameService = listName.random()
-                val slug = StringUtil.slugify(randomCompany.data.name + " " + nameService, false)
+                val slug = StringUtil.slugify(randomCompany.name + " " + nameService, false)
                 if (!serviceWriteRepository.existsBySlug(slug))
                     serviceCompanyService.create(
                             companyId = randomCompany.id,
