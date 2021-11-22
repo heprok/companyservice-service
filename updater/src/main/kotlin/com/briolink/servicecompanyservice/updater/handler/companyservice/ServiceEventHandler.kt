@@ -5,9 +5,9 @@ import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
-import com.briolink.servicecompanyservice.updater.handler.company.Industry
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityNotFoundException
 
@@ -35,13 +35,22 @@ class ServiceUpdatedEventHandler(
                             created = serviceCompany.created,
                             company = ServiceReadEntity.Company(
                                     id = company.id,
-                                    name = company.data.name,
+                                    name = company.name,
                                     slug = company.data.slug,
                                     logo = company.data.logo,
-                                    industry = company.data.industry,
                             ),
                     )
                     serviceReadRepository.save(this)
                 }
+    }
+}
+
+@EventHandler("CompanyServiceDeletedEvent", "1.0")
+@Transactional
+class ServiceDeletedEventHandler(
+    private val serviceReadRepository: ServiceReadRepository,
+) : IEventHandler<CompanyServiceDeletedEvent> {
+    override fun handle(event: CompanyServiceDeletedEvent) {
+        serviceReadRepository.deleteById(event.data.id)
     }
 }

@@ -1,7 +1,8 @@
 package com.briolink.servicecompanyservice.updater.handler.company
 
+import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
-import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
@@ -18,45 +19,42 @@ class CompanyHandlerService(
     private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
 ) {
 
-    fun createOrUpdate(company: Company) {
-        val companyRead = companyReadRepository.findById(company.id).orElse(CompanyReadEntity(company.id)).apply {
+    fun createOrUpdate(company: Company): CompanyReadEntity {
+        companyReadRepository.findById(company.id).orElse(CompanyReadEntity(company.id)).apply {
+            name = company.name
             data = CompanyReadEntity.Data(
                     slug = company.slug,
                     logo = company.logo,
-                    name = company.name,
                     location = company.location,
                     industry = company.industry?.let { CompanyReadEntity.Industry(id = it.id, name = company.industry.name) },
             )
-            companyReadRepository.save(this)
+            return companyReadRepository.save(this)
         }
-        serviceReadRepository.findByCompanyId(company.id).forEach {
-            it.data.company = ServiceReadEntity.Company(
-                    id = companyRead.id,
-                    name = companyRead.data.name,
-                    slug = companyRead.data.slug,
-                    logo = companyRead.data.logo,
-                    industry = companyRead.data.industry,
-            )
-            serviceReadRepository.save(it)
-        }
+    }
 
-        fun setPermission(companyId: UUID, userId: UUID, roleType: UserPermissionRoleReadEntity.RoleType) {
-            userPermissionRoleReadRepository.save(
-                    userPermissionRoleReadRepository.findByAccessObjectUuidAndAccessObjectTypeAndUserId(
-                            accessObjectUuid = companyId,
-                            userId = userId,
-                    )?.apply {
-                        role = roleType
-                    } ?: UserPermissionRoleReadEntity(accessObjectUuid = companyId, userId = userId, role = roleType),
-            )
-        }
 
-        fun getPermission(companyId: UUID, userId: UUID): UserPermissionRoleReadEntity.RoleType? {
-            return userPermissionRoleReadRepository.findByAccessObjectUuidAndAccessObjectTypeAndUserId(
-                    accessObjectUuid = companyId,
-                    accessObjectType = 1,
-                    userId = userId,
-            )?.role
-        }
+    fun setPermission(companyId: UUID, userId: UUID, roleType: UserPermissionRoleTypeEnum) {
+        userPermissionRoleReadRepository.save(
+                userPermissionRoleReadRepository.getUserPermissionRole(
+                        accessObjectUuid = companyId,
+                        accessObjectType = AccessObjectTypeEnum.Company.value,
+                        userId = userId,
+                )?.apply {
+                    role = roleType
+                } ?: UserPermissionRoleReadEntity().apply {
+                    role = roleType
+                    accessObjectUuid = companyId
+                    this.userId = userId
+                    accessObjectType = AccessObjectTypeEnum.Company
+                },
+        )
+    }
+
+    fun getPermission(companyId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
+        return userPermissionRoleReadRepository.getUserPermissionRole(
+                accessObjectUuid = companyId,
+                accessObjectType = AccessObjectTypeEnum.Company.value,
+                userId = userId,
+        )?.role
     }
 }

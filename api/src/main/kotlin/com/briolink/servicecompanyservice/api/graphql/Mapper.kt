@@ -2,19 +2,20 @@ package com.briolink.servicecompanyservice.api.graphql
 
 import com.briolink.servicecompanyservice.api.types.Company
 import com.briolink.servicecompanyservice.api.types.Connection
-import com.briolink.servicecompanyservice.api.types.ConnectionRole
-import com.briolink.servicecompanyservice.api.types.ConnectionRoleType
+import com.briolink.servicecompanyservice.api.types.ConnectionCompanyRole
+import com.briolink.servicecompanyservice.api.types.ConnectionCompanyRoleType
+import com.briolink.servicecompanyservice.api.types.ConnectionParticipant
 import com.briolink.servicecompanyservice.api.types.ConnectionService
+import com.briolink.servicecompanyservice.api.types.ConnectionStatus
 import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.Industry
-import com.briolink.servicecompanyservice.api.types.Participant
 import com.briolink.servicecompanyservice.api.types.Service
 import com.briolink.servicecompanyservice.api.types.User
-import com.briolink.servicecompanyservice.api.types.VerificationStage
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
+import java.net.URL
 
 fun Industry.Companion.fromEntity(entity: CompanyReadEntity.Industry) = Industry(
         id = entity.id.toString(),
@@ -37,60 +38,76 @@ fun Service.Companion.fromEntity(entity: ServiceReadEntity) = Service(
         logo = entity.data.logo?.let { Image(it) },
 )
 
-fun ConnectionRole.Companion.fromEntity(entity: ConnectionReadEntity.Role) = ConnectionRole(
+fun ConnectionCompanyRole.Companion.fromEntity(entity: ConnectionReadEntity.CompanyRole) = ConnectionCompanyRole(
         id = entity.id.toString(),
         name = entity.name,
-        type = ConnectionRoleType.values()[entity.type.ordinal],
+        type = ConnectionCompanyRoleType.valueOf(entity.type.name),
 )
 
-fun ConnectionRole.Companion.fromEntity(entity: ConnectionRoleReadEntity) = ConnectionRole(
+fun ConnectionCompanyRole.Companion.fromEntity(entity: ConnectionRoleReadEntity) = ConnectionCompanyRole(
         id = entity.id.toString(),
         name = entity.name,
-        type = ConnectionRoleType.values()[entity.type.ordinal],
+        type = ConnectionCompanyRoleType.valueOf(entity.type.name),
+)
+
+fun Company.Companion.fromEntity(entity: CompanyReadEntity) = Company(
+        id = entity.id.toString(),
+        slug = entity.data.slug,
+        name = entity.name,
+        logo = entity.data.logo?.let { Image(url = entity.data.logo) },
+        location = entity.data.location,
 )
 
 fun Connection.Companion.fromEntity(entity: ConnectionReadEntity) = Connection(
         id = entity.id.toString(),
-        buyer = Participant(
-                id = entity.data.buyerCompany.id.toString(),
-                name = entity.data.buyerCompany.name,
-                slug = entity.data.buyerCompany.slug,
-                logo = entity.data.buyerCompany.logo?.let {
-                    Image(url = it)
-                },
-                verifyUser = User(
-                        id = entity.data.buyerCompany.verifyUser.id.toString(),
-                        lastName = entity.data.buyerCompany.verifyUser.lastName,
-                        firstName = entity.data.buyerCompany.verifyUser.firstName,
-                        slug = entity.data.buyerCompany.verifyUser.slug,
-                        image = entity.data.buyerCompany.verifyUser.image?.let {
-                            Image(url = it)
-                        },
+        participantFrom = ConnectionParticipant(
+                user = User(
+                        id = entity.data.participantFrom.user.id.toString(),
+                        slug = entity.data.participantFrom.user.slug,
+                        image = entity.data.participantFrom.user.image?.let { image -> Image(image) },
+                        firstName = entity.data.participantFrom.user.firstName,
+                        lastName = entity.data.participantFrom.user.lastName
                 ),
-                role = ConnectionRole.fromEntity(entity.data.buyerCompany.role),
+                company = Company(
+                        id = entity.data.participantFrom.company.id.toString(),
+                        slug = entity.data.participantFrom.company.slug,
+                        logo = entity.data.participantFrom.company.logo?.let { logo -> Image(logo) },
+                        name = entity.data.participantFrom.company.name
+                ),
+                companyRole = ConnectionCompanyRole(
+                        id = entity.participantFromRoleId.toString(),
+                        name = entity.participantFromRoleName,
+                        type = ConnectionCompanyRoleType.valueOf(entity.participantFromRoleType.name)
+                )
         ),
-        verifySeller = User(
-                id = entity.data.sellerCompany.verifyUser.id.toString(),
-                lastName = entity.data.sellerCompany.verifyUser.lastName,
-                firstName = entity.data.sellerCompany.verifyUser.firstName,
-                slug = entity.data.sellerCompany.verifyUser.slug,
-                image = entity.data.sellerCompany.verifyUser.image?.let {
-                    Image(url = it)
-                },
+        participantTo = ConnectionParticipant(
+                user = User(
+                        id = entity.data.participantTo.user.id.toString(),
+                        slug = entity.data.participantTo.user.slug,
+                        image = entity.data.participantTo.user.image?.let { image -> Image(image) },
+                        firstName = entity.data.participantTo.user.firstName,
+                        lastName = entity.data.participantTo.user.lastName
+                ),
+                company = Company(
+                        id = entity.data.participantTo.company.id.toString(),
+                        slug = entity.data.participantTo.company.slug,
+                        logo = entity.data.participantTo.company.logo?.let { logo -> Image(logo) },
+                        name = entity.data.participantTo.company.name
+                ),
+                companyRole = ConnectionCompanyRole(
+                        id = entity.participantToRoleId.toString(),
+                        name = entity.participantToRoleName,
+                        type = ConnectionCompanyRoleType.valueOf(entity.participantToRoleType.name)
+                )
         ),
-        service = entity.data.connectionService.let {
+        service = entity.data.service.let {
             ConnectionService(
                     id = it.id.toString(),
-                    name = it.name!!,
-                    endDate = it.endDate?.value,
-                    startDate = it.startDate.value,
+                    name = it.serviceName,
+                    startDate = it.startDate,
+                    endDate = it.endDate
             )
         },
-        industry = entity.data.industry?.let { Industry.fromEntity(it) },
-        verificationStage = when (entity.verificationStage) {
-            ConnectionReadEntity.ConnectionStatus.Pending -> VerificationStage.Pending
-            ConnectionReadEntity.ConnectionStatus.InProgress -> VerificationStage.InProgress
-            ConnectionReadEntity.ConnectionStatus.Verified -> VerificationStage.Verified
-            else -> VerificationStage.Pending
-        },
+        status = ConnectionStatus.valueOf(entity.status.name),
+        industry = entity.data.industry
 )

@@ -1,6 +1,8 @@
 package com.briolink.servicecompanyservice.api.graphql.mutation
 
+import com.briolink.servicecompanyservice.api.graphql.SecurityUtil
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
+import com.briolink.servicecompanyservice.api.types.BaseResult
 import com.briolink.servicecompanyservice.api.types.CreateServiceInput
 import com.briolink.servicecompanyservice.api.types.CreateServiceResult
 import com.briolink.servicecompanyservice.api.types.ServiceResultData
@@ -36,13 +38,40 @@ class ServiceMutation(
                 price = input.price,
                 name = input.name,
                 description = input.description,
-                fileImage = input.logo
+                fileImage = input.logo,
         )
 
         return CreateServiceResult(
                 userErrors = listOf(),
                 data = ServiceResultData(id = entity.id.toString(), slug = entity.slug),
         )
+    }
+
+    @DgsMutation(field = "createServiceLocal")
+    fun createServiceLocal(
+        @InputArgument("companyId") companyId: String,
+        @InputArgument("name") name: String
+    ): CreateServiceResult {
+        (serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = name) ?: serviceCompanyService.create(
+                companyId = UUID.fromString(companyId),
+                name = name,
+        )).let {
+            return CreateServiceResult(
+                    data = ServiceResultData(id = it.id.toString(), slug = it.slug),
+                    userErrors = listOf(),
+            )
+        }
+    }
+
+    @DgsMutation(field = "deleteServiceLocal")
+    fun deleteServiceLocal(
+        @InputArgument("serviceId") serviceId: String
+    ): BaseResult {
+        serviceCompanyService.delete(UUID.fromString(serviceId), deletedBy = SecurityUtil.currentUserAccountId)
+        return BaseResult(
+                success = true
+        )
+
     }
 
     @DgsMutation(field = "updateService")

@@ -93,6 +93,7 @@ class ConnectionDataLoader(
                                     status = connectionStatusList.random(),
                                     created = randomInstant(2010, 2020),
                             ),
+                            false
                     )
                 } catch (e: DataIntegrityViolationException) {
 
@@ -102,7 +103,7 @@ class ConnectionDataLoader(
     }
 
     companion object {
-        const val COUNT_CONNECTION = 1
+        const val COUNT_CONNECTION = 1000
     }
 }
 

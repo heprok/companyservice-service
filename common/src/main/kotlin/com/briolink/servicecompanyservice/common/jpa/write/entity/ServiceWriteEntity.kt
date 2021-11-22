@@ -34,7 +34,14 @@ class ServiceWriteEntity(
     var description: String? = null,
 
     @Column(name = "created")
-    var created: Instant? = null
+    var created: Instant? = null,
+
+    @Column(name = "deleted")
+    var deleted: Instant? = null,
+
+    @Type(type="pg-uuid")
+    @Column(name = "deleted_by")
+    var deletedBy: UUID? = null
 
 ) : BaseWriteEntity() {
     @PrePersist

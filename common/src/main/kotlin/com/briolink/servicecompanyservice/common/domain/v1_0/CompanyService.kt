@@ -28,3 +28,8 @@ data class CompanyService (
     @JsonProperty("verifiedUses")
     val verifiedUses: Int = 0,
 ) : Domain
+
+data class CompanyServiceDeletedData(
+    @JsonProperty("id")
+    val id: UUID
+) : Domain

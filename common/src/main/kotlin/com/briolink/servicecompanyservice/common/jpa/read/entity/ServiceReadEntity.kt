@@ -16,11 +16,11 @@ import javax.persistence.Table
 @Entity
 class ServiceReadEntity(
     @Id
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "id", nullable = false)
     var id: UUID,
 
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "company_id", nullable = false)
     var companyId: UUID,
 
@@ -29,11 +29,10 @@ class ServiceReadEntity(
 
     ) : BaseReadEntity() {
 
-    @Type(type="jsonb")
+    @Type(type = "jsonb")
     @Column(name = "data", nullable = false)
     lateinit var data: Data
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     data class Data(
         @JsonProperty("name")
         var name: String,
@@ -59,8 +58,6 @@ class ServiceReadEntity(
         var id: UUID,
         @JsonProperty("name")
         var name: String,
-        @JsonProperty("industry")
-        var industry: CompanyReadEntity.Industry?,
         @JsonProperty("slug")
         var slug: String,
         @JsonProperty("logo")

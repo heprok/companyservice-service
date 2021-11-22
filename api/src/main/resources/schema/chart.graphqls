@@ -1,0 +1,87 @@
+type ServiceCharts {
+    numberUsesByYear: ChartNumberUsesConnectionByYear!
+    byCountry: ChartByCountry!
+    byIndustry: ChartByIndustry!
+    byServiceDuration: ChartByServiceDuration!
+}
+
+### charts (base)
+
+type ChartItemWithHint {
+    key: String!
+    name: String!
+    value: Int!
+    hints: [ChartItemHint!]!
+}
+
+type ChartItemHint {
+    name: String!
+    image: Image
+}
+
+type ChartTabItem {
+    id: ID!
+    name: String!
+    total: Int!
+}
+
+### charts (specific)
+
+## chart connection number of connection
+
+type ChartNumberUsesConnectionByYear {
+    data: [ChartItemWithHint!]!
+    tabs: [ChartTabItem!]!
+    listByTab(id: ID!): [ChartByNumberUsesItem!]!
+}
+#
+#type ChartNumberUsesConnectionByYearItem {
+#    company: Company!
+#    companyRole: String!
+#    numberOfUses: Int!
+#}
+
+type ChartByNumberUsesItem {
+    company: Company!
+    industry: String
+    companyRoles: [String!]!
+    numberOfUses: Int!
+}
+## chart by country
+
+type ChartByCountry {
+    data: [ChartItemWithHint!]!
+    tabs: [ChartTabItem!]!
+    listByTab(id: ID!): [ChartByNumberUsesItem!]!
+}
+
+#type ChartByCountryItem {
+#    company: Company!
+#    companyRole: String!
+#    numberOfUses: Int!
+#}
+
+## chart by industry
+
+type ChartByIndustry {
+    data: [ChartItemWithHint!]!
+    tabs: [ChartTabItem!]!
+    listByTab(id: ID!): [ChartByNumberUsesItem!]!
+}
+
+#type ChartByIndustryItem {
+#    company: Company!
+#    companyRole: String!
+#    numberOfUses: Int!
+#}
+
+## chart by service duration
+
+type ChartByServiceDuration {
+    data: [ChartByServiceDurationItem!]!
+}
+
+type ChartByServiceDurationItem {
+    company: Company!
+    duration: Int!
+}
