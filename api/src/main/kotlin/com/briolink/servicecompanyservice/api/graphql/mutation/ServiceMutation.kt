@@ -5,6 +5,7 @@ import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.BaseResult
 import com.briolink.servicecompanyservice.api.types.CreateServiceInput
 import com.briolink.servicecompanyservice.api.types.CreateServiceResult
+import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.ServiceResultData
 import com.briolink.servicecompanyservice.api.types.UpdateServiceInput
 import com.briolink.servicecompanyservice.api.types.UpdateServiceResult
@@ -24,8 +25,8 @@ class ServiceMutation(
     fun uploadServiceImage(
         @InputArgument("id") id: String,
         @InputArgument("image") image: MultipartFile?
-    ): URL? {
-        return serviceCompanyService.uploadProfileImage(UUID.fromString(id), image)
+    ): Image? {
+        return Image(serviceCompanyService.uploadProfileImage(UUID.fromString(id), image))
     }
 
     @DgsMutation(field = "createService")

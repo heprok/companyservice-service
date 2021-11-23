@@ -1,7 +1,7 @@
 type Mutation{
     createService(companyId: ID!, input: CreateServiceInput!) : CreateServiceResult!
     createServiceLocal(companyId: ID!, name: String!) : CreateServiceResult!
-    uploadServiceImage(id: ID!, image: Upload) : Url
+    uploadServiceImage(id: ID!, image: Upload) : Image
     updateService(id: ID!, input: UpdateServiceInput!) : UpdateServiceResult!
 
     isHideConnection(connectionId: ID!, serviceId: ID!, isHide: Boolean!): Boolean!
