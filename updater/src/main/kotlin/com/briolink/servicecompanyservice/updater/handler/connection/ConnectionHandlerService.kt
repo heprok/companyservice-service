@@ -121,6 +121,7 @@ class ConnectionHandlerService(
                                         )
                                     },
                                     industry = buyerCompany?.industry?.name,
+                                    location = buyerCompany?.location,
                                     service = ConnectionReadEntity.Service(
                                             id = connectionService.serviceId,
                                             serviceName = connectionService.serviceName,
@@ -128,7 +129,7 @@ class ConnectionHandlerService(
                                             endDate = connectionService.endDate,
                                     ),
                             )
-                            connectionReadRepository.saveAndFlush(this).let {
+                            connectionReadRepository.save(this).let {
                                 statisticHandlerService.refreshByService(it.serviceId)
                             }
                         }

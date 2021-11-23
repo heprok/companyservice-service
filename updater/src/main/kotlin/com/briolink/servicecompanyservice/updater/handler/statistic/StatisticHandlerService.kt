@@ -31,19 +31,18 @@ class StatisticHandlerService(
     private val companyReadRepository: CompanyReadRepository,
 ) {
     fun refreshByService(serviceId: UUID) {
-        statisticReadRepository.deleteByServiceId(serviceId)
-//        var serviceStatistic = statisticReadRepository.findByServiceId(serviceId) ?: StatisticReadEntity(
-//                serviceId,
-//        )
-        val serviceStatistic = StatisticReadEntity(serviceId)
+        var serviceStatistic = statisticReadRepository.findByServiceId(serviceId) ?: StatisticReadEntity(
+                serviceId
+        )
+        serviceStatistic = StatisticReadEntity(serviceId)
         connectionReadRepository.getByServiceIdAndStatusAndNotHiddenOrDeleted(serviceId, ConnectionStatusEnum.Verified.value)
                 .forEach { connectionReadEntity ->
                     val collaboratorParticipant = if (connectionReadEntity.participantFromRoleType == CompanyRoleTypeEnum.Buyer)
                         connectionReadEntity.data.participantFrom else connectionReadEntity.data.participantTo
-
+                    val companyBuyer = companyReadRepository.findById(collaboratorParticipant.company.id).get()
                     val industry = connectionReadEntity.data.industry
                     // chart data by country
-                    val country = connectionReadEntity.data.location?.country?.name
+                    val country = companyBuyer.data.location?.country?.name
                     if (!country.isNullOrBlank()) {
                         serviceStatistic.chartByCountryData.data.getOrPut(country) { ChartDataList(country, mutableListOf()) }
                                 .also { list ->

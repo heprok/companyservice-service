@@ -70,7 +70,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
     @Query(
             """
         select c from ConnectionReadEntity c
-        where c.serviceId = ?1 and c._status = ?2 AND c.isDeleted = false AND c.isHidden = false)
+        where c.serviceId = ?1 and c._status = ?2 AND c.isDeleted = false AND c.isHidden = false
     """
     )
     fun getByServiceIdAndStatusAndNotHiddenOrDeleted(serviceId: UUID, type: Int = ConnectionStatusEnum.Verified.value): List<ConnectionReadEntity>
