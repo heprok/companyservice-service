@@ -6,14 +6,11 @@ import com.briolink.servicecompanyservice.api.service.ConnectionService
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.Collaborator
 import com.briolink.servicecompanyservice.api.types.Connection
-import com.briolink.servicecompanyservice.api.types.ConnectionCompanyRole
 import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionList
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.api.types.Industry
-import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
 import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity_.isHidden
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
@@ -30,6 +27,7 @@ class ConnectionQuery(
     @PreAuthorize("isAuthenticated()")
     fun getConnections(
         @InputArgument("serviceId") serviceId: String,
+        @InputArgument("companyId") companyId: String,
         @InputArgument("filter") filter: ConnectionFilter,
         @InputArgument("sort") sort: ConnectionSort,
         @InputArgument("limit") limit: Int,
@@ -47,6 +45,7 @@ class ConnectionQuery(
                 filter.copy(isHidden = false) else filter
             val result = connectionService.findAll(
                     serviceId = UUID.fromString(serviceId),
+                    companyId = UUID.fromString(companyId),
                     sort = sort,
                     filter = securityFilter,
                     limit = limit,
@@ -54,7 +53,7 @@ class ConnectionQuery(
             )
             ConnectionList(
                     items = result.map { Connection.fromEntity(it) },
-                    totalItems = result.count(),
+                    totalItems = connectionService.count(serviceId = UUID.fromString(serviceId), companyId = UUID.fromString(companyId), filter = filter).toInt()
             )
         } else {
             ConnectionList(items = listOf(), totalItems = -1)
@@ -65,18 +64,21 @@ class ConnectionQuery(
     @PreAuthorize("isAuthenticated()")
     fun getConnectionsCount(
         @InputArgument("serviceId") serviceId: String,
+        @InputArgument("companyId") companyId: String,
         @InputArgument("filter") filter: ConnectionFilter
     ): Int =
-            connectionService.count(serviceId = UUID.fromString(serviceId), filter = filter).toInt()
+            connectionService.count(serviceId = UUID.fromString(serviceId), companyId = UUID.fromString(companyId), filter = filter).toInt()
 
 
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
     fun getConnectionCollaborators(
         @InputArgument("serviceId") serviceId: String,
+        @InputArgument("companyId") companyId: String,
         @InputArgument("query") query: String,
     ): List<Collaborator> = connectionService.getCollaboratorsUsedForCompany(
             serviceId = UUID.fromString(serviceId),
+            companyId = UUID.fromString(companyId),
             query = StringUtil.replaceNonWord(query),
     )
 
@@ -84,11 +86,13 @@ class ConnectionQuery(
     @PreAuthorize("isAuthenticated()")
     fun getConnectionIndustries(
         @InputArgument("query") query: String,
-        @InputArgument("serviceId") serviceId: String
+        @InputArgument("serviceId") serviceId: String,
+        @InputArgument("companyId") companyId: String
     ): List<Industry> =
             connectionService.getIndustriesInConnectionFromCompany(
-                    UUID.fromString(serviceId),
-                    StringUtil.replaceNonWord(query),
+                    serviceId = UUID.fromString(serviceId),
+                    companyId = UUID.fromString(companyId),
+                    query = StringUtil.replaceNonWord(query),
             ).map {
                 Industry.fromEntity(it)
             }

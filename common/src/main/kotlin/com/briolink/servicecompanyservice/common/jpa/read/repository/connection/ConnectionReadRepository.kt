@@ -2,7 +2,6 @@ package com.briolink.servicecompanyservice.common.jpa.read.repository.connection
 
 import com.briolink.servicecompanyservice.common.jpa.enumration.ConnectionStatusEnum
 import com.briolink.servicecompanyservice.common.jpa.projection.CollaboratorProjection
-import com.briolink.servicecompanyservice.common.jpa.projection.CollaboratorRoleProjection
 import com.briolink.servicecompanyservice.common.jpa.projection.IndustryProjection
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import org.springframework.data.jpa.repository.JpaRepository
@@ -11,7 +10,6 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.util.*
-import java.util.stream.Stream
 
 interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, JpaSpecificationExecutor<ConnectionReadEntity> {
 
@@ -27,14 +25,20 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
                     read.connection as connection
                 WHERE
                     (
-                    connection.service_id = :serviceId
-                    AND connection.company_industry_id = company_industry.id)
+                    ((connection.participant_from_role_type = 1 AND connection.participant_from_company_id = :companyId) OR
+                    (connection.participant_to_role_type = 1 AND connection.participant_to_company_id = :companyId)) AND
+                    connection.service_id = :serviceId AND 
+                    connection.company_industry_id = company_industry.id)
                     LIMIT 1
                 ) LIMIT 10
     """,
             nativeQuery = true
     )
-    fun getIndustriesUsesCompany(@Param("serviceId") serviceId: UUID, @Param("query") query: String?): List<IndustryProjection>
+    fun getIndustriesUsesCompany(
+        @Param("serviceId") serviceId: UUID,
+        @Param("companyId") companyId: UUID,
+        @Param("query") query: String?
+    ): List<IndustryProjection>
 
     @Query(
             """
@@ -45,6 +49,8 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
                 SELECT 1 FROM
                     read.connection as connection
                 WHERE
+                    ((connection.participant_from_role_type = 1 AND connection.participant_from_company_id = :companyId) OR
+                    (connection.participant_to_role_type = 1 AND connection.participant_to_company_id = :companyId)) AND
                     connection.service_id = :serviceId
                     LIMIT 1
                 ) LIMIT 10
@@ -52,8 +58,9 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
             nativeQuery = true
     )
     fun getCollaboratorsUsedForCompany(
-        @Param("query") query: String?,
         @Param("serviceId") serviceId: UUID,
+        @Param("companyId") companyId: UUID,
+        @Param("query") query: String?,
     ): List<CollaboratorProjection>
 
     fun existsByServiceId(serviceId: UUID): Boolean
@@ -73,7 +80,10 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
         where c.serviceId = ?1 and c._status = ?2 AND c.isDeleted = false AND c.isHidden = false
     """
     )
-    fun getByServiceIdAndStatusAndNotHiddenOrDeleted(serviceId: UUID, type: Int = ConnectionStatusEnum.Verified.value): List<ConnectionReadEntity>
+    fun getByServiceIdAndStatusAndNotHiddenOrDeleted(
+        serviceId: UUID,
+        type: Int = ConnectionStatusEnum.Verified.value
+    ): List<ConnectionReadEntity>
 
     @Modifying
     @Query("UPDATE ConnectionReadEntity c SET c.isHidden = ?3 where c.id = ?1 and c.serviceId = ?2")

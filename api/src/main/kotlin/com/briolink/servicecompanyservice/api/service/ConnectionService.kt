@@ -11,13 +11,12 @@ import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
+import com.briolink.servicecompanyservice.common.jpa.enumration.CompanyRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumration.ConnectionStatusEnum
 import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
-import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
-import com.briolink.servicecompanyservice.common.util.StringUtil
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.persistence.EntityManager
@@ -32,6 +31,7 @@ class ConnectionService(
 ) {
     fun findAll(
         serviceId: UUID,
+        companyId: UUID,
         limit: Int,
         offset: Int,
         sort: ConnectionSort,
@@ -40,31 +40,48 @@ class ConnectionService(
         val cbf = criteriaBuilderFactory.create(entityManager, ConnectionReadEntity::class.java)
         val cb = cbf.from(ConnectionReadEntity::class.java)
 
-        setFilters(serviceId, cb, filter)
+        setFilters(serviceId, companyId, cb, filter)
 
         return cb.orderBy(sort.sortBy.name, sort.direction.name == "ASC").orderByAsc("id").page(offset, limit).resultList
     }
 
-    fun count(serviceId: UUID, filter: ConnectionFilter): Long {
+    fun count(companyId: UUID, serviceId: UUID, filter: ConnectionFilter): Long {
         val cbf = criteriaBuilderFactory.create(entityManager, ConnectionReadEntity::class.java)
         val cb = cbf.from(ConnectionReadEntity::class.java)
-        setFilters(serviceId, cb, filter)
+        setFilters(serviceId, companyId, cb, filter)
         return cb.countQuery.singleResult
     }
 
     fun <T> setFilters(
         serviceId: UUID,
+        companyId: UUID,
         cb: T,
         filters: ConnectionFilter
     ): T where T : WhereBuilder<T>, T : ParameterHolder<T> {
+        cb.whereOr()
+                .whereAnd()
+                .where("participantToCompanyId").eq(companyId)
+                .where("_participantToRoleType").eq(CompanyRoleTypeEnum.Seller.value)
+                .endAnd()
+                .whereAnd()
+                .where("participantFromCompanyId").eq(companyId)
+                .where("_participantFromRoleType").eq(CompanyRoleTypeEnum.Seller.value)
+                .endAnd()
+                .endOr()
         cb.where("serviceId").eq(serviceId)
-        cb.where("isDeleted").eq( false)
+        cb.where("isDeleted").eq(false)
+        cb.where("isHidden").eq(filters.isHidden ?: false)
         with(filters) {
-            cb.where("isHidden").eq(filters.isHidden ?: false)
             if (!collaboratorIds.isNullOrEmpty()) {
                 cb.whereOr()
+                        .whereAnd()
                         .where("participantFromCompanyId").`in`(collaboratorIds.map { UUID.fromString(it) })
+                        .where("participantFromCompanyId").notEq(companyId)
+                        .endAnd()
+                        .whereAnd()
                         .where("participantToCompanyId").`in`(collaboratorIds.map { UUID.fromString(it) })
+                        .where("participantToCompanyId").notEq(companyId)
+                        .endAnd()
                         .endOr()
             }
 
@@ -97,17 +114,19 @@ class ConnectionService(
         return connectionReadRepository.existsByServiceId(serviceId = serviceId)
     }
 
-    fun getCollaboratorsUsedForCompany(serviceId: UUID, query: String): List<Collaborator> =
+    fun getCollaboratorsUsedForCompany(companyId: UUID, serviceId: UUID, query: String): List<Collaborator> =
             connectionReadRepository.getCollaboratorsUsedForCompany(
+                    companyId = companyId,
                     serviceId = serviceId,
                     query = query.trimStart().ifEmpty { null },
-            ).map {
-                Collaborator(id = it.id.toString(), name = it.name)
-            }.toList()
+            ).map { Collaborator(id = it.id.toString(), name = it.name) }
 
-    fun getIndustriesInConnectionFromCompany(serviceId: UUID, query: String): List<CompanyReadEntity.Industry> =
-            connectionReadRepository.getIndustriesUsesCompany(serviceId = serviceId, query = query.trimStart().ifEmpty { null })
-                    .map { CompanyReadEntity.Industry(it.id, it.name) }
+    fun getIndustriesInConnectionFromCompany(companyId: UUID, serviceId: UUID, query: String): List<CompanyReadEntity.Industry> =
+            connectionReadRepository.getIndustriesUsesCompany(
+                    companyId = companyId,
+                    serviceId = serviceId,
+                    query = query.trimStart().ifEmpty { null },
+            ).map { CompanyReadEntity.Industry(it.id, it.name) }
 
     fun hiddenConnectionAndServiceId(serviceId: UUID, connectionId: UUID, isHide: Boolean): Boolean {
         SecurityUtil.currentUserAccountId.let {
