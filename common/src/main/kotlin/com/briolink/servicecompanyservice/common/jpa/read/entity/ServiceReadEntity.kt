@@ -49,7 +49,7 @@ class ServiceReadEntity(
         @JsonProperty("description")
         var description: String? = null,
         @JsonProperty("lastUsed")
-        val lastUsed: LocalDate? = null,
+        var lastUsed: LocalDate? = null,
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

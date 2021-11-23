@@ -20,7 +20,8 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpe
 //    @Query("UPDATE ServiceReadEntity s SET s.isHide = ?3 where s.id = ?1 and s.companyId = ?2")
 //    fun hideServiceByIdAndCompanyId(id: UUID, companyId: UUID, isHide: Boolean)
 
-
+    @Query("SELECT id FROM ServiceReadEntity")
+    fun getAllUUID(): List<UUID>
     fun findByCompanyId(companyId: UUID): List<ServiceReadEntity>
 
     @Modifying

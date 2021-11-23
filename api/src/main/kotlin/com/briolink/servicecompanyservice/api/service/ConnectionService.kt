@@ -4,10 +4,13 @@ import com.blazebit.persistence.CriteriaBuilderFactory
 import com.blazebit.persistence.PagedList
 import com.blazebit.persistence.ParameterHolder
 import com.blazebit.persistence.WhereBuilder
+import com.briolink.event.publisher.EventPublisher
 import com.briolink.servicecompanyservice.api.graphql.SecurityUtil
 import com.briolink.servicecompanyservice.api.types.Collaborator
 import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
+import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import com.briolink.servicecompanyservice.common.jpa.enumration.ConnectionStatusEnum
 import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
@@ -24,6 +27,7 @@ class ConnectionService(
     private val connectionReadRepository: ConnectionReadRepository,
     private val serviceCompanyService: ServiceCompanyService,
     private val entityManager: EntityManager,
+    private val eventPublisher: EventPublisher,
     private val criteriaBuilderFactory: CriteriaBuilderFactory
 ) {
     fun findAll(
@@ -38,7 +42,7 @@ class ConnectionService(
 
         setFilters(serviceId, cb, filter)
 
-        return cb.orderByAsc("id").orderBy(sort.sortBy.name, sort.direction.name == "ASC").page(offset, limit).resultList
+        return cb.orderBy(sort.sortBy.name, sort.direction.name == "ASC").orderByAsc("id").page(offset, limit).resultList
     }
 
     fun count(serviceId: UUID, filter: ConnectionFilter): Long {
@@ -54,6 +58,7 @@ class ConnectionService(
         filters: ConnectionFilter
     ): T where T : WhereBuilder<T>, T : ParameterHolder<T> {
         cb.where("serviceId").eq(serviceId)
+        cb.where("isDeleted").eq( false)
         with(filters) {
             cb.where("isHidden").eq(filters.isHidden ?: false)
             if (!collaboratorIds.isNullOrEmpty()) {
@@ -112,6 +117,7 @@ class ConnectionService(
                         connectionId = connectionId,
                         isHide = isHide,
                 )
+                eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(serviceId)))
                 return true
             }
         }

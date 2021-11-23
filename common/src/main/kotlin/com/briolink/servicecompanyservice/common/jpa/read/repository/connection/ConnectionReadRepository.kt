@@ -70,10 +70,10 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
     @Query(
             """
         select c from ConnectionReadEntity c
-        where c.serviceId = ?1 and c._status = ?2
+        where c.serviceId = ?1 and c._status = ?2 AND c.isDeleted = false AND c.isHidden = false)
     """
     )
-    fun getByServiceIdAndStatus(serviceId: UUID, type: Int = ConnectionStatusEnum.Verified.value): Stream<ConnectionReadEntity>
+    fun getByServiceIdAndStatusAndNotHiddenOrDeleted(serviceId: UUID, type: Int = ConnectionStatusEnum.Verified.value): List<ConnectionReadEntity>
 
     @Modifying
     @Query("UPDATE ConnectionReadEntity c SET c.isHidden = ?3 where c.id = ?1 and c.serviceId = ?2")

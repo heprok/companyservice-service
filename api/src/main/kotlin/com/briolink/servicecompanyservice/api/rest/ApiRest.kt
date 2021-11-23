@@ -18,7 +18,7 @@ class ApiRest(
     @GetMapping("/statistic/refresh")
     fun refreshStatistic(): ResponseEntity<Int> {
         eventPublisher.publishAsync(
-                CompanyServiceStatisticRefreshEvent(Statistic("refresh")),
+                CompanyServiceStatisticRefreshEvent(Statistic(null)),
         )
         return ResponseEntity.ok(1)
     }

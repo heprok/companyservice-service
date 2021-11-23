@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql.mutation
 
+import com.briolink.event.publisher.EventPublisher
 import com.briolink.servicecompanyservice.api.graphql.SecurityUtil
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.BaseResult
@@ -9,6 +10,8 @@ import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.ServiceResultData
 import com.briolink.servicecompanyservice.api.types.UpdateServiceInput
 import com.briolink.servicecompanyservice.api.types.UpdateServiceResult
+import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.InputArgument
@@ -19,7 +22,8 @@ import java.util.*
 
 @DgsComponent
 class ServiceMutation(
-    val serviceCompanyService: ServiceCompanyService
+    val serviceCompanyService: ServiceCompanyService,
+    private val eventPublisher: EventPublisher
 ) {
     @DgsMutation
     fun uploadServiceImage(
@@ -69,6 +73,8 @@ class ServiceMutation(
         @InputArgument("serviceId") serviceId: String
     ): BaseResult {
         serviceCompanyService.delete(UUID.fromString(serviceId), deletedBy = SecurityUtil.currentUserAccountId)
+        eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(UUID.fromString(serviceId))))
+
         return BaseResult(
                 success = true
         )

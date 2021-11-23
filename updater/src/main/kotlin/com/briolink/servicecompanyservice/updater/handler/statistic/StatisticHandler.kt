@@ -12,10 +12,10 @@ class StatisticHandler(
     private val serviceReadRepository: ServiceReadRepository
 ) : IEventHandler<CompanyServiceStatisticRefreshEvent> {
     override fun handle(event: CompanyServiceStatisticRefreshEvent) {
-        val serviceIds = serviceReadRepository.findAll().map {
-            it.id
+        val serviceUUID = event.data.serviceId.let {
+            if (it == null) serviceReadRepository.getAllUUID() else listOf(it)
         }
-        serviceIds.forEach {
+        serviceUUID.forEach {
             statisticHandlerService.refreshByService(it)
         }
     }
