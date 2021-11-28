@@ -12,6 +12,7 @@ import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException
 import org.springframework.security.access.prepost.PreAuthorize
+import java.util.UUID
 
 @DgsComponent
 class ServiceQuery(private val serviceCompanyService: ServiceCompanyService) {
@@ -21,12 +22,17 @@ class ServiceQuery(private val serviceCompanyService: ServiceCompanyService) {
         val service = serviceCompanyService.getServiceBySlug(slug).orElseThrow { throw DgsEntityNotFoundException() }
         val role = serviceCompanyService.getPermission(service.id, SecurityUtil.currentUserAccountId)
         return ServiceAndUserRole(
-                service = Service.fromEntity(service),
-                role = when (role) {
-                    UserPermissionRoleTypeEnum.Employee -> PermissionRole.Employee
-                    UserPermissionRoleTypeEnum.Owner -> PermissionRole.Owner
-                    else -> null
-                },
+            service = Service.fromEntity(service),
+            role = when (role) {
+                UserPermissionRoleTypeEnum.Employee -> PermissionRole.Employee
+                UserPermissionRoleTypeEnum.Owner -> PermissionRole.Owner
+                else -> null
+            },
         )
     }
+
+    @DgsQuery
+    fun getServiceById(@InputArgument("id") id: String): Service =
+        serviceCompanyService.findById(UUID.fromString(id)).orElseThrow { throw DgsEntityNotFoundException() }
+            .let { Service.fromEntity(it) }
 }

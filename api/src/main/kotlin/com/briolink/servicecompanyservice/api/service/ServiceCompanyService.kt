@@ -1,7 +1,12 @@
 package com.briolink.servicecompanyservice.api.service
 
+import com.briolink.event.publisher.EventPublisher
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceDeletedData
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceUpdatedEvent
+import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
@@ -9,11 +14,6 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermiss
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
-import com.briolink.event.publisher.EventPublisher
-import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceDeletedData
-import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
-import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -45,23 +45,22 @@ class ServiceCompanyService(
         created: Instant? = null,
     ): ServiceWriteEntity {
         val nameCompany = companyReadRepository.findById(companyId)
-                .orElseThrow { throw EntityNotFoundException("$companyId company not found") }.name
+            .orElseThrow { throw EntityNotFoundException("$companyId company not found") }.name
         serviceCompanyWriteRepository.save(
-                ServiceWriteEntity(
-                        companyId = companyId,
-                        name = name,
-                        created = created,
-                        slug = StringUtil.slugify("$nameCompany $name", false),
-                        description = description,
-                        price = price,
-                ).apply {
-                    this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
-                },
+            ServiceWriteEntity(
+                companyId = companyId,
+                name = name,
+                created = created,
+                slug = StringUtil.slugify("$nameCompany $name", false),
+                description = description,
+                price = price,
+            ).apply {
+                this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
+            },
         ).let {
             eventPublisher.publish(CompanyServiceCreatedEvent(it.toDomain()))
             return it
         }
-
     }
 
     fun update(
@@ -69,20 +68,20 @@ class ServiceCompanyService(
         price: Double?,
         description: String?,
     ): ServiceWriteEntity? =
-            serviceCompanyWriteRepository.findByIdOrNull(id)?.let { writeEntity ->
-                writeEntity.price = price
-                writeEntity.description = description
-                serviceCompanyWriteRepository.save(writeEntity)
-                serviceCompanyReadRepository.getById(id).apply {
-                    data.apply {
-                        this.price = price
-                        this.description = description
-                    }
-                    serviceCompanyReadRepository.save(this)
+        serviceCompanyWriteRepository.findByIdOrNull(id)?.let { writeEntity ->
+            writeEntity.price = price
+            writeEntity.description = description
+            serviceCompanyWriteRepository.save(writeEntity)
+            serviceCompanyReadRepository.getById(id).apply {
+                data.apply {
+                    this.price = price
+                    this.description = description
                 }
-                eventPublisher.publishAsync(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
-                writeEntity
+                serviceCompanyReadRepository.save(this)
             }
+            eventPublisher.publishAsync(CompanyServiceUpdatedEvent(writeEntity.toDomain()))
+            writeEntity
+        }
 
     fun update(
         entity: ServiceWriteEntity
@@ -92,52 +91,52 @@ class ServiceCompanyService(
         return entity
     }
 
-
     fun getServiceBySlug(slug: String): Optional<ServiceReadEntity> = serviceCompanyReadRepository.findBySlug(slug)
     fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
         return userPermissionRoleReadRepository.getUserPermissionRole(
-                accessObjectUuid = serviceId,
-                accessObjectType = AccessObjectTypeEnum.CompanyService.value,
-                userId = userId,
+            accessObjectUuid = serviceId,
+            accessObjectType = AccessObjectTypeEnum.CompanyService.value,
+            userId = userId,
         )?.role
     }
 
     fun getPermissionOnCompany(companyId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
         return userPermissionRoleReadRepository.getUserPermissionRole(
-                accessObjectUuid = companyId,
-                accessObjectType = AccessObjectTypeEnum.Company.value,
-                userId = userId,
+            accessObjectUuid = companyId,
+            accessObjectType = AccessObjectTypeEnum.Company.value,
+            userId = userId,
         )?.role
     }
 
     fun uploadProfileImage(id: UUID, image: MultipartFile?): URL? {
         val serviceWrite =
-                serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+            serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
         val imageUrl: URL? = if (image != null) awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, image) else null
         serviceWrite.logo = imageUrl
         serviceCompanyReadRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
-                .apply {
-                    data.apply {
-                        logo = imageUrl
-                    }
-                    serviceCompanyReadRepository.save(this)
+            .apply {
+                data.apply {
+                    logo = imageUrl
                 }
+                serviceCompanyReadRepository.save(this)
+            }
         update(serviceWrite)
         return imageUrl
     }
 
     fun delete(id: UUID, deletedBy: UUID) {
         serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
-                .apply {
-                    this.deleted = Instant.now()
-                    this.deletedBy = deletedBy
-                    serviceCompanyWriteRepository.save(this)
-                }
+            .apply {
+                this.deleted = Instant.now()
+                this.deletedBy = deletedBy
+                serviceCompanyWriteRepository.save(this)
+            }
         eventPublisher.publishAsync(CompanyServiceDeletedEvent(CompanyServiceDeletedData(id)))
     }
+
+    fun findById(serviceId: UUID): Optional<ServiceWriteEntity> = serviceCompanyWriteRepository.findById(serviceId)
 
     fun findByNameAndCompanyId(companyId: UUID, name: String): ServiceWriteEntity? {
         return serviceCompanyWriteRepository.findByCompanyIdAndName(companyId = companyId, name = name)
     }
-
 }
