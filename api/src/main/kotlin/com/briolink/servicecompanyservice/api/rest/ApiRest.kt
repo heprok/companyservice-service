@@ -1,9 +1,9 @@
 package com.briolink.servicecompanyservice.api.rest
 
-import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
-import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import com.briolink.event.publisher.EventPublisher
 import com.briolink.servicecompanyservice.api.dataloader.ServiceDataLoader
+import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,7 +18,7 @@ class ApiRest(
     @GetMapping("/statistic/refresh")
     fun refreshStatistic(): ResponseEntity<Int> {
         eventPublisher.publishAsync(
-                CompanyServiceStatisticRefreshEvent(Statistic(null)),
+            CompanyServiceStatisticRefreshEvent(Statistic(null)),
         )
         return ResponseEntity.ok(1)
     }

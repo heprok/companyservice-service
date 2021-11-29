@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.projection
 
-import java.util.*
+import java.util.UUID
 
 interface IndustryProjection {
     val id: UUID

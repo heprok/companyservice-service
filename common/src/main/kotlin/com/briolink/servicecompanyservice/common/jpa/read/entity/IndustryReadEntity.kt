@@ -17,6 +17,4 @@ class IndustryReadEntity(
 
     @Column(nullable = false)
     val name: String
-) : BaseReadEntity() {
-
-}
+) : BaseReadEntity()

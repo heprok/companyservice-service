@@ -4,32 +4,34 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URL
 import java.time.Instant
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
-data class CompanyService (
-    @JsonProperty("id")
+data class CompanyService(
+    @JsonProperty
     val id: UUID,
-    @JsonProperty("companyId")
+    @JsonProperty
     val companyId: UUID,
-    @JsonProperty("name")
+    @JsonProperty
     val name: String,
-    @JsonProperty("slug")
+    @JsonProperty
     val slug: String,
-    @JsonProperty("price")
+    @JsonProperty
     val price: Double? = null,
-    @JsonProperty("logo")
+    @JsonProperty
     val logo: URL? = null,
-    @JsonProperty("description")
+    @JsonProperty
     val description: String? = null,
-    @JsonProperty("created")
+    @JsonProperty
     val created: Instant,
-    @JsonProperty("lastUsed")
+    @JsonProperty
     val lastUsed: LocalDate? = null,
-    @JsonProperty("verifiedUses")
+    @JsonProperty
     val verifiedUses: Int = 0,
 ) : Domain
 
 data class CompanyServiceDeletedData(
-    @JsonProperty("id")
-    val id: UUID
+    @JsonProperty
+    val id: UUID,
+    @JsonProperty
+    val companyId: UUID
 ) : Domain

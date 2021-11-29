@@ -17,15 +17,7 @@ class JsonbGetFunc : SQLFunction {
     }
 
     @Throws(QueryException::class)
-    override fun getReturnType(columnType: Type?, mapping: Mapping?): Type {
-        return StringType()
-    }
-
-    override fun hasArguments(): Boolean {
-        return true
-    }
-
-    override fun hasParenthesesIfNoArguments(): Boolean {
-        return false
-    }
+    override fun getReturnType(columnType: Type?, mapping: Mapping?): Type = StringType()
+    override fun hasArguments(): Boolean = true
+    override fun hasParenthesesIfNoArguments(): Boolean = false
 }

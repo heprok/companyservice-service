@@ -13,10 +13,10 @@ class CompanyIndustryCreatedEventHandler(
 ) : IEventHandler<IndustryCreatedEvent> {
     override fun handle(event: IndustryCreatedEvent) {
         industryReadRepository.save(
-                IndustryReadEntity(
-                        id = event.data.id,
-                        name = event.data.name,
-                ),
+            IndustryReadEntity(
+                id = event.data.id,
+                name = event.data.name,
+            ),
         )
     }
 }

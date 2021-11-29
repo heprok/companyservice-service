@@ -3,7 +3,7 @@ package com.briolink.servicecompanyservice.updater.handler.connection
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.Instant
 import java.time.Year
-import java.util.*
+import java.util.UUID
 
 enum class ConnectionStatus(val value: Int) {
     @JsonProperty("1")

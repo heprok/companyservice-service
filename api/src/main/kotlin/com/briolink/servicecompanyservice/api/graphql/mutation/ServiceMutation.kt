@@ -1,7 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql.mutation
 
 import com.briolink.event.publisher.EventPublisher
-import com.briolink.servicecompanyservice.api.graphql.SecurityUtil
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.BaseResult
 import com.briolink.servicecompanyservice.api.types.CreateServiceInput
@@ -10,22 +9,24 @@ import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.ServiceResultData
 import com.briolink.servicecompanyservice.api.types.UpdateServiceInput
 import com.briolink.servicecompanyservice.api.types.UpdateServiceResult
+import com.briolink.servicecompanyservice.api.util.SecurityUtil
 import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.multipart.MultipartFile
-import java.net.URL
-import java.util.*
+import java.util.UUID
 
 @DgsComponent
 class ServiceMutation(
-    val serviceCompanyService: ServiceCompanyService,
+    private val serviceCompanyService: ServiceCompanyService,
     private val eventPublisher: EventPublisher
 ) {
     @DgsMutation
+    @PreAuthorize("isAuthenticated()")
     fun uploadServiceImage(
         @InputArgument("id") id: String,
         @InputArgument("image") image: MultipartFile?
@@ -34,67 +35,63 @@ class ServiceMutation(
     }
 
     @DgsMutation(field = "createService")
+    @PreAuthorize("isAuthenticated()")
     fun create(
         @InputArgument("companyId") companyId: String,
         @InputArgument("input") input: CreateServiceInput
     ): CreateServiceResult {
         val entity = serviceCompanyService.create(
-                companyId = UUID.fromString(companyId),
-                price = input.price,
-                name = input.name,
-                description = input.description,
-                fileImage = input.logo,
+            companyId = UUID.fromString(companyId),
+            price = input.price,
+            name = input.name,
+            description = input.description,
+            fileImage = input.logo,
         )
 
         return CreateServiceResult(
-                userErrors = listOf(),
-                data = ServiceResultData(id = entity.id.toString(), slug = entity.slug),
+            userErrors = listOf(),
+            data = ServiceResultData(id = entity.id.toString(), slug = entity.slug),
         )
     }
 
     @DgsMutation(field = "createServiceLocal")
+    @PreAuthorize("@servletUtil.isIntranet()")
     fun createServiceLocal(
         @InputArgument("companyId") companyId: String,
         @InputArgument("name") name: String
     ): CreateServiceResult {
-        (serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = name) ?: serviceCompanyService.create(
-                companyId = UUID.fromString(companyId),
-                name = name,
-        )).let {
-            return CreateServiceResult(
-                    data = ServiceResultData(id = it.id.toString(), slug = it.slug),
-                    userErrors = listOf(),
-            )
-        }
+        return (
+            serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = name)
+                ?: serviceCompanyService.create(companyId = UUID.fromString(companyId), name = name)
+            ).let { CreateServiceResult(data = ServiceResultData(id = it.id.toString(), slug = it.slug), userErrors = listOf()) }
     }
 
     @DgsMutation(field = "deleteServiceLocal")
+    @PreAuthorize("@servletUtil.isIntranet()")
     fun deleteServiceLocal(
         @InputArgument("serviceId") serviceId: String
     ): BaseResult {
         serviceCompanyService.delete(UUID.fromString(serviceId), deletedBy = SecurityUtil.currentUserAccountId)
         eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(UUID.fromString(serviceId))))
 
-        return BaseResult(
-                success = true
-        )
-
+        return BaseResult(success = true)
     }
 
     @DgsMutation(field = "updateService")
+    @PreAuthorize("isAuthenticated()")
     fun update(
         @InputArgument("id") id: String,
         @InputArgument("input") input: UpdateServiceInput
     ): UpdateServiceResult {
         serviceCompanyService.update(
-                id = UUID.fromString(id),
-                price = input.price,
-                description = input.description,
+            id = UUID.fromString(id),
+            price = input.price,
+            description = input.description,
         ) ?: throw DgsEntityNotFoundException()
 
         return UpdateServiceResult(
-                success = true,
-                userErrors = listOf(),
+            success = true,
+            userErrors = listOf(),
         )
     }
 }

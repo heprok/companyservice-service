@@ -1,12 +1,12 @@
 package com.briolink.servicecompanyservice.updater.handler.userpermission
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.*
-
+import java.util.UUID
 
 enum class AccessObjectType(val value: Int) {
     @JsonProperty("1")
     Company(1),
+
     @JsonProperty("2")
     CompanyService(2),
 }
@@ -14,6 +14,7 @@ enum class AccessObjectType(val value: Int) {
 enum class UserPermissionRoleType(val value: Int) {
     @JsonProperty("0")
     Employee(0),
+
     @JsonProperty("1")
     Owner(1)
 }

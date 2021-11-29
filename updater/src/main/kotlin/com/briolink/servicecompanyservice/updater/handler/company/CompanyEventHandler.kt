@@ -6,10 +6,10 @@ import com.briolink.event.annotation.EventHandlers
 import com.briolink.servicecompanyservice.updater.handler.companyservice.CompanyServiceHandlerService
 
 @EventHandlers(
-        EventHandler("CompanyCreatedEvent", "1.0"),
-        EventHandler("CompanyUpdatedEvent", "1.0"),
+    EventHandler("CompanyCreatedEvent", "1.0"),
+    EventHandler("CompanyUpdatedEvent", "1.0"),
 )
-class CompanyCreatedEventHandler(
+class CompanyEventHandler(
     private val companyHandlerService: CompanyHandlerService,
     private val companyServiceHandlerService: CompanyServiceHandlerService
 ) : IEventHandler<CompanyEvent> {
@@ -21,5 +21,3 @@ class CompanyCreatedEventHandler(
         }
     }
 }
-
-

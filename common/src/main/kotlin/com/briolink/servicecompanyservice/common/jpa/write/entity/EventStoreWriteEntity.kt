@@ -1,6 +1,5 @@
 package com.briolink.servicecompanyservice.common.jpa.write.entity
 
-import com.briolink.servicecompanyservice.common.domain.v1_0.Domain
 import org.hibernate.annotations.Type
 import java.time.Instant
 import javax.persistence.Column
@@ -16,5 +15,4 @@ class EventStoreWriteEntity(
     @Column(name = "created", nullable = false)
     var created: Instant
 
-) : BaseWriteEntity() {
-}
+) : BaseWriteEntity()

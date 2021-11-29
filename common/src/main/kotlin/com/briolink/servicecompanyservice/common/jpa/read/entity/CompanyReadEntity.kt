@@ -28,21 +28,21 @@ class CompanyReadEntity(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Data(
-        @JsonProperty("slug")
+        @JsonProperty
         var slug: String,
-        @JsonProperty("logo")
+        @JsonProperty
         var logo: URL? = null,
-        @JsonProperty("location")
+        @JsonProperty
         var location: LocationInfoDto? = null,
-        @JsonProperty("industry")
+        @JsonProperty
         var industry: Industry? = null,
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Industry(
-        @JsonProperty("id")
+        @JsonProperty
         val id: UUID,
-        @JsonProperty("name")
+        @JsonProperty
         val name: String,
     )
 }

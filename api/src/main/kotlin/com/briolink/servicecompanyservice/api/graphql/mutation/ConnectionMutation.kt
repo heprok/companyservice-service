@@ -4,7 +4,7 @@ import com.briolink.servicecompanyservice.api.service.ConnectionService
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.InputArgument
-import java.util.*
+import java.util.UUID
 
 @DgsComponent
 class ConnectionMutation(
@@ -17,9 +17,9 @@ class ConnectionMutation(
         @InputArgument("isHide") isHide: Boolean
     ): Boolean {
         return connectionService.hiddenConnectionAndServiceId(
-                connectionId = UUID.fromString(connectionId),
-                serviceId = UUID.fromString(serviceId),
-                isHide = isHide,
+            connectionId = UUID.fromString(connectionId),
+            serviceId = UUID.fromString(serviceId),
+            isHide = isHide,
         )
     }
 }

@@ -4,13 +4,13 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEnti
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
-interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpecificationExecutor<ServiceReadEntity> {
+interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
     fun findByCompanyIdIs(companyId: UUID, pageable: Pageable? = null): Page<ServiceReadEntity>
 
     fun existsByCompanyId(companyId: UUID): Boolean
@@ -26,7 +26,7 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpe
 
     @Modifying
     @Query(
-            """update ServiceReadEntity c
+        """update ServiceReadEntity c
            set c.data = function('jsonb_sets', c.data,
                 '{company,name}', :name, text,
                 '{company,slug}', :slug, text,
@@ -43,5 +43,4 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID>, JpaSpe
     @Modifying
     @Query("DELETE from ServiceReadEntity c where c.id = ?1")
     override fun deleteById(id: UUID)
-
 }

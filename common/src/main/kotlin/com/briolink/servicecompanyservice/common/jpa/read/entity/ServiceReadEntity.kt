@@ -6,7 +6,7 @@ import org.hibernate.annotations.Type
 import java.net.URL
 import java.time.Instant
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -27,40 +27,40 @@ class ServiceReadEntity(
     @Column(name = "slug", nullable = false, length = 255)
     var slug: String,
 
-    ) : BaseReadEntity() {
+) : BaseReadEntity() {
 
     @Type(type = "jsonb")
     @Column(name = "data", nullable = false)
     lateinit var data: Data
 
     data class Data(
-        @JsonProperty("name")
+        @JsonProperty
         var name: String,
-        @JsonProperty("logo")
+        @JsonProperty
         var logo: URL? = null,
-        @JsonProperty("verifiedUses")
+        @JsonProperty
         var verifiedUses: Int = 0,
-        @JsonProperty("price")
+        @JsonProperty
         var price: Double? = null,
-        @JsonProperty("created")
+        @JsonProperty
         var created: Instant,
-        @JsonProperty("company")
+        @JsonProperty
         var company: Company,
-        @JsonProperty("description")
+        @JsonProperty
         var description: String? = null,
-        @JsonProperty("lastUsed")
+        @JsonProperty
         var lastUsed: LocalDate? = null,
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Company(
-        @JsonProperty("id")
+        @JsonProperty
         var id: UUID,
-        @JsonProperty("name")
+        @JsonProperty
         var name: String,
-        @JsonProperty("slug")
+        @JsonProperty
         var slug: String,
-        @JsonProperty("logo")
+        @JsonProperty
         var logo: URL?,
     )
 }

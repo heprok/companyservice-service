@@ -14,9 +14,9 @@ class UserHandlerService(
     fun createOrUpdate(user: User) {
         userReadRepository.findById(user.id).orElse(UserReadEntity(user.id)).apply {
             this.data = UserReadEntity.Data(
-                    firstName = user.firstName,
-                    lastName = user.lastName,
-                    image = user.image,
+                firstName = user.firstName,
+                lastName = user.lastName,
+                image = user.image,
             ).apply {
                 this.slug = user.slug
             }

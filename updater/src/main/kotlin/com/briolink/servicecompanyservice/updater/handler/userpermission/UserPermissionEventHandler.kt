@@ -5,8 +5,8 @@ import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
 
 @EventHandlers(
-        EventHandler("UserPermissionCreatedEvent", "1.0"),
-        EventHandler("UserPermissionUpdatedEvent", "1.0"),
+    EventHandler("UserPermissionCreatedEvent", "1.0"),
+    EventHandler("UserPermissionUpdatedEvent", "1.0"),
 )
 class UserPermissionEventHandler(
     private val userPermissionHandlerService: UserPermissionHandlerService

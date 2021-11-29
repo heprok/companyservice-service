@@ -1,6 +1,7 @@
 type Query {
     getService(slug: String!): ServiceAndUserRole!
     getServiceById(id: ID!): Service!
+    countByCompanyId(companyId: ID!) : Int
     getConnections(companyId: ID!, serviceId: ID!, filter: ConnectionFilter!, sort: ConnectionSort!, limit: Int = 10, offset: Int = 0): ConnectionList!
     getConnectionsCount(companyId: ID!, serviceId: ID!,  filter: ConnectionFilter!): Int!
 

@@ -14,7 +14,7 @@ import javax.persistence.Table
 @Entity
 class UserReadEntity(
     @Id
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "id", nullable = false)
     var id: UUID,
 ) : BaseReadEntity() {
@@ -25,14 +25,14 @@ class UserReadEntity(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Data(
-        @JsonProperty("firstName")
+        @JsonProperty
         var firstName: String,
-        @JsonProperty("lastName")
+        @JsonProperty
         var lastName: String,
-        @JsonProperty("image")
+        @JsonProperty
         var image: URL? = null,
     ) {
-        @JsonProperty("slug")
+        @JsonProperty
         lateinit var slug: String
     }
 }

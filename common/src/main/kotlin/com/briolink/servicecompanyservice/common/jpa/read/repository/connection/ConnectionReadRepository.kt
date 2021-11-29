@@ -5,14 +5,13 @@ import com.briolink.servicecompanyservice.common.jpa.projection.CollaboratorProj
 import com.briolink.servicecompanyservice.common.jpa.projection.IndustryProjection
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.util.Optional
 import java.util.UUID
 
-interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, JpaSpecificationExecutor<ConnectionReadEntity> {
+interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
 
     fun findByIdAndServiceId(id: UUID, serviceId: UUID): Optional<ConnectionReadEntity>
 

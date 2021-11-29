@@ -2,7 +2,6 @@ package com.briolink.servicecompanyservice.common.jpa.read.entity.statistic
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.vladmihalcea.hibernate.type.range.Range
 import java.util.UUID
 
 interface ChartListItem {
@@ -18,7 +17,8 @@ class ChartDataList<T>(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class ChartList<T> {
-    @JsonProperty var data: MutableMap<String, ChartDataList<T>> = mutableMapOf()
+    @JsonProperty
+    var data: MutableMap<String, ChartDataList<T>> = mutableMapOf()
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)

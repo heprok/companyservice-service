@@ -5,10 +5,10 @@ import com.blazebit.persistence.PagedList
 import com.blazebit.persistence.ParameterHolder
 import com.blazebit.persistence.WhereBuilder
 import com.briolink.event.publisher.EventPublisher
-import com.briolink.servicecompanyservice.api.graphql.SecurityUtil
 import com.briolink.servicecompanyservice.api.types.Collaborator
 import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
+import com.briolink.servicecompanyservice.api.util.SecurityUtil
 import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
 import com.briolink.servicecompanyservice.common.dto.location.LocationId
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent

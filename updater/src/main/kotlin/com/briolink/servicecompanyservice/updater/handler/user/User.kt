@@ -2,7 +2,7 @@ package com.briolink.servicecompanyservice.updater.handler.user
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URL
-import java.util.*
+import java.util.UUID
 
 data class User(
     @JsonProperty("id")

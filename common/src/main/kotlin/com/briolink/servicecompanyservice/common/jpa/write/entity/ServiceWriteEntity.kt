@@ -4,7 +4,7 @@ import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
 import org.hibernate.annotations.Type
 import java.net.URL
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.PrePersist
@@ -14,7 +14,7 @@ import javax.persistence.Table
 @Entity
 class ServiceWriteEntity(
 
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "company_id", nullable = false)
     var companyId: UUID,
 
@@ -39,7 +39,7 @@ class ServiceWriteEntity(
     @Column(name = "deleted")
     var deleted: Instant? = null,
 
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "deleted_by")
     var deletedBy: UUID? = null
 
@@ -50,14 +50,13 @@ class ServiceWriteEntity(
     }
 
     fun toDomain() = CompanyService(
-            id = id!!,
-            companyId = companyId,
-            name = name,
-            price = price,
-            logo = logo,
-            description = description,
-            created = created!!,
-            slug = slug,
+        id = id!!,
+        companyId = companyId,
+        name = name,
+        price = price,
+        logo = logo,
+        description = description,
+        created = created!!,
+        slug = slug,
     )
-
 }

@@ -131,8 +131,8 @@ class ServiceCompanyService(
                 this.deleted = Instant.now()
                 this.deletedBy = deletedBy
                 serviceCompanyWriteRepository.save(this)
+                eventPublisher.publishAsync(CompanyServiceDeletedEvent(CompanyServiceDeletedData(id, companyId)))
             }
-        eventPublisher.publishAsync(CompanyServiceDeletedEvent(CompanyServiceDeletedData(id)))
     }
 
     fun findById(serviceId: UUID): Optional<ServiceWriteEntity> = serviceCompanyWriteRepository.findById(serviceId)
@@ -140,4 +140,6 @@ class ServiceCompanyService(
     fun findByNameAndCompanyId(companyId: UUID, name: String): ServiceWriteEntity? {
         return serviceCompanyWriteRepository.findByCompanyIdAndName(companyId = companyId, name = name)
     }
+
+    fun countByCompanyId(companyId: UUID): Long = serviceCompanyWriteRepository.countByCompanyId(companyId)
 }

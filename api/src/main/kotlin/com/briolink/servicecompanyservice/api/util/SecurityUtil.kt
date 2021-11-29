@@ -1,6 +1,5 @@
-package com.briolink.servicecompanyservice.api.graphql
+package com.briolink.servicecompanyservice.api.util
 
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.util.UUID

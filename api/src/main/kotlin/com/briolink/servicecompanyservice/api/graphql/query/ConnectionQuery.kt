@@ -1,6 +1,5 @@
 package com.briolink.servicecompanyservice.api.graphql.query
 
-import com.briolink.servicecompanyservice.api.graphql.SecurityUtil
 import com.briolink.servicecompanyservice.api.graphql.fromEntity
 import com.briolink.servicecompanyservice.api.service.ConnectionService
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
@@ -10,6 +9,7 @@ import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionList
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.api.types.Industry
+import com.briolink.servicecompanyservice.api.util.SecurityUtil
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
@@ -35,12 +35,12 @@ class ConnectionQuery(
     ): ConnectionList {
         return if (connectionService.existsConnectionByService(serviceId = UUID.fromString(serviceId))
         ) {
-            val securityFilter = if (SecurityUtil.currentUserAccountId.let {
+            val securityFilter = if (
                 serviceCompanyService.getPermission(
-                        userId = it,
-                        serviceId = UUID.fromString(serviceId),
-                    ) != UserPermissionRoleTypeEnum.Owner
-            }
+                    userId = SecurityUtil.currentUserAccountId,
+                    serviceId = UUID.fromString(serviceId),
+                ) != UserPermissionRoleTypeEnum.Owner
+
             )
                 filter.copy(isHidden = false) else filter
             val result = connectionService.findAll(
@@ -59,9 +59,7 @@ class ConnectionQuery(
                     filter = filter,
                 ).toInt(),
             )
-        } else {
-            ConnectionList(items = listOf(), totalItems = -1)
-        }
+        } else ConnectionList(items = listOf(), totalItems = -1)
     }
 
     @DgsQuery

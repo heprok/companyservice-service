@@ -6,7 +6,6 @@ import java.time.Instant
 import java.time.LocalDate
 import kotlin.random.Random
 
-
 abstract class DataLoader : CommandLineRunner {
 
     @Throws(Exception::class)
@@ -26,11 +25,11 @@ abstract class DataLoader : CommandLineRunner {
     fun randomInstant(startYear: Int, endYear: Int): Instant {
         val date = randomDate(startYear, endYear)
         val datetime = DateTime(
-                date.year,
-                date.month.value,
-                date.dayOfMonth,
-                Random.nextInt(0, 23),
-                Random.nextInt(0, 59),
+            date.year,
+            date.month.value,
+            date.dayOfMonth,
+            Random.nextInt(0, 23),
+            Random.nextInt(0, 59),
         )
         return Instant.ofEpochMilli(datetime.millis)
     }

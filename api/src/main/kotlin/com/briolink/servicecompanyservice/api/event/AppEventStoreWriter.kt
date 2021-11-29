@@ -11,7 +11,7 @@ import java.time.Instant
 @Component
 class AppEventStoreWriter(
     private val eventStoreWriteRepository: EventStoreWriteRepository,
-) : EventStoreWriter{
+) : EventStoreWriter {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     override fun write(payload: String, timestamp: Long) {
         // TODO: check for select
