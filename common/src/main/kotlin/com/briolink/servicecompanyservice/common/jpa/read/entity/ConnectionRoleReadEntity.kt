@@ -1,11 +1,8 @@
 package com.briolink.servicecompanyservice.common.jpa.read.entity
 
-import com.briolink.servicecompanyservice.common.jpa.enumration.CompanyRoleTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
-import com.fasterxml.jackson.annotation.JsonFormat
+import com.briolink.servicecompanyservice.common.jpa.enumeration.CompanyRoleTypeEnum
 import org.hibernate.annotations.Type
-import java.util.*
-import java.util.UUID.randomUUID
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -15,7 +12,7 @@ import javax.persistence.Table
 @Entity
 class ConnectionRoleReadEntity(
     @Id
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "id", nullable = false)
     var id: UUID,
 

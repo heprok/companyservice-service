@@ -5,8 +5,8 @@ import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceDelet
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceUpdatedEvent
-import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
@@ -20,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.net.URL
 import java.time.Instant
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 import javax.persistence.EntityNotFoundException
 
 @Service

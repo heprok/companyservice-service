@@ -33,7 +33,7 @@ type ConnectionParticipant {
 input ConnectionFilter {
     collaboratorIds: [ID!]
     industryIds: [ID!]
-    location: String
+    locationId: ID
     datesOfCollaborators: RangeYear
     status: [ConnectionStatus!]
     isHidden: Boolean

@@ -10,13 +10,13 @@ import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionList
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.api.types.Industry
-import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
 import org.springframework.security.access.prepost.PreAuthorize
-import java.util.*
+import java.util.UUID
 
 @DgsComponent
 class ConnectionQuery(
@@ -33,27 +33,31 @@ class ConnectionQuery(
         @InputArgument("limit") limit: Int,
         @InputArgument("offset") offset: Int,
     ): ConnectionList {
-        return if (connectionService.existsConnectionByService(
-                    serviceId = UUID.fromString(serviceId),
-            )) {
+        return if (connectionService.existsConnectionByService(serviceId = UUID.fromString(serviceId))
+        ) {
             val securityFilter = if (SecurityUtil.currentUserAccountId.let {
-                    serviceCompanyService.getPermission(
-                            userId = it,
-                            serviceId = UUID.fromString(serviceId),
+                serviceCompanyService.getPermission(
+                        userId = it,
+                        serviceId = UUID.fromString(serviceId),
                     ) != UserPermissionRoleTypeEnum.Owner
-                })
+            }
+            )
                 filter.copy(isHidden = false) else filter
             val result = connectionService.findAll(
-                    serviceId = UUID.fromString(serviceId),
-                    companyId = UUID.fromString(companyId),
-                    sort = sort,
-                    filter = securityFilter,
-                    limit = limit,
-                    offset = offset,
+                serviceId = UUID.fromString(serviceId),
+                companyId = UUID.fromString(companyId),
+                sort = sort,
+                filter = securityFilter,
+                limit = limit,
+                offset = offset,
             )
             ConnectionList(
-                    items = result.map { Connection.fromEntity(it) },
-                    totalItems = connectionService.count(serviceId = UUID.fromString(serviceId), companyId = UUID.fromString(companyId), filter = filter).toInt()
+                items = result.map { Connection.fromEntity(it) },
+                totalItems = connectionService.count(
+                    serviceId = UUID.fromString(serviceId),
+                    companyId = UUID.fromString(companyId),
+                    filter = filter,
+                ).toInt(),
             )
         } else {
             ConnectionList(items = listOf(), totalItems = -1)
@@ -67,8 +71,7 @@ class ConnectionQuery(
         @InputArgument("companyId") companyId: String,
         @InputArgument("filter") filter: ConnectionFilter
     ): Int =
-            connectionService.count(serviceId = UUID.fromString(serviceId), companyId = UUID.fromString(companyId), filter = filter).toInt()
-
+        connectionService.count(serviceId = UUID.fromString(serviceId), companyId = UUID.fromString(companyId), filter = filter).toInt()
 
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
@@ -77,9 +80,9 @@ class ConnectionQuery(
         @InputArgument("companyId") companyId: String,
         @InputArgument("query") query: String,
     ): List<Collaborator> = connectionService.getCollaboratorsUsedForCompany(
-            serviceId = UUID.fromString(serviceId),
-            companyId = UUID.fromString(companyId),
-            query = StringUtil.replaceNonWord(query),
+        serviceId = UUID.fromString(serviceId),
+        companyId = UUID.fromString(companyId),
+        query = StringUtil.replaceNonWord(query),
     )
 
     @DgsQuery
@@ -89,11 +92,11 @@ class ConnectionQuery(
         @InputArgument("serviceId") serviceId: String,
         @InputArgument("companyId") companyId: String
     ): List<Industry> =
-            connectionService.getIndustriesInConnectionFromCompany(
-                    serviceId = UUID.fromString(serviceId),
-                    companyId = UUID.fromString(companyId),
-                    query = StringUtil.replaceNonWord(query),
-            ).map {
-                Industry.fromEntity(it)
-            }
+        connectionService.getIndustriesInConnectionFromCompany(
+            serviceId = UUID.fromString(serviceId),
+            companyId = UUID.fromString(companyId),
+            query = StringUtil.replaceNonWord(query),
+        ).map {
+            Industry.fromEntity(it)
+        }
 }

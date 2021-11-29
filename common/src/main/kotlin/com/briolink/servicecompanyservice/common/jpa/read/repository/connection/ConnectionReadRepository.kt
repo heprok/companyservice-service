@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.read.repository.connection
 
-import com.briolink.servicecompanyservice.common.jpa.enumration.ConnectionStatusEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatusEnum
 import com.briolink.servicecompanyservice.common.jpa.projection.CollaboratorProjection
 import com.briolink.servicecompanyservice.common.jpa.projection.IndustryProjection
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
@@ -9,14 +9,15 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
 interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, JpaSpecificationExecutor<ConnectionReadEntity> {
 
     fun findByIdAndServiceId(id: UUID, serviceId: UUID): Optional<ConnectionReadEntity>
 
     @Query(
-            """
+        """
         SELECT cast(company_industry.id as varchar), company_industry.name FROM read.company_industry as company_industry
             WHERE
                 (:query is null or company_industry.name @@to_tsquery( quote_literal( quote_literal( :query ) ) || ':*' ) = true) 
@@ -32,7 +33,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
                     LIMIT 1
                 ) LIMIT 10
     """,
-            nativeQuery = true
+        nativeQuery = true,
     )
     fun getIndustriesUsesCompany(
         @Param("serviceId") serviceId: UUID,
@@ -41,7 +42,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
     ): List<IndustryProjection>
 
     @Query(
-            """
+        """
         SELECT cast(company.id as varchar), company.name FROM read.company as company
             WHERE
                 (:query is null or company.name @@to_tsquery( quote_literal( quote_literal( :query ) ) || ':*' ) = true) 
@@ -55,7 +56,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
                     LIMIT 1
                 ) LIMIT 10
     """,
-            nativeQuery = true
+        nativeQuery = true,
     )
     fun getCollaboratorsUsedForCompany(
         @Param("serviceId") serviceId: UUID,
@@ -75,10 +76,10 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
     fun deleteByConnectionId(id: UUID): Int
 
     @Query(
-            """
+        """
         select c from ConnectionReadEntity c
         where c.serviceId = ?1 and c._status = ?2 AND c.isDeleted = false AND c.isHidden = false
-    """
+    """,
     )
     fun getByServiceIdAndStatusAndNotHiddenOrDeleted(
         serviceId: UUID,
@@ -88,5 +89,4 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID>, 
     @Modifying
     @Query("UPDATE ConnectionReadEntity c SET c.isHidden = ?3 where c.id = ?1 and c.serviceId = ?2")
     fun hiddenByConnectionIdAndServiceId(connectionId: UUID, serviceId: UUID, isHide: Boolean): Int
-
 }

@@ -1,8 +1,8 @@
 package com.briolink.servicecompanyservice.common.jpa.read.entity
 
-import com.briolink.servicecompanyservice.common.jpa.enumration.CompanyRoleTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumration.ConnectionStatusEnum
-import com.briolink.servicecompanyservice.common.jpa.dto.location.LocationInfoDto
+import com.briolink.servicecompanyservice.common.dto.location.LocationInfoDto
+import com.briolink.servicecompanyservice.common.jpa.enumeration.CompanyRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatusEnum
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.range.Range
 import org.hibernate.annotations.Type
@@ -17,8 +17,7 @@ import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.Table
 
-class ConnectionReactorPK(
-) : Serializable {
+class ConnectionReactorPK() : Serializable {
     lateinit var id: UUID
     lateinit var serviceId: UUID
 }
@@ -28,12 +27,12 @@ class ConnectionReactorPK(
 @IdClass(ConnectionReactorPK::class)
 class ConnectionReadEntity(
     @Id
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "id", nullable = false)
     val id: UUID,
 
     @Id
-    @Type(type="pg-uuid")
+    @Type(type = "pg-uuid")
     @Column(name = "service_id", nullable = false)
     var serviceId: UUID
 ) : BaseReadEntity() {

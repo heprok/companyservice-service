@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.read.entity
 
-import com.briolink.servicecompanyservice.common.jpa.dto.location.LocationInfoDto
+import com.briolink.servicecompanyservice.common.dto.location.LocationInfoDto
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.Type

@@ -1,7 +1,7 @@
 package com.briolink.servicecompanyservice.updater.handler.userpermission
 
-import com.briolink.servicecompanyservice.common.jpa.enumration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumration.UserPermissionRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
 import org.springframework.stereotype.Service
