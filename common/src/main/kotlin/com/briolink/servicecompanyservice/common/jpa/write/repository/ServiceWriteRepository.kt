@@ -11,6 +11,6 @@ interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
     fun existsBySlug(slug: String): Boolean
     fun findByCompanyIdAndName(companyId: UUID, name: String): ServiceWriteEntity?
 
-    @Query("SELECT count(s) FROM ServiceWriteEntity s WHERE c.deleted is null")
+    @Query("SELECT count(s) FROM ServiceWriteEntity s WHERE s.deleted is null")
     fun countByCompanyId(companyId: UUID): Long
 }
