@@ -154,4 +154,23 @@ class ConnectionHandlerService(
     fun delete(connectionId: UUID) {
         connectionReadRepository.deleteByConnectionId(connectionId)
     }
+
+    fun updateUser(user: UserReadEntity) {
+        connectionReadRepository.updateUser(
+            userId = user.id,
+            slug = user.data.slug,
+            firstName = user.data.firstName,
+            lastName = user.data.lastName,
+            image = user.data.image?.toString(),
+        )
+    }
+
+    fun updateCompany(company: CompanyReadEntity) {
+        connectionReadRepository.updateCompany(
+            companyId = company.id,
+            slug = company.data.slug,
+            name = company.name,
+            image = company.data.logo?.toString(),
+        )
+    }
 }

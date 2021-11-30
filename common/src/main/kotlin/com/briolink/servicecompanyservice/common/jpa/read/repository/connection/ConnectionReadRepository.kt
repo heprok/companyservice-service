@@ -88,4 +88,61 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
     @Modifying
     @Query("UPDATE ConnectionReadEntity c SET c.isHidden = ?3 where c.id = ?1 and c.serviceId = ?2")
     fun hiddenByConnectionIdAndServiceId(connectionId: UUID, serviceId: UUID, isHide: Boolean): Int
+
+    @Modifying
+    @Query(
+        """update ConnectionReadEntity u
+           set u.data = case
+               when u.participantFromUserId = :userId
+                   then function('jsonb_sets', u.data,
+                           '{participantFrom,user,slug}', :slug, text,
+                           '{participantFrom,user,image}', :image, text,
+                           '{participantFrom,user,firstName}', :firstName, text,
+                           '{participantFrom,user,lastName}', :lastName, text
+                   )
+               when u.participantToUserId = :userId
+                   then function('jsonb_sets', u.data,
+                           '{participantTo,user,slug}', :slug, text,
+                           '{participantTo,user,image}', :image, text,
+                           '{participantTo,user,firstName}', :firstName, text,
+                           '{participantTo,user,lastName}', :lastName, text
+                   )
+               else data end
+           where u.participantFromUserId = :userId or u.participantToUserId = :userId""",
+    )
+    fun updateUser(
+        @Param("userId") userId: UUID,
+        @Param("slug") slug: String,
+        @Param("firstName") firstName: String,
+        @Param("lastName") lastName: String,
+        @Param("image") image: String? = null,
+    )
+
+    @Modifying
+    @Query(
+        """update ConnectionReadEntity u
+           set u.data = case
+               when u.participantFromCompanyId = :companyId
+                   then function('jsonb_sets', u.data,
+                           '{participantFrom,company,slug}', :slug, text,
+                           '{participantFrom,company,image}', :image, text,
+                           '{participantFrom,company,name}', :name, text
+                   )
+               when u.participantToCompanyId = :companyId
+                   then function('jsonb_sets', u.data,
+                           '{participantTo,company,slug}', :slug, text,
+                           '{participantTo,company,image}', :image, text,
+                           '{participantTo,company,name}', :name, text
+                   )
+               else data end
+           where
+            (c.participantFromCompanyId = :companyId) or
+            (c.participantToCompanyId = :companyId)""",
+    )
+    fun updateCompany(
+        @Param("companyId") companyId: UUID,
+        @Param("slug") slug: String,
+        @Param("name") name: String,
+        @Param("image") image: String? = null,
+    )
 }

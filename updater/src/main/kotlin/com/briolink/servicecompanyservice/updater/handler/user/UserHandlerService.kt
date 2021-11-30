@@ -10,8 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 class UserHandlerService(
     private val userReadRepository: UserReadRepository
 ) {
-
-    fun createOrUpdate(user: User) {
+    fun createOrUpdate(user: User): UserReadEntity {
         userReadRepository.findById(user.id).orElse(UserReadEntity(user.id)).apply {
             this.data = UserReadEntity.Data(
                 firstName = user.firstName,
@@ -20,7 +19,7 @@ class UserHandlerService(
             ).apply {
                 this.slug = user.slug
             }
-            userReadRepository.save(this)
+            return userReadRepository.save(this)
         }
     }
 }
