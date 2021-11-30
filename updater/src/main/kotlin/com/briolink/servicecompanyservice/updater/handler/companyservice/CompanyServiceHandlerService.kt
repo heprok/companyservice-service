@@ -50,7 +50,7 @@ class CompanyServiceHandlerService(
             companyId = company.id,
             name = company.name,
             slug = company.data.slug,
-            logo = company.data.logo.toString(),
+            logo = company.data.logo?.toString(),
         )
     }
 

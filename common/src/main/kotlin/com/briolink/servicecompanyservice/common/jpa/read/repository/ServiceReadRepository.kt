@@ -37,7 +37,7 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
         @Param("companyId") companyId: UUID,
         @Param("name") name: String,
         @Param("slug") slug: String,
-        @Param("logo") logo: String
+        @Param("logo") logo: String?
     )
 
     @Modifying
