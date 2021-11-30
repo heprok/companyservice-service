@@ -38,7 +38,7 @@ class ServiceQuery(private val serviceCompanyService: ServiceCompanyService) {
             .let { Service.fromEntity(it) }
 
     @DgsQuery
-    @PreAuthorize("@servletUtil.isIntranet()")
-    fun countServiceByCompanyId(@InputArgument("companyId") companyId: String): Int =
+//    @PreAuthorize("@servletUtil.isIntranet()")
+    fun countByCompanyId(@InputArgument("companyId") companyId: String): Int =
         serviceCompanyService.countByCompanyId(UUID.fromString(companyId)).toInt()
 }
