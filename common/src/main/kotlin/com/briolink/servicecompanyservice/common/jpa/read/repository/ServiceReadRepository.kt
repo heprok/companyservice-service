@@ -30,7 +30,7 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
            set c.data = function('jsonb_sets', c.data,
                 '{company,name}', :name, text,
                 '{company,slug}', :slug, text,
-                '{company,image}', :logo, text
+                '{company,logo}', :logo, text
            ) where c.companyId = :companyId""",
     )
     fun updateCompany(
