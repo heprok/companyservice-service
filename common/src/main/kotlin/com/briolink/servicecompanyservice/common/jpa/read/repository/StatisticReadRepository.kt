@@ -10,6 +10,6 @@ interface StatisticReadRepository : JpaRepository<StatisticReadEntity, UUID> {
     fun findByServiceId(serviceId: UUID): StatisticReadEntity?
 
     @Modifying
-    @Query("DELETE from StatisticReadEntity s where s.serviceId = ?1")
+    @Query("DELETE FROM StatisticReadEntity s WHERE s.serviceId = ?1")
     fun deleteByServiceId(serviceId: UUID)
 }

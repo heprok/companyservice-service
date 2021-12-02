@@ -77,14 +77,14 @@ class ConnectionDataLoader(
                             id = UUID.randomUUID(),
                             participantFrom = ConnectionParticipant(
                                 userId = listUser.random().id,
-                                userJobPositionTitle = null,
+                                userJobPositionTitle = "developer",
                                 companyId = from.id,
                                 companyRole = listConnectionRole.shuffled()
                                     .find { connectionRoleReadEntity -> connectionRoleReadEntity.type == ConnectionCompanyRoleType.Seller }!!, // ktlint-disable max-line-length
                             ),
                             participantTo = ConnectionParticipant(
                                 userId = listUser.random().id,
-                                userJobPositionTitle = null,
+                                userJobPositionTitle = "developer",
                                 companyId = to.id,
                                 companyRole = listConnectionRole.shuffled()
                                     .find { connectionRoleReadEntity -> connectionRoleReadEntity.type == ConnectionCompanyRoleType.Buyer }!!, // ktlint-disable max-line-length

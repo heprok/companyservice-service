@@ -17,7 +17,7 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
     fun findBySlug(slug: String): Optional<ServiceReadEntity>
 
 //    @Modifying
-//    @Query("UPDATE ServiceReadEntity s SET s.isHide = ?3 where s.id = ?1 and s.companyId = ?2")
+//    @Query("UPDATE ServiceReadEntity s SET s.isHide = ?3 WHERE s.id = ?1 and s.companyId = ?2")
 //    fun hideServiceByIdAndCompanyId(id: UUID, companyId: UUID, isHide: Boolean)
 
     @Query("SELECT id FROM ServiceReadEntity")
@@ -31,7 +31,7 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
                 '{company,name}', :name, text,
                 '{company,slug}', :slug, text,
                 '{company,logo}', :logo, text
-           ) where c.companyId = :companyId""",
+           ) WHERE c.companyId = :companyId""",
     )
     fun updateCompany(
         @Param("companyId") companyId: UUID,
@@ -41,6 +41,6 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
     )
 
     @Modifying
-    @Query("DELETE from ServiceReadEntity c where c.id = ?1")
+    @Query("DELETE FROM ServiceReadEntity c WHERE c.id = ?1")
     override fun deleteById(id: UUID)
 }

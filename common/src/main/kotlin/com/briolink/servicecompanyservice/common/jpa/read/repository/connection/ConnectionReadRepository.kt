@@ -3,6 +3,7 @@ package com.briolink.servicecompanyservice.common.jpa.read.repository.connection
 import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatusEnum
 import com.briolink.servicecompanyservice.common.jpa.projection.CollaboratorProjection
 import com.briolink.servicecompanyservice.common.jpa.projection.IndustryProjection
+import com.briolink.servicecompanyservice.common.jpa.projection.ServiceIdProjection
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
@@ -71,13 +72,13 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
     override fun deleteById(id: UUID)
 
     @Modifying
-    @Query("DELETE from ConnectionReadEntity c where c.id = ?1")
+    @Query("DELETE FROM ConnectionReadEntity c WHERE c.id = ?1")
     fun deleteByConnectionId(id: UUID): Int
 
     @Query(
         """
-        select c from ConnectionReadEntity c
-        where c.serviceId = ?1 and c._status = ?2 AND c.isDeleted = false AND c.isHidden = false
+        SELECT c FROM ConnectionReadEntity c
+        WHERE c.serviceId = ?1 and c._status = ?2 AND c.isDeleted = false AND c.isHidden = false
     """,
     )
     fun getByServiceIdAndStatusAndNotHiddenOrDeleted(
@@ -86,8 +87,26 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
     ): List<ConnectionReadEntity>
 
     @Modifying
-    @Query("UPDATE ConnectionReadEntity c SET c.isHidden = ?3 where c.id = ?1 and c.serviceId = ?2")
+    @Query("UPDATE ConnectionReadEntity c SET c.isHidden = ?3 WHERE c.id = ?1 and c.serviceId = ?2")
     fun hiddenByConnectionIdAndServiceId(connectionId: UUID, serviceId: UUID, isHide: Boolean): Int
+
+    @Modifying
+    @Query(
+        """
+            UPDATE ConnectionReadEntity c
+            SET c.isHidden = :hidden
+            WHERE
+               (c.participantFromCompanyId = :companyId OR c.participantToCompanyId = :companyId) AND
+               (c.participantFromUserId = :userId OR c.participantToUserId = :userId) AND
+               c.isHidden <> :hidden
+           """,
+    )
+
+    fun changeVisibilityByCompanyIdAndUserId(
+        @Param("companyId") companyId: UUID,
+        @Param("userId") userId: UUID,
+        @Param("hidden") hidden: Boolean
+    )
 
     @Modifying
     @Query(
@@ -108,7 +127,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
                            '{participantTo,user,lastName}', :lastName, text
                    )
                else data end
-           where u.participantFromUserId = :userId or u.participantToUserId = :userId""",
+           WHERE u.participantFromUserId = :userId or u.participantToUserId = :userId""",
     )
     fun updateUser(
         @Param("userId") userId: UUID,
@@ -135,7 +154,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
                            '{participantTo,company,name}', :name, text
                    )
                else data end
-           where
+           WHERE 
             (u.participantFromCompanyId = :companyId) or
             (u.participantToCompanyId = :companyId)""",
     )
@@ -145,4 +164,23 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         @Param("name") name: String,
         @Param("logo") logo: String? = null,
     )
+
+    @Query(
+        """
+        SELECT
+            distinct cast(service_id as varchar) as serviceId
+        FROM
+            read.connection
+        WHERE
+            participant_from_company_id = cast(:companyId as uuid) or
+            participant_to_company_id = cast(:companyId as uuid)
+        LIMIT :limit offset :offset
+    """,
+        nativeQuery = true,
+    )
+    fun getServiceIdsByCompanyId(
+        @Param("companyId") companyId: String,
+        @Param("limit") limit: Int = 10,
+        @Param("offset") offset: Int = 0
+    ): List<ServiceIdProjection>
 }

@@ -14,27 +14,35 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyRead
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.StatisticReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
+import com.briolink.servicecompanyservice.updater.ReloadStatisticByCompanyId
+import com.briolink.servicecompanyservice.updater.ReloadStatisticByServiceId
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.event.EventListener
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.stereotype.Service
+import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.Year
 import java.time.ZoneId
 import java.util.UUID
 
 @Transactional
-@Service
+@Component
+@EnableAsync
 class StatisticHandlerService(
     private val statisticReadRepository: StatisticReadRepository,
     private val connectionReadRepository: ConnectionReadRepository,
     private val serviceReadRepository: ServiceReadRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher,
     private val companyReadRepository: CompanyReadRepository,
 ) {
-    fun refreshByService(serviceId: UUID) {
-//         statisticReadRepository.findByServiceId(serviceId) ?: StatisticReadEntity(
-//            serviceId,
-//        )
-        var serviceStatistic = StatisticReadEntity(serviceId)
-        connectionReadRepository.getByServiceIdAndStatusAndNotHiddenOrDeleted(serviceId, ConnectionStatusEnum.Verified.value)
+    @Async
+    @EventListener
+    fun refreshByService(event: ReloadStatisticByServiceId) {
+        deleteByServiceId(event.serviceId)
+        val serviceStatistic = StatisticReadEntity(event.serviceId)
+        connectionReadRepository.getByServiceIdAndStatusAndNotHiddenOrDeleted(event.serviceId, ConnectionStatusEnum.Verified.value)
             .forEach { connectionReadEntity ->
                 val collaboratorParticipant = if (connectionReadEntity.participantFromRoleType == CompanyRoleTypeEnum.Buyer)
                     connectionReadEntity.data.participantFrom else connectionReadEntity.data.participantTo
@@ -133,7 +141,7 @@ class StatisticHandlerService(
                         }
                     }
                 }
-                serviceReadRepository.findByIdOrNull(serviceId)?.apply {
+                serviceReadRepository.findByIdOrNull(event.serviceId)?.apply {
                     data.verifiedUses =
                         serviceStatistic.chartNumberUsesByYearData.data.values.sumOf { year -> year.items.sumOf { it.numberOfUses } }
                     data.lastUsed = connectionReadEntity.created.atZone(ZoneId.systemDefault()).toLocalDate()
@@ -150,6 +158,24 @@ class StatisticHandlerService(
 
     private fun deleteByServiceId(serviceId: UUID) {
         statisticReadRepository.deleteByServiceId(serviceId)
+    }
+
+    @Async
+    @EventListener
+    fun updateByCompanyId(event: ReloadStatisticByCompanyId) {
+        val limit = 5000
+        var offset = 0
+
+        while (true) {
+            val serviceId = connectionReadRepository.getServiceIdsByCompanyId(event.companyId.toString(), limit, offset)
+            if (serviceId.isEmpty()) break
+
+            serviceId.forEach {
+                applicationEventPublisher.publishEvent(ReloadStatisticByServiceId(it.serviceId))
+            }
+
+            offset += limit
+        }
     }
 
     private fun getChartDuration(

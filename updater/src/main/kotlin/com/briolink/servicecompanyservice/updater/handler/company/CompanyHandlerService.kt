@@ -7,6 +7,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionR
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
 import com.briolink.servicecompanyservice.common.service.LocationService
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -19,15 +20,16 @@ class CompanyHandlerService(
     private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
 ) {
 
-    fun createOrUpdate(company: Company): CompanyReadEntity {
-        companyReadRepository.findById(company.id).orElse(CompanyReadEntity(company.id)).apply {
-            name = company.name
+    fun createOrUpdate(entityPrevCompany: CompanyReadEntity? = null, companyDomain: Company): CompanyReadEntity {
+        val company = entityPrevCompany ?: CompanyReadEntity(companyDomain.id)
+        company.apply {
+            name = companyDomain.name
             data = CompanyReadEntity.Data(
-                slug = company.slug,
-                logo = company.logo,
-                industry = company.industry?.let { CompanyReadEntity.Industry(id = it.id, name = company.industry.name) },
+                slug = companyDomain.slug,
+                logo = companyDomain.logo,
+                industry = companyDomain.industry?.let { CompanyReadEntity.Industry(id = it.id, name = companyDomain.industry.name) },
             ).apply {
-                location = company.locationId?.let { locationService.getLocation(it) }
+                location = companyDomain.locationId?.let { locationService.getLocation(it) }
             }
             return companyReadRepository.save(this)
         }
@@ -49,6 +51,8 @@ class CompanyHandlerService(
             },
         )
     }
+
+    fun findById(companyId: UUID): CompanyReadEntity? = companyReadRepository.findByIdOrNull(companyId)
 
     fun getPermission(companyId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
         return userPermissionRoleReadRepository.getUserPermissionRole(

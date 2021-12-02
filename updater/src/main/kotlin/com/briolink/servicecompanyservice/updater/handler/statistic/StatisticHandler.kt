@@ -4,9 +4,9 @@ import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
+import com.briolink.servicecompanyservice.updater.ReloadStatisticByServiceId
 
 @EventHandler("CompanyServiceStatisticRefreshEvent", "1.0")
-
 class StatisticHandler(
     private val statisticHandlerService: StatisticHandlerService,
     private val serviceReadRepository: ServiceReadRepository
@@ -16,7 +16,7 @@ class StatisticHandler(
             if (it == null) serviceReadRepository.getAllUUID() else listOf(it)
         }
         serviceUUID.forEach {
-            statisticHandlerService.refreshByService(it)
+            statisticHandlerService.refreshByService(ReloadStatisticByServiceId(it))
         }
     }
 }
