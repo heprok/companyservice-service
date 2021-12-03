@@ -13,7 +13,7 @@ class UserPermissionHandlerService(
     private val userPermissionReadRepository: UserPermissionRoleReadRepository
 ) {
     fun createOrUpdate(userPermission: UserPermission) {
-        userPermissionReadRepository.findById(userPermission.id).orElse(UserPermissionRoleReadEntity(userPermission.id)).apply {
+        UserPermissionRoleReadEntity(userPermission.id).apply {
             userId = userPermission.userId
             accessObjectUuid = userPermission.accessObjectUuid
             accessObjectType = AccessObjectTypeEnum.valueOf(userPermission.accessObjectType.name)
