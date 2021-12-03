@@ -122,25 +122,31 @@ class StatisticHandlerService(
                 serviceStatistic.chartByServiceDuration = getChartDuration(serviceStatistic.chartByServiceDurationData)
 
                 // chart data by industry
-                val createdYear = connectionReadEntity.created.atZone(ZoneId.systemDefault()).year.toString()
-                serviceStatistic.chartNumberUsesByYearData.data.getOrPut(createdYear) {
-                    ChartDataList(createdYear, mutableListOf())
-                }.also { list ->
-                    when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {
-                        -1 -> list.items.add(
-                            ChartListItemWithNumberOfUses(
-                                companyId = collaboratorParticipant.company.id,
-                                industry = industry,
-                                companyRoles = mutableSetOf(collaboratorParticipant.companyRole.name),
-                                numberOfUses = 1,
-                            ),
-                        )
-                        else -> {
-                            list.items[i].numberOfUses = list.items[i].numberOfUses.inc()
-                            list.items[i].companyRoles.add(collaboratorParticipant.companyRole.name)
+                val rangeYear = connectionReadEntity.data.service.startDate.value..(
+                    connectionReadEntity.data.service.endDate?.value
+                        ?: Year.now().value
+                    )
+                rangeYear.forEach { year ->
+                    serviceStatistic.chartNumberUsesByYearData.data.getOrPut(year.toString()) {
+                        ChartDataList(year.toString(), mutableListOf())
+                    }.also { list ->
+                        when (val i = list.items.indexOfFirst { it.companyId == collaboratorParticipant.company.id }) {
+                            -1 -> list.items.add(
+                                ChartListItemWithNumberOfUses(
+                                    companyId = collaboratorParticipant.company.id,
+                                    industry = industry,
+                                    companyRoles = mutableSetOf(collaboratorParticipant.companyRole.name),
+                                    numberOfUses = 1,
+                                ),
+                            )
+                            else -> {
+                                list.items[i].numberOfUses = list.items[i].numberOfUses.inc()
+                                list.items[i].companyRoles.add(collaboratorParticipant.companyRole.name)
+                            }
                         }
                     }
                 }
+
                 serviceReadRepository.findByIdOrNull(event.serviceId)?.apply {
                     data.verifiedUses =
                         serviceStatistic.chartNumberUsesByYearData.data.values.sumOf { year -> year.items.sumOf { it.numberOfUses } }
@@ -178,9 +184,7 @@ class StatisticHandlerService(
         }
     }
 
-    private fun getChartDuration(
-        chartList: ChartList<ChartListItemWithDuration>,
-    ): Chart {
+    private fun getChartDuration(chartList: ChartList<ChartListItemWithDuration>): Chart {
         val tabs = mutableListOf<ChartTabItem>()
         val items = mutableListOf<ChartItem>()
 
