@@ -9,9 +9,11 @@ import com.briolink.servicecompanyservice.updater.handler.userpermission.UserPer
 import com.briolink.servicecompanyservice.updater.handler.userpermission.UserPermissionHandlerService
 import com.briolink.servicecompanyservice.updater.handler.userpermission.UserPermissionRoleType
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @EventHandler("UserJobPositionCreatedEvent", "1.0")
+@Transactional
 class UserJobPositionCreatedEventHandler(
     private val userPermissionHandlerService: UserPermissionHandlerService,
     private val connectionReadRepository: ConnectionReadRepository,
