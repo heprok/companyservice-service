@@ -19,3 +19,5 @@ delete from read.statistic
 create table read.statistic (
 id    integer PRIMARY KEY
 );
+
+update read."connection" set is_hidden = true where participant_from_company_id = '022b8242-ea43-43f7-a31a-270dcb618a69' or participant_to_company_id = '022b8242-ea43-43f7-a31a-270dcb618a69'

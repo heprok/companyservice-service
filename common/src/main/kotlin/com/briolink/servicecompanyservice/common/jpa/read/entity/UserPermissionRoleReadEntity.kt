@@ -2,38 +2,32 @@ package com.briolink.servicecompanyservice.common.jpa.read.entity
 
 import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.write.entity.BaseWriteEntity
 import org.hibernate.annotations.Type
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
 import javax.persistence.Table
 
 @Table(name = "user_permission_role", schema = "read")
 @Entity
 class UserPermissionRoleReadEntity(
-    @Id
-    @GeneratedValue
+
     @Type(type = "pg-uuid")
-    @Column(name = "id", nullable = false)
-    var id: UUID? = null,
+    @Column(name = "access_object_uuid", nullable = false)
+    var accessObjectUuid: UUID,
+
+    @Type(type = "pg-uuid")
+    @Column(name = "user_id", nullable = false)
+    var userId: UUID,
 
     @Column(name = "access_object_type", nullable = false)
-    private var _accessObjectType: Int = AccessObjectTypeEnum.CompanyService.value,
+    private var _accessObjectType: Int = AccessObjectTypeEnum.Company.value,
 
     @Column(name = "role", nullable = false)
     private var _role: Int = UserPermissionRoleTypeEnum.Employee.value
 
-) : BaseReadEntity() {
-
-    @Type(type = "pg-uuid")
-    @Column(name = "access_object_uuid", nullable = false)
-    lateinit var accessObjectUuid: UUID
-
-    @Type(type = "pg-uuid")
-    @Column(name = "user_id", nullable = false)
-    lateinit var userId: UUID
+) : BaseWriteEntity() {
 
     var accessObjectType: AccessObjectTypeEnum
         get() = AccessObjectTypeEnum.fromInt(_accessObjectType)

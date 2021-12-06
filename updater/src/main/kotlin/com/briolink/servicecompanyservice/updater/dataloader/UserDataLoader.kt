@@ -2,8 +2,12 @@ package com.briolink.servicecompanyservice.updater.dataloader
 
 import com.briolink.servicecompanyservice.common.dataloader.DataLoader
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
+import com.briolink.servicecompanyservice.updater.userjobposition.UserJobPosition
+import com.briolink.servicecompanyservice.updater.userjobposition.UserJobPositionCreatedEvent
+import com.briolink.servicecompanyservice.updater.userjobposition.UserJobPositionCreatedEventHandler
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import java.net.URL
@@ -14,7 +18,8 @@ import java.util.UUID
 @Order(1)
 class UserDataLoader(
     var userReadRepository: UserReadRepository,
-
+    private val userJobPositionHandlerService: UserJobPositionCreatedEventHandler,
+    private val companyReadRepository: CompanyReadRepository
 ) : DataLoader() {
     val listFirstName: List<String> = listOf(
         "Lynch", "Kennedy", "Williams", "Evans", "Jones", "Burton", "Miller", "Smith", "Nelson", "Lucas",
@@ -35,7 +40,21 @@ class UserDataLoader(
                             image = if (Random().nextBoolean()) URL("https://placeimg.com/148/148/people") else null,
                         ).apply { slug = StringUtil.slugify(listFirstName.random() + " " + listLastName.random()) }
                     },
-                )
+                ).also { user ->
+                    companyReadRepository.getAllUUID().forEach { companyId ->
+                        userJobPositionHandlerService.handle(
+                            UserJobPositionCreatedEvent(
+                                UserJobPosition(
+                                    userId = user.id,
+                                    companyId = companyId,
+                                    id = UUID.randomUUID(),
+                                    title = "Devloper",
+                                    isCurrent = false,
+                                ),
+                            ),
+                        )
+                    }
+                }
             }
         }
     }

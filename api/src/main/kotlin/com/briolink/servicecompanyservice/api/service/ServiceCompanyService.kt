@@ -93,17 +93,11 @@ class ServiceCompanyService(
     }
 
     fun getServiceBySlug(slug: String): Optional<ServiceReadEntity> = serviceCompanyReadRepository.findBySlug(slug)
+
+    // TODO Выгесьи в сервис и изменить на company service
     fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
         return userPermissionRoleReadRepository.getUserPermissionRole(
             accessObjectUuid = serviceId,
-            accessObjectType = AccessObjectTypeEnum.CompanyService.value,
-            userId = userId,
-        )?.role
-    }
-
-    fun getPermissionOnCompany(companyId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
-        return userPermissionRoleReadRepository.getUserPermissionRole(
-            accessObjectUuid = companyId,
             accessObjectType = AccessObjectTypeEnum.Company.value,
             userId = userId,
         )?.role

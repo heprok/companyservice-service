@@ -22,6 +22,10 @@ interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
 
     @Query("SELECT id FROM ServiceReadEntity")
     fun getAllUUID(): List<UUID>
+
+    @Query("SELECT companyId FROM ServiceReadEntity WHERE id = ?1")
+    fun getCompanyId(serviceId: UUID): UUID
+
     fun findByCompanyId(companyId: UUID): List<ServiceReadEntity>
 
     @Modifying

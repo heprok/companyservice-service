@@ -4,6 +4,7 @@ import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByCompanyId
+import com.briolink.servicecompanyservice.updater.handler.companyservice.CompanyServiceHandlerService
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionHandlerService
 import org.springframework.context.ApplicationEventPublisher
 
@@ -14,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher
 class CompanyEventHandler(
     private val companyHandlerService: CompanyHandlerService,
     private val connectionHandlerService: ConnectionHandlerService,
+    private val companyServiceHandlerService: CompanyServiceHandlerService,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) : IEventHandler<CompanyEvent> {
     override fun handle(event: CompanyEvent) {
@@ -23,6 +25,7 @@ class CompanyEventHandler(
         companyHandlerService.createOrUpdate(updatedCompany, event.data).let {
             if (event.name == "CompanyUpdatedEvent") {
                 connectionHandlerService.updateCompany(it)
+                companyServiceHandlerService.updateCompany(it)
                 if (it.data.industry?.id != prevIndustryId || it.data.location?.country?.id != prevCountryId) {
                     applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(event.data.id))
                 }

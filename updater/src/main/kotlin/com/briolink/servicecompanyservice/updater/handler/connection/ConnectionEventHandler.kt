@@ -3,6 +3,9 @@ package com.briolink.servicecompanyservice.updater.handler.connection
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
+import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.PermissionRightEnum
+import com.briolink.servicecompanyservice.common.service.PermissionService
 import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandlerService
 
 @EventHandlers(
@@ -12,21 +15,29 @@ import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandler
 class ConnectionEventHandler(
     private val companyHandlerService: CompanyHandlerService,
     private val connectionHandlerService: ConnectionHandlerService,
+    private val permissionService: PermissionService,
 ) : IEventHandler<ConnectionEvent> {
     override fun handle(event: ConnectionEvent) {
         val connection = event.data
         if (connection.status != ConnectionStatus.Rejected) {
             (connection.participantFrom.companyRole.type == ConnectionCompanyRoleType.Seller).let {
                 if (it)
-                    companyHandlerService.getPermission(connection.participantFrom.companyId, connection.participantFrom.userId) == null
+                    !permissionService.isHavePermission(
+                        connection.participantFrom.companyId,
+                        connection.participantFrom.userId,
+                        AccessObjectTypeEnum.Company,
+                        PermissionRightEnum.ConnectionCrud,
+                    )
                 else
-                    companyHandlerService.getPermission(connection.participantTo.companyId, connection.participantTo.userId) == null
+                    !permissionService.isHavePermission(
+                        connection.participantTo.companyId,
+                        connection.participantTo.userId,
+                        AccessObjectTypeEnum.Company,
+                        PermissionRightEnum.ConnectionCrud,
+                    )
             }.also { isHiddenConnection ->
                 connectionHandlerService.createOrUpdate(connection, isHiddenConnection)
             }
-//                    statisticHandlerService.refreshByCompany(connection.participantTo.companyId!!)
-//                    statisticHandlerService.refreshByCompany(connection.participantFrom.companyId!!)
-//                }
         } else if (connection.status == ConnectionStatus.Rejected) {
             connectionHandlerService.delete(connection.id)
         }

@@ -10,7 +10,9 @@ import com.briolink.servicecompanyservice.api.types.ConnectionList
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.api.types.Industry
 import com.briolink.servicecompanyservice.api.util.SecurityUtil
-import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
+import com.briolink.servicecompanyservice.common.jpa.enumeration.PermissionRightEnum
+import com.briolink.servicecompanyservice.common.service.PermissionService
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
@@ -21,7 +23,8 @@ import java.util.UUID
 @DgsComponent
 class ConnectionQuery(
     private val connectionService: ConnectionService,
-    private val serviceCompanyService: ServiceCompanyService
+    private val serviceCompanyService: ServiceCompanyService,
+    private val permissionService: PermissionService
 ) {
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
@@ -36,13 +39,14 @@ class ConnectionQuery(
         return if (connectionService.existsConnectionByService(serviceId = UUID.fromString(serviceId))
         ) {
             val securityFilter = if (
-                serviceCompanyService.getPermission(
+                permissionService.isHavePermission(
+                    companyId = UUID.fromString(companyId),
                     userId = SecurityUtil.currentUserAccountId,
-                    serviceId = UUID.fromString(serviceId),
-                ) != UserPermissionRoleTypeEnum.Owner
+                    accessObjectType = AccessObjectTypeEnum.Company,
+                    permissionRight = PermissionRightEnum.ConnectionCrud,
+                )
+            ) filter else filter.copy(isHidden = false)
 
-            )
-                filter.copy(isHidden = false) else filter
             val result = connectionService.findAll(
                 serviceId = UUID.fromString(serviceId),
                 companyId = UUID.fromString(companyId),

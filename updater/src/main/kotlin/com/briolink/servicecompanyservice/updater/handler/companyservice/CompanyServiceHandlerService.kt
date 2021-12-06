@@ -1,17 +1,12 @@
 package com.briolink.servicecompanyservice.updater.handler.companyservice
 
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
-import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
-import com.briolink.servicecompanyservice.common.jpa.read.entity.UserPermissionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 import javax.persistence.EntityNotFoundException
 
 @Transactional
@@ -19,7 +14,6 @@ import javax.persistence.EntityNotFoundException
 class CompanyServiceHandlerService(
     private val companyReadRepository: CompanyReadRepository,
     private val serviceReadRepository: ServiceReadRepository,
-    private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
 ) {
 
     fun createOrUpdate(serviceCompany: CompanyService) {
@@ -52,30 +46,5 @@ class CompanyServiceHandlerService(
             slug = company.data.slug,
             logo = company.data.logo?.toString(),
         )
-    }
-
-    fun setPermission(companyId: UUID, userId: UUID, roleType: UserPermissionRoleTypeEnum) {
-        userPermissionRoleReadRepository.save(
-            userPermissionRoleReadRepository.getUserPermissionRole(
-                accessObjectUuid = companyId,
-                accessObjectType = AccessObjectTypeEnum.Company.value,
-                userId = userId,
-            )?.apply {
-                role = roleType
-            } ?: UserPermissionRoleReadEntity().apply {
-                accessObjectUuid = companyId
-                this.userId = userId
-                role = roleType
-                accessObjectType = AccessObjectTypeEnum.Company
-            },
-        )
-    }
-
-    fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
-        return userPermissionRoleReadRepository.getUserPermissionRole(
-            accessObjectUuid = serviceId,
-            accessObjectType = AccessObjectTypeEnum.CompanyService.value,
-            userId = userId,
-        )?.role
     }
 }

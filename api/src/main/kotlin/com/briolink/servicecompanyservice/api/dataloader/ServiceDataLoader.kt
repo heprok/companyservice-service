@@ -53,6 +53,6 @@ class ServiceDataLoader(
     }
 
     companion object {
-        const val COUNT_SERVICE = 20
+        const val COUNT_SERVICE = 100
     }
 }
