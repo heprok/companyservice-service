@@ -96,8 +96,8 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
             UPDATE ConnectionReadEntity c
             SET c.isHidden = :hidden
             WHERE
-               (c.participantFromCompanyId = :companyId OR c.participantToCompanyId = :companyId) AND
-               (c.participantFromUserId = :userId OR c.participantToUserId = :userId) AND
+               (c.participantFromCompanyId = :companyId AND c.participantFromUserId = :userId AND c._participantFromRoleType = 1) OR
+               (c.participantToCompanyId = :companyId AND c.participantToUserId = :userId AND c._participantToRoleType = 1) AND
                c.isHidden <> :hidden
            """,
     )
