@@ -52,7 +52,7 @@ class ServiceCompanyService(
                 companyId = companyId,
                 name = name,
                 created = created,
-                slug = StringUtil.slugify("$nameCompany $name", false),
+                slug = StringUtil.slugify("$nameCompany $name", true),
                 description = description,
                 price = price,
             ).apply {

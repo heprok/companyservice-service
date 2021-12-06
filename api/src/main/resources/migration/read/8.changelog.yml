@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8
+      author: oleg@briolink.com
+      changes:
+        - delete:
+            tableName: user_permission_role
+            schemaName: read
+            where: id IN ('f9b5fa7a-2893-4fe3-a256-e4fdea927259', 'a65b004b-311a-45a2-88ef-fa6bc3692c09', 'b122545a-7782-45d6-b9da-8b49f2335ad3', 'f3a8d859-8e88-46f8-8397-c335b97367d0', '0d932def-2209-448d-b162-a4f435cf7c1e', 'd9d4d04b-a0c1-4d11-be42-442460bb92a0')
+        - createIndex:
+            schemaName: read
+            tableName: user_permission_role
+            columns:
+              - column:
+                  name: access_object_uuid
+              - column:
+                  name: user_id
+            indexName: idx_access_object_uuid_and_user_uuid
+            unique: true
