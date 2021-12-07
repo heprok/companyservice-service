@@ -11,6 +11,7 @@ import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandler
 @EventHandlers(
     EventHandler("ConnectionCreatedEvent", "1.0"),
     EventHandler("ConnectionUpdatedEvent", "1.0"),
+    EventHandler("CompanyConnectionEvent", "1.0"),
 )
 class ConnectionEventHandler(
     private val companyHandlerService: CompanyHandlerService,

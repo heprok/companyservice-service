@@ -6,7 +6,6 @@ import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatu
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.range.Range
 import org.hibernate.annotations.Type
-import java.io.Serializable
 import java.net.URL
 import java.time.Instant
 import java.time.Year
@@ -14,24 +13,20 @@ import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
-import javax.persistence.IdClass
 import javax.persistence.Table
-
-class ConnectionReactorPK() : Serializable {
-    lateinit var id: UUID
-    lateinit var serviceId: UUID
-}
 
 @Table(name = "connection", schema = "read")
 @Entity
-@IdClass(ConnectionReactorPK::class)
 class ConnectionReadEntity(
     @Id
+    @Type(type = "pg-uuid")
+    @Column(name = "connection_service_id", nullable = false)
+    val connectionServiceId: UUID,
+
     @Type(type = "pg-uuid")
     @Column(name = "id", nullable = false)
     val id: UUID,
 
-    @Id
     @Type(type = "pg-uuid")
     @Column(name = "service_id", nullable = false)
     var serviceId: UUID

@@ -42,8 +42,14 @@ class ConnectionHandlerService(
 
         connection.services.forEach { connectionService ->
             if (connectionService.serviceId != null) {
-                connectionReadRepository.findByIdAndServiceId(connection.id, connectionService.serviceId)
-                    .orElse(ConnectionReadEntity(connection.id, connectionService.serviceId)).apply {
+                connectionReadRepository.findByConnectionServiceId(connectionService.id)
+                    .orElse(
+                        ConnectionReadEntity(
+                            connectionServiceId = connectionService.id,
+                            id = connection.id,
+                            serviceId = connectionService.serviceId,
+                        ),
+                    ).apply {
                         participantFromCompanyId = connection.participantFrom.companyId
                         participantFromUserId = connection.participantFrom.userId
                         participantFromRoleId = connection.participantFrom.companyRole.id

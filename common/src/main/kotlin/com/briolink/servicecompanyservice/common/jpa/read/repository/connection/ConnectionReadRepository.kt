@@ -15,6 +15,7 @@ import java.util.UUID
 interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
 
     fun findByIdAndServiceId(id: UUID, serviceId: UUID): Optional<ConnectionReadEntity>
+    fun findByConnectionServiceId(connectionServiceId: UUID): Optional<ConnectionReadEntity>
 
     @Query(
         """
