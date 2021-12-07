@@ -48,7 +48,7 @@ class ConnectionService(
 
         setFilters(serviceId, companyId, cb, filter)
 
-        return cb.orderBy(sort.sortBy.name, sort.direction.name == "ASC").orderByAsc("id").page(offset, limit).resultList
+        return cb.orderBy(sort.sortBy.name, sort.direction.name == "ASC").orderByAsc("connectionServiceId").page(offset, limit).resultList
     }
 
     fun count(companyId: UUID, serviceId: UUID, filter: ConnectionFilter): Long {
