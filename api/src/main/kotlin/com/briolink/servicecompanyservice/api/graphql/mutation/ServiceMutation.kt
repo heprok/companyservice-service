@@ -9,9 +9,6 @@ import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.ServiceResultData
 import com.briolink.servicecompanyservice.api.types.UpdateServiceInput
 import com.briolink.servicecompanyservice.api.types.UpdateServiceResult
-import com.briolink.servicecompanyservice.api.util.SecurityUtil
-import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
-import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.InputArgument
@@ -34,9 +31,9 @@ class ServiceMutation(
         return Image(serviceCompanyService.uploadProfileImage(UUID.fromString(id), image))
     }
 
-    @DgsMutation(field = "createService")
+    @DgsMutation
     @PreAuthorize("isAuthenticated()")
-    fun create(
+    fun createService(
         @InputArgument("companyId") companyId: String,
         @InputArgument("input") input: CreateServiceInput
     ): CreateServiceResult {
@@ -54,7 +51,7 @@ class ServiceMutation(
         )
     }
 
-    @DgsMutation(field = "createServiceLocal")
+    @DgsMutation
     @PreAuthorize("@servletUtil.isIntranet()")
     fun createServiceLocal(
         @InputArgument("companyId") companyId: String,
@@ -66,20 +63,28 @@ class ServiceMutation(
             ).let { CreateServiceResult(data = ServiceResultData(id = it.id.toString(), slug = it.slug), userErrors = listOf()) }
     }
 
-    @DgsMutation(field = "deleteServiceLocal")
+    @DgsMutation
     @PreAuthorize("@servletUtil.isIntranet()")
     fun deleteServiceLocal(
-        @InputArgument("serviceId") serviceId: String
+        @InputArgument("serviceId") serviceId: String,
+        @InputArgument("userId") userId: UUID
     ): BaseResult {
-        serviceCompanyService.delete(UUID.fromString(serviceId), deletedBy = SecurityUtil.currentUserAccountId)
-        eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(UUID.fromString(serviceId))))
-
+        serviceCompanyService.delete(UUID.fromString(serviceId), deletedBy = userId)
         return BaseResult(success = true)
     }
 
-    @DgsMutation(field = "updateService")
+    @DgsMutation
+    @PreAuthorize("@servletUtil.isIntranet()")
+    fun hideServiceLocal(
+        @InputArgument("serviceId") serviceId: String
+    ): BaseResult {
+        serviceCompanyService.hide(UUID.fromString(serviceId))
+        return BaseResult(success = true)
+    }
+
+    @DgsMutation
     @PreAuthorize("isAuthenticated()")
-    fun update(
+    fun updateService(
         @InputArgument("id") id: String,
         @InputArgument("input") input: UpdateServiceInput
     ): UpdateServiceResult {

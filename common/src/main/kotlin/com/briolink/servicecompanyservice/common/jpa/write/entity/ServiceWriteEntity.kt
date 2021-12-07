@@ -39,6 +39,9 @@ class ServiceWriteEntity(
     @Column(name = "deleted")
     var deleted: Instant? = null,
 
+    @Column(name = "hidden")
+    var hidden: Boolean = false,
+
     @Type(type = "pg-uuid")
     @Column(name = "deleted_by")
     var deletedBy: UUID? = null

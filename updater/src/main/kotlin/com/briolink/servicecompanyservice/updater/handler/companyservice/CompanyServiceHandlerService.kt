@@ -20,21 +20,32 @@ class CompanyServiceHandlerService(
         val company = companyReadRepository.findById(serviceCompany.companyId)
             .orElseThrow { throw EntityNotFoundException(serviceCompany.companyId.toString() + " company not found") }
         serviceReadRepository.findById(serviceCompany.id)
-            .orElse(ServiceReadEntity(id = serviceCompany.id, slug = serviceCompany.slug, companyId = serviceCompany.companyId))
-            .apply {
-                data = ServiceReadEntity.Data(
-                    name = serviceCompany.name,
-                    description = serviceCompany.description,
-                    logo = serviceCompany.logo,
-                    price = serviceCompany.price,
-                    created = serviceCompany.created,
-                    company = ServiceReadEntity.Company(
-                        id = company.id,
-                        name = company.name,
-                        slug = company.data.slug,
-                        logo = company.data.logo,
+            .orElse(
+                ServiceReadEntity(
+                    id = serviceCompany.id, slug = serviceCompany.slug, companyId = serviceCompany.companyId,
+                    data = ServiceReadEntity.Data(
+                        name = serviceCompany.name,
+                        description = serviceCompany.description,
+                        logo = serviceCompany.logo,
+                        price = serviceCompany.price,
+                        created = serviceCompany.created,
+                        company = ServiceReadEntity.Company(
+                            id = company.id,
+                            name = company.name,
+                            slug = company.data.slug,
+                            logo = company.data.logo,
+                        ),
                     ),
-                )
+                ),
+            )
+            .apply {
+                data.apply {
+                    name = serviceCompany.name
+                    description = serviceCompany.description
+                    logo = serviceCompany.logo
+                    price = serviceCompany.price
+                }
+
                 serviceReadRepository.save(this)
             }
     }

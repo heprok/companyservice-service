@@ -2,8 +2,10 @@ package com.briolink.servicecompanyservice.api.service
 
 import com.briolink.event.publisher.EventPublisher
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceDeletedData
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceHideData
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceHideEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceUpdatedEvent
 import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
@@ -11,6 +13,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEnti
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
@@ -32,7 +35,8 @@ class ServiceCompanyService(
     private val awsS3Service: AwsS3Service,
     private val serviceCompanyWriteRepository: ServiceWriteRepository,
     private val serviceCompanyReadRepository: ServiceReadRepository,
-    private val companyReadRepository: CompanyReadRepository
+    private val companyReadRepository: CompanyReadRepository,
+    private val connectionReadRepository: ConnectionReadRepository
 ) {
     val SERVICE_PROFILE_IMAGE_PATH = "uploads/service-company/profile-image"
     fun create(
@@ -52,7 +56,7 @@ class ServiceCompanyService(
                 companyId = companyId,
                 name = name,
                 created = created,
-                slug = StringUtil.slugify("$nameCompany $name", true),
+                slug = StringUtil.slugify("$nameCompany $name ", true),
                 description = description,
                 price = price,
             ).apply {
@@ -120,12 +124,41 @@ class ServiceCompanyService(
     }
 
     fun delete(id: UUID, deletedBy: UUID) {
+        val affectedConnections = ArrayList(connectionReadRepository.getConnectionIdsAffectedByServiceId(serviceId = id))
         serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
             .apply {
                 this.deleted = Instant.now()
                 this.deletedBy = deletedBy
                 serviceCompanyWriteRepository.save(this)
-                eventPublisher.publishAsync(CompanyServiceDeletedEvent(CompanyServiceDeletedData(id, companyId)))
+                eventPublisher.publishAsync(
+                    CompanyServiceDeletedEvent(
+                        CompanyServiceDeletedData(
+                            id,
+                            companyId,
+                            affectedConnections = affectedConnections,
+                        ),
+                    ),
+                )
+            }
+    }
+
+    fun hide(id: UUID) {
+        val affectedConnections = ArrayList(connectionReadRepository.getConnectionIdsAffectedByServiceId(serviceId = id))
+        println(affectedConnections)
+        serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
+            .apply {
+                this.hidden = true
+                serviceCompanyWriteRepository.save(this)
+                eventPublisher.publishAsync(
+                    CompanyServiceHideEvent(
+                        CompanyServiceHideData(
+                            id = id,
+                            companyId = this.companyId,
+                            hidden = true,
+                            affectedConnections = affectedConnections,
+                        ),
+                    ),
+                )
             }
     }
 

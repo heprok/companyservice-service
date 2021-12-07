@@ -27,11 +27,10 @@ class ServiceReadEntity(
     @Column(name = "slug", nullable = false, length = 255)
     var slug: String,
 
-) : BaseReadEntity() {
-
     @Type(type = "jsonb")
     @Column(name = "data", nullable = false)
-    lateinit var data: Data
+    var data: Data
+) : BaseReadEntity() {
 
     data class Data(
         @JsonProperty

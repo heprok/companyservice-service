@@ -183,4 +183,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         @Param("limit") limit: Int = 10,
         @Param("offset") offset: Int = 0
     ): List<ServiceIdProjection>
+
+    @Query("SELECT distinct c.id FROM ConnectionReadEntity c WHERE c.serviceId = ?1")
+    fun getConnectionIdsAffectedByServiceId(serviceId: UUID): List<UUID>
 }

@@ -24,14 +24,25 @@ data class CompanyService(
     @JsonProperty
     val created: Instant,
     @JsonProperty
-    val lastUsed: LocalDate? = null,
-    @JsonProperty
-    val verifiedUses: Int = 0,
+    val lastUsed: LocalDate? = null
 ) : Domain
 
 data class CompanyServiceDeletedData(
     @JsonProperty
     val id: UUID,
     @JsonProperty
-    val companyId: UUID
+    val companyId: UUID,
+    @JsonProperty
+    val affectedConnections: ArrayList<UUID>
+) : Domain
+
+data class CompanyServiceHideData(
+    @JsonProperty
+    val id: UUID,
+    @JsonProperty
+    val companyId: UUID,
+    @JsonProperty
+    val hidden: Boolean,
+    @JsonProperty
+    val affectedConnections: ArrayList<UUID>
 ) : Domain
