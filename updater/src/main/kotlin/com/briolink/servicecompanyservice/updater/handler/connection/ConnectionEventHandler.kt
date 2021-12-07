@@ -24,15 +24,15 @@ class ConnectionEventHandler(
             (connection.participantFrom.companyRole.type == ConnectionCompanyRoleType.Seller).let {
                 if (it)
                     !permissionService.isHavePermission(
-                        connection.participantFrom.companyId,
-                        connection.participantFrom.userId,
+                        userId = connection.participantFrom.userId,
+                        companyId = connection.participantFrom.companyId,
                         AccessObjectTypeEnum.Company,
                         PermissionRightEnum.ConnectionCrud,
                     )
                 else
                     !permissionService.isHavePermission(
-                        connection.participantTo.companyId,
-                        connection.participantTo.userId,
+                        userId = connection.participantTo.userId,
+                        companyId = connection.participantTo.companyId,
                         AccessObjectTypeEnum.Company,
                         PermissionRightEnum.ConnectionCrud,
                     )
