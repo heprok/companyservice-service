@@ -33,6 +33,8 @@ data class CompanyServiceDeletedData(
     @JsonProperty
     val companyId: UUID,
     @JsonProperty
+    val slug: String,
+    @JsonProperty
     val affectedConnections: ArrayList<UUID>
 ) : Domain
 
@@ -43,6 +45,8 @@ data class CompanyServiceHideData(
     val companyId: UUID,
     @JsonProperty
     val hidden: Boolean,
+    @JsonProperty
+    val slug: String,
     @JsonProperty
     val affectedConnections: ArrayList<UUID>
 ) : Domain

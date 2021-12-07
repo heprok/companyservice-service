@@ -67,9 +67,9 @@ class ServiceMutation(
     @PreAuthorize("@servletUtil.isIntranet()")
     fun deleteServiceLocal(
         @InputArgument("serviceId") serviceId: String,
-        @InputArgument("userId") userId: UUID
+        @InputArgument("userId") userId: String
     ): BaseResult {
-        serviceCompanyService.delete(UUID.fromString(serviceId), deletedBy = userId)
+        serviceCompanyService.delete(UUID.fromString(serviceId), deletedBy = UUID.fromString(userId))
         return BaseResult(success = true)
     }
 

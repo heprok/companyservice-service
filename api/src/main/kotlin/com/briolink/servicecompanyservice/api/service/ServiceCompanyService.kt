@@ -133,8 +133,9 @@ class ServiceCompanyService(
                 eventPublisher.publishAsync(
                     CompanyServiceDeletedEvent(
                         CompanyServiceDeletedData(
-                            id,
-                            companyId,
+                            id = id,
+                            companyId = companyId,
+                            slug = slug,
                             affectedConnections = affectedConnections,
                         ),
                     ),
@@ -155,6 +156,7 @@ class ServiceCompanyService(
                             id = id,
                             companyId = this.companyId,
                             hidden = true,
+                            slug = slug,
                             affectedConnections = affectedConnections,
                         ),
                     ),
