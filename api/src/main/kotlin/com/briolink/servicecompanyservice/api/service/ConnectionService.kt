@@ -18,8 +18,8 @@ import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatu
 import com.briolink.servicecompanyservice.common.jpa.enumeration.PermissionRightEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
+import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.service.PermissionService
 import org.springframework.stereotype.Service
 import java.util.UUID

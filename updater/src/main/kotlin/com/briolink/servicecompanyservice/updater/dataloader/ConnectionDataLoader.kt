@@ -2,9 +2,9 @@ package com.briolink.servicecompanyservice.updater.dataloader
 
 import com.briolink.servicecompanyservice.common.dataloader.DataLoader
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.updater.handler.connection.Connection
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionCompanyRole
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionCompanyRoleType

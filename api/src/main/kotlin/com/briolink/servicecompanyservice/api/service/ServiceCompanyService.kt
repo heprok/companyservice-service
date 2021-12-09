@@ -11,9 +11,9 @@ import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTyp
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
@@ -124,7 +124,6 @@ class ServiceCompanyService(
     }
 
     fun delete(id: UUID, deletedBy: UUID) {
-        val affectedConnections = ArrayList(connectionReadRepository.getConnectionIdsAffectedByServiceId(serviceId = id))
         serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
             .apply {
                 this.deleted = Instant.now()
@@ -136,7 +135,6 @@ class ServiceCompanyService(
                             id = id,
                             companyId = companyId,
                             slug = slug,
-                            affectedConnections = affectedConnections,
                         ),
                     ),
                 )
@@ -144,8 +142,6 @@ class ServiceCompanyService(
     }
 
     fun hide(id: UUID) {
-        val affectedConnections = ArrayList(connectionReadRepository.getConnectionIdsAffectedByServiceId(serviceId = id))
-        println(affectedConnections)
         serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
             .apply {
                 this.hidden = true
@@ -157,7 +153,6 @@ class ServiceCompanyService(
                             companyId = this.companyId,
                             hidden = true,
                             slug = slug,
-                            affectedConnections = affectedConnections,
                         ),
                     ),
                 )

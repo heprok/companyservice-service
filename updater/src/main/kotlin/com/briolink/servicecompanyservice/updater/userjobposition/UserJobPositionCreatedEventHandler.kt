@@ -5,7 +5,7 @@ import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
 import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.service.PermissionService
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByCompanyId
 import org.springframework.context.ApplicationEventPublisher

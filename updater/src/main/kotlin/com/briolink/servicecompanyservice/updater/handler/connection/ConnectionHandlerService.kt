@@ -6,8 +6,8 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEnti
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.UserReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByServiceId
 import com.briolink.servicecompanyservice.updater.handler.statistic.StatisticHandlerService
 import com.vladmihalcea.hibernate.type.range.Range

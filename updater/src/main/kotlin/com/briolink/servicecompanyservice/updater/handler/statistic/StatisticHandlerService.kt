@@ -11,9 +11,9 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.statistic.Chart
 import com.briolink.servicecompanyservice.common.jpa.read.entity.statistic.ChartTabItem
 import com.briolink.servicecompanyservice.common.jpa.read.entity.statistic.StatisticReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
+import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.StatisticReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.connection.ConnectionReadRepository
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByCompanyId
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByServiceId
 import org.springframework.context.ApplicationEventPublisher

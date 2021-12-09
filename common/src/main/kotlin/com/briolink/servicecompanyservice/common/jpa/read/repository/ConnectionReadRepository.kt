@@ -1,4 +1,4 @@
-package com.briolink.servicecompanyservice.common.jpa.read.repository.connection
+package com.briolink.servicecompanyservice.common.jpa.read.repository
 
 import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatusEnum
 import com.briolink.servicecompanyservice.common.jpa.projection.CollaboratorProjection
@@ -14,7 +14,6 @@ import java.util.UUID
 
 interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
 
-    fun findByIdAndServiceId(id: UUID, serviceId: UUID): Optional<ConnectionReadEntity>
     fun findByConnectionServiceId(connectionServiceId: UUID): Optional<ConnectionReadEntity>
 
     @Query(
@@ -66,9 +65,6 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
     ): List<CollaboratorProjection>
 
     fun existsByServiceId(serviceId: UUID): Boolean
-    fun findByServiceId(serviceId: UUID): List<ConnectionReadEntity>
-
-    fun deleteByIdAndServiceId(id: UUID, serviceId: UUID): Long
 
     override fun deleteById(id: UUID)
 
@@ -184,7 +180,4 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         @Param("limit") limit: Int = 10,
         @Param("offset") offset: Int = 0
     ): List<ServiceIdProjection>
-
-    @Query("SELECT distinct c.id FROM ConnectionReadEntity c WHERE c.serviceId = ?1")
-    fun getConnectionIdsAffectedByServiceId(serviceId: UUID): List<UUID>
 }
