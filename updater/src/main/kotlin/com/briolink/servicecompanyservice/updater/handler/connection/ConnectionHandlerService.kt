@@ -8,9 +8,11 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.UserReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
+import com.briolink.servicecompanyservice.updater.ReloadStatisticByCompanyId
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByServiceId
 import com.briolink.servicecompanyservice.updater.handler.statistic.StatisticHandlerService
 import com.vladmihalcea.hibernate.type.range.Range
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -23,6 +25,7 @@ class ConnectionHandlerService(
     private val companyReadRepository: CompanyReadRepository,
     private val statisticHandlerService: StatisticHandlerService,
     private val userReadRepository: UserReadRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
     fun createOrUpdate(connection: Connection, isHidden: Boolean) {
         val participantUsers = userReadRepository.findByIdIsIn(
@@ -136,8 +139,18 @@ class ConnectionHandlerService(
         }
     }
 
-    fun setHidden(isHide: Boolean, serviceId: UUID, connectionId: UUID) {
-        connectionReadRepository.hiddenByConnectionIdAndServiceId(connectionId = connectionId, serviceId = serviceId, isHide = isHide)
+    fun setHiddenByCompanyId(hidden: Boolean, companyId: UUID, connectionId: UUID) {
+        connectionReadRepository.changeVisibilityByConnectionIdAndCompanyId(
+            connectionId = connectionId,
+            companyId = companyId,
+            hidden = hidden,
+        )
+        applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(companyId))
+    }
+
+    fun softDeletedByCompanyId(companyId: UUID, connectionId: UUID) {
+        connectionReadRepository.deletedByConnectionIdAndCompanyId(companyId = companyId, connectionId = connectionId)
+        applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(companyId))
     }
 
     fun delete(connectionId: UUID) {

@@ -85,7 +85,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
 
     @Modifying
     @Query("UPDATE ConnectionReadEntity c SET c.isHidden = ?3 WHERE c.id = ?1 and c.serviceId = ?2")
-    fun hiddenByConnectionIdAndServiceId(connectionId: UUID, serviceId: UUID, isHide: Boolean): Int
+    fun hiddenByConnectionIdAndServiceId(connectionId: UUID, serviceId: UUID, hidden: Boolean): Int
 
     @Modifying
     @Query(
@@ -103,6 +103,40 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         @Param("companyId") companyId: UUID,
         @Param("userId") userId: UUID,
         @Param("hidden") hidden: Boolean
+    )
+
+    @Modifying
+    @Query(
+        """
+            UPDATE ConnectionReadEntity c
+            SET c.isHidden = :hidden
+            WHERE
+               (c.participantFromCompanyId = :companyId AND c._participantFromRoleType = 1) OR
+               (c.participantToCompanyId = :companyId AND c._participantToRoleType = 1) AND
+               c.isHidden <> :hidden AND c.id = :connectionId
+           """,
+    )
+
+    fun changeVisibilityByConnectionIdAndCompanyId(
+        @Param("companyId") companyId: UUID,
+        @Param("connectionId") connectionId: UUID,
+        @Param("hidden") hidden: Boolean
+    )
+
+    @Modifying
+    @Query(
+        """
+            DELETE ConnectionReadEntity c
+            WHERE
+               (c.participantFromCompanyId = :companyId AND c._participantFromRoleType = 1) OR
+               (c.participantToCompanyId = :companyId AND c._participantToRoleType = 1) AND
+               c.id = :connectionId
+           """,
+    )
+
+    fun deletedByConnectionIdAndCompanyId(
+        @Param("companyId") companyId: UUID,
+        @Param("connectionId") connectionId: UUID,
     )
 
     @Modifying

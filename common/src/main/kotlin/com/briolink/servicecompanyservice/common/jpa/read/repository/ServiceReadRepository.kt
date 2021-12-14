@@ -12,13 +12,8 @@ import java.util.UUID
 
 interface ServiceReadRepository : JpaRepository<ServiceReadEntity, UUID> {
     fun findByCompanyIdIs(companyId: UUID, pageable: Pageable? = null): Page<ServiceReadEntity>
-
     fun existsByCompanyId(companyId: UUID): Boolean
     fun findBySlug(slug: String): Optional<ServiceReadEntity>
-
-//    @Modifying
-//    @Query("UPDATE ServiceReadEntity s SET s.isHide = ?3 WHERE s.id = ?1 and s.companyId = ?2")
-//    fun hideServiceByIdAndCompanyId(id: UUID, companyId: UUID, isHide: Boolean)
 
     @Query("SELECT id FROM ServiceReadEntity")
     fun getAllUUID(): List<UUID>

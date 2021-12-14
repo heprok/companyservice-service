@@ -135,7 +135,7 @@ class ConnectionService(
             query = query.trimStart().ifEmpty { null },
         ).map { CompanyReadEntity.Industry(it.id, it.name) }
 
-    fun hiddenConnectionAndServiceId(serviceId: UUID, connectionId: UUID, isHide: Boolean): Boolean {
+    fun hiddenConnectionAndServiceId(serviceId: UUID, connectionId: UUID, hidden: Boolean): Boolean {
         if (permissionService.isHavePermission(
                 companyId = serviceReadRepository.getCompanyId(serviceId),
                 userId = SecurityUtil.currentUserAccountId,
@@ -146,7 +146,7 @@ class ConnectionService(
             connectionReadRepository.hiddenByConnectionIdAndServiceId(
                 serviceId = serviceId,
                 connectionId = connectionId,
-                isHide = isHide,
+                hidden = hidden,
             )
             eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(serviceId)))
             return true

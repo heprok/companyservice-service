@@ -7,6 +7,8 @@ import java.time.Year
 import java.util.UUID
 
 data class ConnectionEvent(override val data: Connection) : Event<Connection>("1.0")
+data class CompanyConnectionChangeVisibilityEvent(override val data: CompanyConnectionHideEventData) : Event<CompanyConnectionHideEventData>("1.0") // ktlint-disable max-line-length
+data class CompanyConnectionDeletedEvent(override val data: CompanyConnectionDeletedEventData) : Event<CompanyConnectionDeletedEventData>("1.0") // ktlint-disable max-line-length
 
 enum class ConnectionStatus(val value: Int) {
     @JsonProperty("1")
@@ -74,4 +76,20 @@ data class Connection(
     val status: ConnectionStatus,
     @JsonProperty
     val created: Instant
+)
+
+data class CompanyConnectionHideEventData(
+    @JsonProperty
+    val connectionId: UUID,
+    @JsonProperty
+    val companyId: UUID,
+    @JsonProperty
+    val hidden: Boolean
+)
+
+data class CompanyConnectionDeletedEventData(
+    @JsonProperty
+    val connectionId: UUID,
+    @JsonProperty
+    val companyId: UUID
 )

@@ -44,3 +44,25 @@ class ConnectionEventHandler(
         }
     }
 }
+
+@EventHandler("CompanyConnectionChangeVisibilityEvent", "1.0")
+class CompanyConnectionChangeVisibilityEventHandler(
+    private val connectionHandlerService: ConnectionHandlerService,
+) : IEventHandler<CompanyConnectionChangeVisibilityEvent> {
+    override fun handle(event: CompanyConnectionChangeVisibilityEvent) {
+        connectionHandlerService.setHiddenByCompanyId(
+            companyId = event.data.companyId,
+            connectionId = event.data.connectionId,
+            hidden = event.data.hidden,
+        )
+    }
+}
+
+@EventHandler("CompanyConnectionDeletedEvent", "1.0")
+class CompanyConnectionDeletedEventHandler(
+    private val connectionHandlerService: ConnectionHandlerService,
+) : IEventHandler<CompanyConnectionDeletedEvent> {
+    override fun handle(event: CompanyConnectionDeletedEvent) {
+        connectionHandlerService.softDeletedByCompanyId(companyId = event.data.companyId, connectionId = event.data.connectionId)
+    }
+}
