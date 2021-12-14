@@ -19,9 +19,6 @@ class StatisticHandler(
         val serviceUUID = event.data.serviceId.let {
             if (it == null) serviceReadRepository.getAllUUID() else listOf(it)
         }
-        userPermissionRoleReadRepository.findAll().forEach {
-            connectionReadRepository.changeVisibilityByCompanyIdAndUserId(companyId = it.accessObjectUuid, userId = it.userId, false)
-        }
         serviceUUID.forEach {
             statisticHandlerService.refreshByService(ReloadStatisticByServiceId(it))
         }

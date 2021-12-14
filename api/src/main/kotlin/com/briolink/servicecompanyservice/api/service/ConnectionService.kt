@@ -20,6 +20,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEnti
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
+import com.briolink.servicecompanyservice.common.jpa.runAfterTxCommit
 import com.briolink.servicecompanyservice.common.service.PermissionService
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -148,7 +149,7 @@ class ConnectionService(
                 connectionId = connectionId,
                 hidden = hidden,
             )
-            eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(serviceId)))
+            runAfterTxCommit { eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(serviceId))) }
             return true
         }
         return false

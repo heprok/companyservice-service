@@ -8,6 +8,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.UserReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
+import com.briolink.servicecompanyservice.common.jpa.runAfterTxCommit
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByCompanyId
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByServiceId
 import com.briolink.servicecompanyservice.updater.handler.statistic.StatisticHandlerService
@@ -132,7 +133,7 @@ class ConnectionHandlerService(
                         )
                         connectionReadRepository.save(this).let {
                             if (connection.status == ConnectionStatus.Verified)
-                                statisticHandlerService.refreshByService(ReloadStatisticByServiceId(it.serviceId))
+                                runAfterTxCommit { statisticHandlerService.refreshByService(ReloadStatisticByServiceId(it.serviceId)) }
                         }
                     }
             }
@@ -145,12 +146,12 @@ class ConnectionHandlerService(
             companyId = companyId,
             hidden = hidden,
         )
-        applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(companyId))
+        runAfterTxCommit { applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(companyId)) }
     }
 
     fun softDeletedByCompanyId(companyId: UUID, connectionId: UUID) {
         connectionReadRepository.deletedByConnectionIdAndCompanyId(companyId = companyId, connectionId = connectionId)
-        applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(companyId))
+        runAfterTxCommit { applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(companyId)) }
     }
 
     fun delete(connectionId: UUID) {

@@ -16,6 +16,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadE
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
+import java.time.Year
 
 fun Industry.Companion.fromEntity(entity: CompanyReadEntity.Industry) = Industry(
     id = entity.id.toString(),
@@ -34,6 +35,7 @@ fun Service.Companion.fromEntity(entity: ServiceReadEntity) = Service(
         logo = entity.data.company.logo?.let { Image(it) },
     ),
     verifiedUses = entity.data.verifiedUses,
+    lastUsedYear = entity.data.lastUsed?.let { Year.of(it.year) },
     slug = entity.slug,
     logo = entity.data.logo?.let { Image(it) },
 )

@@ -14,6 +14,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyRead
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
+import com.briolink.servicecompanyservice.common.jpa.runAfterTxCommit
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
@@ -129,15 +130,17 @@ class ServiceCompanyService(
                 this.deleted = Instant.now()
                 this.deletedBy = deletedBy
                 serviceCompanyWriteRepository.save(this)
-                eventPublisher.publishAsync(
-                    CompanyServiceDeletedEvent(
-                        CompanyServiceDeletedData(
-                            id = id,
-                            companyId = companyId,
-                            slug = slug,
+                runAfterTxCommit {
+                    eventPublisher.publishAsync(
+                        CompanyServiceDeletedEvent(
+                            CompanyServiceDeletedData(
+                                id = id,
+                                companyId = companyId,
+                                slug = slug,
+                            ),
                         ),
-                    ),
-                )
+                    )
+                }
             }
     }
 
@@ -146,16 +149,18 @@ class ServiceCompanyService(
             .apply {
                 this.hidden = true
                 serviceCompanyWriteRepository.save(this)
-                eventPublisher.publishAsync(
-                    CompanyServiceHideEvent(
-                        CompanyServiceHideData(
-                            id = id,
-                            companyId = this.companyId,
-                            hidden = true,
-                            slug = slug,
+                runAfterTxCommit {
+                    eventPublisher.publishAsync(
+                        CompanyServiceHideEvent(
+                            CompanyServiceHideData(
+                                id = id,
+                                companyId = this.companyId,
+                                hidden = true,
+                                slug = slug,
+                            ),
                         ),
-                    ),
-                )
+                    )
+                }
             }
     }
 

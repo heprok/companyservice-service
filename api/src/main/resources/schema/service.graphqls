@@ -6,6 +6,7 @@ type Service {
     price: Float
     description: String
     logo: Image
+    lastUsedYear: Year
     verifiedUses: Int
 }
 
