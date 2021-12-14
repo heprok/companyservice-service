@@ -150,7 +150,6 @@ class StatisticHandlerService(
 
             serviceReadRepository.findByIdOrNull(event.serviceId)?.apply {
                 data.verifiedUses = connectionsVerifyByService.count()
-//                    data.lastUsed = connectionReadEntity.created.atZone(ZoneId.systemDefault()).toLocalDate()
                 LocalDate.of(connectionReadEntity.data.service.endDate?.value ?: Year.now().value, 1, 1).also {
                     data.lastUsed =
                         if (data.lastUsed == null) it
@@ -166,6 +165,13 @@ class StatisticHandlerService(
 
             statisticReadRepository.save(serviceStatistic)
         }
+
+        if (connectionsVerifyByService.isEmpty())
+            serviceReadRepository.findByIdOrNull(event.serviceId)?.apply {
+                data.verifiedUses = 0
+                data.lastUsed = null
+                serviceReadRepository.save(this)
+            }
     }
 
     private fun deleteByServiceId(serviceId: UUID) {
