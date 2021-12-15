@@ -39,7 +39,7 @@ class ServiceCompanyService(
     private val companyReadRepository: CompanyReadRepository,
     private val connectionReadRepository: ConnectionReadRepository
 ) {
-    val SERVICE_PROFILE_IMAGE_PATH = "uploads/service-company/profile-image"
+    val SERVICE_PROFILE_IMAGE_PATH = "uploads/companyservice/profile-image"
     fun create(
         companyId: UUID,
         name: String,
