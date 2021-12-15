@@ -119,7 +119,7 @@ class ConnectionService(
     }
 
     fun existsConnectionByService(serviceId: UUID): Boolean {
-        return connectionReadRepository.existsByServiceId(serviceId = serviceId)
+        return connectionReadRepository.existsByServiceIdAndIsDeletedAndIsHidden(serviceId = serviceId)
     }
 
     fun getCollaboratorsUsedForCompany(companyId: UUID, serviceId: UUID, query: String): List<Collaborator> =

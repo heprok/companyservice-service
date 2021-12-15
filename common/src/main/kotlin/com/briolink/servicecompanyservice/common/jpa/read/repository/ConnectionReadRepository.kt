@@ -64,8 +64,6 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         @Param("query") query: String?,
     ): List<CollaboratorProjection>
 
-    fun existsByServiceId(serviceId: UUID): Boolean
-
     override fun deleteById(id: UUID)
 
     @Modifying
@@ -214,4 +212,6 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         @Param("limit") limit: Int = 10,
         @Param("offset") offset: Int = 0
     ): List<ServiceIdProjection>
+
+    fun existsByServiceIdAndIsDeletedAndIsHidden(serviceId: UUID, isDeleted: Boolean = false, isHidden: Boolean = false): Boolean
 }
