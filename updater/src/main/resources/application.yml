@@ -29,6 +29,8 @@ cloud:
 event:
   listener:
     sqs-name: bl-network-${env.spring_profiles_active}-companyservice-service.fifo
+  publisher:
+    sns-name: bl-network-${env.spring_profiles_active}.fifo
 app:
   app-endpoints:
     locationservice: http://location-service.${env.spring_profiles_active}.svc.cluster.local/
