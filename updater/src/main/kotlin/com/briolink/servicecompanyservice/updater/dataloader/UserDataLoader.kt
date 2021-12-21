@@ -19,7 +19,7 @@ import java.util.UUID
 class UserDataLoader(
     var userReadRepository: UserReadRepository,
     private val userJobPositionHandlerService: UserJobPositionCreatedEventHandler,
-    private val companyReadRepository: CompanyReadRepository
+    private val companyReadRepository: CompanyReadRepository,
 ) : DataLoader() {
     val listFirstName: List<String> = listOf(
         "Lynch", "Kennedy", "Williams", "Evans", "Jones", "Burton", "Miller", "Smith", "Nelson", "Lucas",
