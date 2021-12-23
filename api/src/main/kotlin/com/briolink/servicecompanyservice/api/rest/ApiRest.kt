@@ -2,6 +2,7 @@ package com.briolink.servicecompanyservice.api.rest
 
 import com.briolink.event.publisher.EventPublisher
 import com.briolink.servicecompanyservice.api.dataloader.ServiceDataLoader
+import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class ApiRest(
     private val eventPublisher: EventPublisher,
     private val serviceDataLoader: ServiceDataLoader,
+    private val serviceCompanyService: ServiceCompanyService,
     private val serviceWriteRepository: ServiceWriteRepository,
 ) {
     @GetMapping("/statistic/refresh")
@@ -31,6 +33,12 @@ class ApiRest(
         serviceWriteRepository.findAll().forEach {
             eventPublisher.publish(CompanyServiceCreatedEvent(it.toDomain()))
         }
+        return ResponseEntity.ok(1)
+    }
+
+    @GetMapping("/sync/search-service")
+    fun syncSearchService(): ResponseEntity<Int> {
+        serviceCompanyService.publishSyncEvent()
         return ResponseEntity.ok(1)
     }
 }

@@ -22,7 +22,9 @@ class CompanyServiceHandlerService(
         serviceReadRepository.findById(serviceCompany.id)
             .orElse(
                 ServiceReadEntity(
-                    id = serviceCompany.id, slug = serviceCompany.slug, companyId = serviceCompany.companyId,
+                    id = serviceCompany.id,
+                    slug = serviceCompany.slug,
+                    companyId = serviceCompany.companyId,
                     data = ServiceReadEntity.Data(
                         name = serviceCompany.name,
                         description = serviceCompany.description,

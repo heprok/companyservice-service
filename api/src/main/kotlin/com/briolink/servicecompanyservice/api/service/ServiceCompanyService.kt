@@ -6,6 +6,7 @@ import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceHideD
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceHideEvent
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceSyncEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceUpdatedEvent
 import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
@@ -171,4 +172,10 @@ class ServiceCompanyService(
     }
 
     fun countByCompanyId(companyId: UUID): Long = serviceCompanyWriteRepository.countByCompanyId(companyId)
+
+    fun publishSyncEvent() {
+        serviceCompanyWriteRepository.findAllNotDeleted().forEach {
+            eventPublisher.publishAsync(CompanyServiceSyncEvent(it.toDomain()))
+        }
+    }
 }

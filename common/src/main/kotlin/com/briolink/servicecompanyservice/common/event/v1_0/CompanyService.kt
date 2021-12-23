@@ -10,3 +10,4 @@ data class CompanyServiceCreatedEvent(override val data: CompanyService) : Event
 data class CompanyServiceUpdatedEvent(override val data: CompanyService) : Event<Domain>("1.0")
 data class CompanyServiceDeletedEvent(override val data: CompanyServiceDeletedData) : Event<Domain>("1.0")
 data class CompanyServiceHideEvent(override val data: CompanyServiceHideData) : Event<Domain>("1.0")
+data class CompanyServiceSyncEvent(override val data: CompanyService) : Event<Domain>("1.0")

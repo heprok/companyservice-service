@@ -13,4 +13,7 @@ interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
 
     @Query("SELECT count(s) FROM ServiceWriteEntity s WHERE s.deleted is null AND s.companyId = ?1")
     fun countByCompanyId(companyId: UUID): Long
+
+    @Query("SELECT s FROM ServiceWriteEntity s WHERE s.deleted is null")
+    fun findAllNotDeleted(): List<ServiceWriteEntity>
 }

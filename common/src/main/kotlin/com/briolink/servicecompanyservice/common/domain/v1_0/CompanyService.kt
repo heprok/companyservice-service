@@ -24,7 +24,9 @@ data class CompanyService(
     @JsonProperty
     val created: Instant,
     @JsonProperty
-    val lastUsed: LocalDate? = null
+    val lastUsed: LocalDate? = null,
+    @JsonProperty
+    val hidden: Boolean,
 ) : Domain
 
 data class CompanyServiceDeletedData(
