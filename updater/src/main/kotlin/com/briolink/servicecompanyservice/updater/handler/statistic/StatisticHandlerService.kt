@@ -1,5 +1,8 @@
 package com.briolink.servicecompanyservice.updater.handler.statistic
 
+import com.briolink.event.publisher.EventPublisher
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceStatistic
+import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticEvent
 import com.briolink.servicecompanyservice.common.jpa.enumeration.CompanyRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatusEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.statistic.Chart
@@ -36,6 +39,7 @@ class StatisticHandlerService(
     private val serviceReadRepository: ServiceReadRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val companyReadRepository: CompanyReadRepository,
+    private val eventPublisher: EventPublisher,
 ) {
     @Async
     @EventListener
@@ -150,6 +154,7 @@ class StatisticHandlerService(
 
             serviceReadRepository.findByIdOrNull(event.serviceId)?.apply {
                 data.verifiedUses = connectionsVerifyByService.count()
+                publishStatistic(id, data.verifiedUses)
                 LocalDate.of(connectionReadEntity.data.service.endDate?.value ?: Year.now().value, 1, 1).also {
                     data.lastUsed =
                         if (data.lastUsed == null) it
@@ -169,6 +174,7 @@ class StatisticHandlerService(
         if (connectionsVerifyByService.isEmpty())
             serviceReadRepository.findByIdOrNull(event.serviceId)?.apply {
                 data.verifiedUses = 0
+                publishStatistic(id, 0)
                 data.lastUsed = null
                 serviceReadRepository.save(this)
             }
@@ -176,6 +182,20 @@ class StatisticHandlerService(
 
     private fun deleteByServiceId(serviceId: UUID) {
         statisticReadRepository.deleteByServiceId(serviceId)
+    }
+
+    private fun publishStatistic(
+        serviceId: UUID,
+        numberOfUses: Int
+    ) {
+        eventPublisher.publishAsync(
+            CompanyServiceStatisticEvent(
+                CompanyServiceStatistic(
+                    serviceId = serviceId,
+                    numberOfUses = numberOfUses,
+                ),
+            ),
+        )
     }
 
     @Async
