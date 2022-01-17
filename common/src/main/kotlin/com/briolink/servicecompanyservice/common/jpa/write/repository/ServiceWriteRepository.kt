@@ -9,6 +9,8 @@ import java.util.UUID
 interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
     fun findBySlug(slug: String): Optional<ServiceWriteEntity>
     fun existsBySlug(slug: String): Boolean
+
+    @Query("SELECT s FROM ServiceWriteEntity s WHERE s.companyId = ?1 and lower(s.name) = lower(?2)")
     fun findByCompanyIdAndName(companyId: UUID, name: String): ServiceWriteEntity?
 
     @Query("SELECT count(s) FROM ServiceWriteEntity s WHERE s.deleted is null AND s.companyId = ?1")

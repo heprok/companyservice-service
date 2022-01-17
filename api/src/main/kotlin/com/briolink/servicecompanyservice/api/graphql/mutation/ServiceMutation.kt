@@ -1,6 +1,5 @@
 package com.briolink.servicecompanyservice.api.graphql.mutation
 
-import com.briolink.event.publisher.EventPublisher
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.BaseResult
 import com.briolink.servicecompanyservice.api.types.CreateServiceInput
@@ -9,6 +8,7 @@ import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.ServiceResultData
 import com.briolink.servicecompanyservice.api.types.UpdateServiceInput
 import com.briolink.servicecompanyservice.api.types.UpdateServiceResult
+import com.briolink.servicecompanyservice.api.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.InputArgument
@@ -20,7 +20,6 @@ import java.util.UUID
 @DgsComponent
 class ServiceMutation(
     private val serviceCompanyService: ServiceCompanyService,
-    private val eventPublisher: EventPublisher
 ) {
     @DgsMutation
     @PreAuthorize("isAuthenticated()")
@@ -40,7 +39,7 @@ class ServiceMutation(
         val entity = serviceCompanyService.create(
             companyId = UUID.fromString(companyId),
             price = input.price,
-            name = input.name,
+            name = StringUtil.trimAllSpaces(input.name),
             description = input.description,
             fileImage = input.logo,
         )
@@ -58,8 +57,8 @@ class ServiceMutation(
         @InputArgument("name") name: String
     ): CreateServiceResult {
         return (
-            serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = name)
-                ?: serviceCompanyService.create(companyId = UUID.fromString(companyId), name = name)
+            serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = StringUtil.trimAllSpaces(name))
+                ?: serviceCompanyService.create(companyId = UUID.fromString(companyId), name = StringUtil.trimAllSpaces(name))
             ).let { CreateServiceResult(data = ServiceResultData(id = it.id.toString(), slug = it.slug), userErrors = listOf()) }
     }
 

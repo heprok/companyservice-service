@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: oleg@briolink.com
+      changes:
+        - dropPrimaryKey:
+            constraintName: service_pkey
+            dropIndex: true
+            schemaName: write
+            tableName: service
+        - sql:
+            sql: create index idx_company_id_company_service_lower_name on write.service (lower(name), company_id)
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: pk_service
+            schemaName: write
+            tableName: service
+
