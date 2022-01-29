@@ -18,6 +18,8 @@ type ServiceAndUserRole {
 type ServiceResultData {
     id: ID!
     slug: String!
+    image: Image
+    description: String
 }
 
 type CreateServiceResult implements ResultWithUserErrors {

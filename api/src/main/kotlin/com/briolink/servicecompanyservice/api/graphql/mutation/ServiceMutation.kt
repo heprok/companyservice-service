@@ -59,7 +59,18 @@ class ServiceMutation(
         return (
             serviceCompanyService.findByNameAndCompanyId(companyId = UUID.fromString(companyId), name = StringUtil.trimAllSpaces(name))
                 ?: serviceCompanyService.create(companyId = UUID.fromString(companyId), name = StringUtil.trimAllSpaces(name))
-            ).let { CreateServiceResult(data = ServiceResultData(id = it.id.toString(), slug = it.slug), userErrors = listOf()) }
+            ).let { serviceWriteEntity ->
+            CreateServiceResult(
+                data = ServiceResultData(
+                    id = serviceWriteEntity.id.toString(),
+                    slug = serviceWriteEntity.slug,
+                    image = serviceWriteEntity.logo?.let { Image(it) },
+                    description = serviceWriteEntity.description,
+
+                ),
+                userErrors = listOf(),
+            )
+        }
     }
 
     @DgsMutation
