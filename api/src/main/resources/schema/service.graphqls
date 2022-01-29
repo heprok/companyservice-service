@@ -18,8 +18,9 @@ type ServiceAndUserRole {
 type ServiceResultData {
     id: ID!
     slug: String!
-    image: Image
+    logo: Image
     description: String
+    price: Float
 }
 
 type CreateServiceResult implements ResultWithUserErrors {

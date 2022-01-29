@@ -64,8 +64,9 @@ class ServiceMutation(
                 data = ServiceResultData(
                     id = serviceWriteEntity.id.toString(),
                     slug = serviceWriteEntity.slug,
-                    image = serviceWriteEntity.logo?.let { Image(it) },
+                    logo = serviceWriteEntity.logo?.let { Image(it) },
                     description = serviceWriteEntity.description,
+                    price = serviceWriteEntity.price,
 
                 ),
                 userErrors = listOf(),
