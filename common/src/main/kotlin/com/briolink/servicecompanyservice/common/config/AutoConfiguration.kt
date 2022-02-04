@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration
 @ComponentScan(
     basePackages = [
         "com.briolink.servicecompanyservice.common.service",
-        "com.briolink.servicecompanyservice.common.dto",
         "com.briolink.servicecompanyservice.common.config"
     ]
 )

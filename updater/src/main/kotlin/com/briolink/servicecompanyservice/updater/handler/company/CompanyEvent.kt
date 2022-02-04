@@ -1,7 +1,7 @@
 package com.briolink.servicecompanyservice.updater.handler.company
 
 import com.briolink.event.Event
-import com.briolink.servicecompanyservice.common.dto.location.LocationId
+import com.briolink.lib.location.model.LocationId
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URL
