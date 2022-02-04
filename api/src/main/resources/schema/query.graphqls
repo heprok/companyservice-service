@@ -11,5 +11,5 @@ type Query {
 
     # -------------------------------------- charts -------------------------------------
     getCharts(serviceId: ID!): ServiceCharts
-    getLocations(query: String!): [Location]
+    getLocations(query: String): [Location]
 }

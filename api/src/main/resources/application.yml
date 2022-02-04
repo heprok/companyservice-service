@@ -45,10 +45,14 @@ dgs:
       enabled: false
 app:
   app-endpoints:
-    locationservice: http://location-service.${env.spring_profiles_active}.svc.cluster.local/
+    locationservice:
   aws:
     s3:
       name: ${env.S3_BUCKET_NAME:briolink}
 event:
   publisher:
     sns-name: bl-network-${env.spring_profiles_active}.fifo
+location-service:
+  api:
+    url: https://location-service.${env.spring_profiles_active}.svc.cluster.local/
+    version: 1
