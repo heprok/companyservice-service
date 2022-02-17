@@ -5,9 +5,9 @@ import com.briolink.servicecompanyservice.common.jpa.read.entity.UserReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
-import com.briolink.servicecompanyservice.updater.userjobposition.UserJobPosition
-import com.briolink.servicecompanyservice.updater.userjobposition.UserJobPositionCreatedEvent
-import com.briolink.servicecompanyservice.updater.userjobposition.UserJobPositionCreatedEventHandler
+import com.briolink.servicecompanyservice.updater.handler.userjobposition.UserJobPositionCreatedEvent
+import com.briolink.servicecompanyservice.updater.handler.userjobposition.UserJobPositionCreatedEventHandler
+import com.briolink.servicecompanyservice.updater.handler.userjobposition.UserJobPositionEventData
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import java.net.URL
@@ -44,7 +44,7 @@ class UserDataLoader(
                     companyReadRepository.getAllUUID().forEach { companyId ->
                         userJobPositionHandlerService.handle(
                             UserJobPositionCreatedEvent(
-                                UserJobPosition(
+                                UserJobPositionEventData(
                                     userId = user.id,
                                     companyId = companyId,
                                     id = UUID.randomUUID(),

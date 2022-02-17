@@ -1,13 +1,14 @@
 package com.briolink.servicecompanyservice.common.jpa.write.entity
 
-import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceEventData
+import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.Type
+import org.hibernate.annotations.UpdateTimestamp
 import java.net.URL
 import java.time.Instant
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.PrePersist
 import javax.persistence.Table
 
 @Table(name = "service", schema = "write")
@@ -33,9 +34,6 @@ class ServiceWriteEntity(
     @Column(name = "description", length = 10240)
     var description: String? = null,
 
-    @Column(name = "created")
-    var created: Instant? = null,
-
     @Column(name = "deleted")
     var deleted: Instant? = null,
 
@@ -47,19 +45,22 @@ class ServiceWriteEntity(
     var deletedBy: UUID? = null
 
 ) : BaseWriteEntity() {
-    @PrePersist
-    fun prePersist() {
-        created = created ?: Instant.now()
-    }
+    @CreationTimestamp
+    @Column(name = "created", nullable = false)
+    lateinit var created: Instant
 
-    fun toDomain() = CompanyService(
+    @UpdateTimestamp
+    @Column(name = "changed")
+    var changed: Instant? = null
+
+    fun toDomain() = CompanyServiceEventData(
         id = id!!,
         companyId = companyId,
         name = name,
         price = price,
         logo = logo,
         description = description,
-        created = created!!,
+        created = created,
         slug = slug,
         hidden = hidden,
     )

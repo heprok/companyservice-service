@@ -28,7 +28,7 @@ class ConnectionHandlerService(
     private val userReadRepository: UserReadRepository,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
-    fun createOrUpdate(connection: Connection, isHidden: Boolean) {
+    fun createOrUpdate(connection: ConnectionEventData, isHidden: Boolean) {
         val participantUsers = userReadRepository.findByIdIsIn(
             listOf(connection.participantFrom.userId, connection.participantTo.userId),
         ).stream().collect(Collectors.toMap(UserReadEntity::id) { v -> v })

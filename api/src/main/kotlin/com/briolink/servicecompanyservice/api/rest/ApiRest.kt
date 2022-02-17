@@ -35,10 +35,4 @@ class ApiRest(
         }
         return ResponseEntity.ok(1)
     }
-
-    @GetMapping("/sync/search-service")
-    fun syncSearchService(): ResponseEntity<Int> {
-        serviceCompanyService.publishSyncEvent()
-        return ResponseEntity.ok(1)
-    }
 }

@@ -5,9 +5,9 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyRead
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
-import com.briolink.servicecompanyservice.updater.handler.connection.Connection
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionCompanyRole
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionCompanyRoleType
+import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionEventData
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionHandlerService
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionParticipant
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionService
@@ -73,7 +73,7 @@ class ConnectionDataLoader(
                 try {
 
                     connectionServiceHandler.createOrUpdate(
-                        Connection(
+                        ConnectionEventData(
                             id = UUID.randomUUID(),
                             participantFrom = ConnectionParticipant(
                                 userId = listUser.random().id,

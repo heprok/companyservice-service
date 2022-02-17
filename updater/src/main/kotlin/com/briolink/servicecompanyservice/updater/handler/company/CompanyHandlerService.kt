@@ -18,7 +18,7 @@ class CompanyHandlerService(
     private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
 ) {
 
-    fun createOrUpdate(entityPrevCompany: CompanyReadEntity? = null, companyDomain: Company): CompanyReadEntity {
+    fun createOrUpdate(entityPrevCompany: CompanyReadEntity? = null, companyDomain: CompanyEventData): CompanyReadEntity {
         val company = entityPrevCompany ?: CompanyReadEntity(companyDomain.id)
         company.apply {
             name = companyDomain.name

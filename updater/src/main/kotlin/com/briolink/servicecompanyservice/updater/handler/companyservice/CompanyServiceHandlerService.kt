@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.updater.handler.companyservice
 
-import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceEventData
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
@@ -16,7 +16,7 @@ class CompanyServiceHandlerService(
     private val serviceReadRepository: ServiceReadRepository,
 ) {
 
-    fun createOrUpdate(serviceCompany: CompanyService) {
+    fun createOrUpdate(serviceCompany: CompanyServiceEventData) {
         val company = companyReadRepository.findById(serviceCompany.companyId)
             .orElseThrow { throw EntityNotFoundException(serviceCompany.companyId.toString() + " company not found") }
         serviceReadRepository.findById(serviceCompany.id)

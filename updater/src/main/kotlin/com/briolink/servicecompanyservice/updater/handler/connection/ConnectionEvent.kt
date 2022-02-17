@@ -1,24 +1,34 @@
 package com.briolink.servicecompanyservice.updater.handler.connection
 
 import com.briolink.event.Event
+import com.briolink.lib.sync.ISyncData
+import com.briolink.lib.sync.enumeration.ServiceEnum
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.Instant
 import java.time.Year
 import java.util.UUID
 
-data class ConnectionEvent(override val data: Connection) : Event<Connection>("1.0")
-data class CompanyConnectionChangeVisibilityEvent(override val data: CompanyConnectionHideEventData) : Event<CompanyConnectionHideEventData>("1.0") // ktlint-disable max-line-length
-data class CompanyConnectionDeletedEvent(override val data: CompanyConnectionDeletedEventData) : Event<CompanyConnectionDeletedEventData>("1.0") // ktlint-disable max-line-length
+data class ConnectionEvent(override val data: ConnectionEventData) : Event<ConnectionEventData>("1.0")
+data class CompanyConnectionChangeVisibilityEvent(override val data: CompanyConnectionHideEventData) :
+    Event<CompanyConnectionHideEventData>("1.0") // ktlint-disable max-line-length
 
+data class CompanyConnectionDeletedEvent(override val data: CompanyConnectionDeletedEventData) :
+    Event<CompanyConnectionDeletedEventData>("1.0") // ktlint-disable max-line-length
+
+data class ConnectionSyncEvent(override val data: ConnectionEventSyncData) : Event<ConnectionEventSyncData>("1.0")
 enum class ConnectionStatus(val value: Int) {
     @JsonProperty("1")
     Draft(1),
+
     @JsonProperty("2")
     Pending(2),
+
     @JsonProperty("3")
     InProgress(3),
+
     @JsonProperty("4")
     Verified(4),
+
     @JsonProperty("5")
     Rejected(5);
 }
@@ -63,7 +73,7 @@ data class ConnectionParticipant(
     val companyRole: ConnectionCompanyRole,
 )
 
-data class Connection(
+data class ConnectionEventData(
     @JsonProperty
     val id: UUID,
     @JsonProperty
@@ -93,3 +103,16 @@ data class CompanyConnectionDeletedEventData(
     @JsonProperty
     val companyId: UUID
 )
+
+data class ConnectionEventSyncData(
+    @JsonProperty
+    override val indexObjectSync: Long,
+    @JsonProperty
+    override val service: ServiceEnum,
+    @JsonProperty
+    override val syncId: Int,
+    @JsonProperty
+    override val totalObjectSync: Long,
+    @JsonProperty
+    override val objectSync: ConnectionEventData
+) : ISyncData<ConnectionEventData>
