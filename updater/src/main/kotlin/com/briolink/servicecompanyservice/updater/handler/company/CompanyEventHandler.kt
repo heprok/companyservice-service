@@ -72,10 +72,7 @@ class CompanySyncEventHandler(
                 ),
             )
         }
-        println("Syncindex : " + syncData.indexObjectSync)
-        println("Total : " + syncData.totalObjectSync)
         if (syncData.indexObjectSync == syncData.totalObjectSync) {
-            println("COMPLETED COMPANY")
             syncService.completedObjectSync(syncData.syncId, syncData.service, ObjectSyncEnum.Company)
         }
     }

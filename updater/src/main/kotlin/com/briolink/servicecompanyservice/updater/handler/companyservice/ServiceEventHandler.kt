@@ -45,7 +45,8 @@ class CompanyServiceSyncEventHandler(
         if (syncData.indexObjectSync.toInt() == 1)
             syncService.startSync(syncData.syncId, syncData.service)
         try {
-            companyServiceHandlerService.createOrUpdate(event.data.objectSync)
+            if (syncData.objectSync.deleted) companyServiceHandlerService.deleteById(syncData.objectSync.id)
+            else companyServiceHandlerService.createOrUpdate(event.data.objectSync)
         } catch (ex: Exception) {
             syncService.sendSyncError(
                 syncError = SyncError(
@@ -57,8 +58,6 @@ class CompanyServiceSyncEventHandler(
                 ),
             )
         }
-        println("Syncindex : " + syncData.indexObjectSync)
-        println("Total : " + syncData.totalObjectSync)
         if (syncData.indexObjectSync == syncData.totalObjectSync)
             syncService.completedObjectSync(syncData.syncId, syncData.service, ObjectSyncEnum.CompanyService)
     }

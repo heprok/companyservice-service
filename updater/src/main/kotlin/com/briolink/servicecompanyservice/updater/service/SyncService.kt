@@ -104,6 +104,11 @@ class SyncService(
                     this._service = ServiceEnum.User.id
                     this._objectSync = ObjectSyncEnum.User.value
                 },
+                SyncLogPK().apply {
+                    this.syncId = syncId
+                    this._service = ServiceEnum.User.id
+                    this._objectSync = ObjectSyncEnum.UserJobPosition.value
+                },
             )
         return startSync(listSyncLogPK)
     }

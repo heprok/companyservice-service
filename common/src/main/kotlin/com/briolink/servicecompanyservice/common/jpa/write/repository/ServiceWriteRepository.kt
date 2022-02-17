@@ -28,4 +28,6 @@ interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
         end: Instant,
         pageable: Pageable
     ): Page<ServiceWriteEntity>
+
+    fun existsByNameAndCompanyId(name: String, companyId: UUID): Boolean
 }

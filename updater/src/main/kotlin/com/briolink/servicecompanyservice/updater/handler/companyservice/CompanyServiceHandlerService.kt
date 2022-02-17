@@ -7,6 +7,7 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyRead
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 import javax.persistence.EntityNotFoundException
 
 @Transactional
@@ -59,5 +60,9 @@ class CompanyServiceHandlerService(
             slug = company.data.slug,
             logo = company.data.logo?.toString(),
         )
+    }
+
+    fun deleteById(id: UUID) {
+        serviceReadRepository.deleteById(id)
     }
 }

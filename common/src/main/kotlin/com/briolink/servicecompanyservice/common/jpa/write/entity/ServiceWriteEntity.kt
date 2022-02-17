@@ -63,5 +63,6 @@ class ServiceWriteEntity(
         created = created,
         slug = slug,
         hidden = hidden,
+        deleted = deleted != null,
     )
 }
