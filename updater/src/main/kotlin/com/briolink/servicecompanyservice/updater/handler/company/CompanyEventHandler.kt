@@ -3,9 +3,8 @@ package com.briolink.servicecompanyservice.updater.handler.company
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
-import com.briolink.lib.sync.enumeration.UpdaterEnum
-import com.briolink.lib.sync.model.SyncError
-import com.briolink.servicecompanyservice.common.jpa.enumeration.ObjectSyncEnum
+import com.briolink.lib.sync.SyncEventHandler
+import com.briolink.lib.sync.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByCompanyId
 import com.briolink.servicecompanyservice.updater.handler.companyservice.CompanyServiceHandlerService
 import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionHandlerService
@@ -42,38 +41,28 @@ class CompanyEventHandler(
 class CompanySyncEventHandler(
     private val companyHandlerService: CompanyHandlerService,
     private val connectionHandlerService: ConnectionHandlerService,
-    private val syncService: SyncService,
     private val companyServiceHandlerService: CompanyServiceHandlerService,
-    private val applicationEventPublisher: ApplicationEventPublisher
-) : IEventHandler<CompanySyncEvent> {
+    private val applicationEventPublisher: ApplicationEventPublisher,
+    syncService: SyncService,
+) : SyncEventHandler<CompanySyncEvent>(ObjectSyncEnum.Company, syncService) {
     override fun handle(event: CompanySyncEvent) {
         val syncData = event.data
-        if (syncData.indexObjectSync.toInt() == 1)
-            syncService.startSync(syncData.syncId, syncData.service)
+        if (!objectSyncStarted(syncData)) return
         try {
-            val updatedCompany = companyHandlerService.findById(syncData.objectSync.id)
+            val objectSync = syncData.objectSync!!
+            val updatedCompany = companyHandlerService.findById(objectSync.id)
             val prevCountryId = updatedCompany?.data?.location?.country?.id
             val prevIndustryId = updatedCompany?.data?.industry?.id
-            companyHandlerService.createOrUpdate(updatedCompany, syncData.objectSync).let {
+            companyHandlerService.createOrUpdate(updatedCompany, objectSync).let {
                 connectionHandlerService.updateCompany(it)
                 companyServiceHandlerService.updateCompany(it)
                 if (it.data.industry?.id != prevIndustryId || it.data.location?.country?.id != prevCountryId) {
-                    applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(syncData.objectSync.id))
+                    applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(objectSync.id))
                 }
             }
         } catch (ex: Exception) {
-            syncService.sendSyncError(
-                syncError = SyncError(
-                    service = syncData.service,
-                    updater = UpdaterEnum.CompanyService,
-                    syncId = syncData.syncId,
-                    exception = ex,
-                    indexObjectSync = syncData.indexObjectSync,
-                ),
-            )
+            sendError(syncData, ex)
         }
-        if (syncData.indexObjectSync == syncData.totalObjectSync) {
-            syncService.completedObjectSync(syncData.syncId, syncData.service, ObjectSyncEnum.Company)
-        }
+        objectSyncCompleted(syncData)
     }
 }

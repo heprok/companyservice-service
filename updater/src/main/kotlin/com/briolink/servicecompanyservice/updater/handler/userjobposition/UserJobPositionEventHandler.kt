@@ -3,10 +3,9 @@ package com.briolink.servicecompanyservice.updater.handler.userjobposition
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
-import com.briolink.lib.sync.enumeration.UpdaterEnum
-import com.briolink.lib.sync.model.SyncError
+import com.briolink.lib.sync.SyncEventHandler
+import com.briolink.lib.sync.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.service.PermissionService
@@ -50,14 +49,13 @@ class UserJobPositionSyncEventHandler(
     private val connectionReadRepository: ConnectionReadRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val permissionService: PermissionService,
-    private val syncService: SyncService,
-) : IEventHandler<UserJobPositionSyncEvent> {
+    syncService: SyncService,
+) : SyncEventHandler<UserJobPositionSyncEvent>(ObjectSyncEnum.UserJobPosition, syncService) {
     override fun handle(event: UserJobPositionSyncEvent) {
         val syncData = event.data
-        if (syncData.indexObjectSync.toInt() == 1)
-            syncService.startSync(syncData.syncId, syncData.service)
+        if (!objectSyncStarted(syncData)) return
         try {
-            val userJobPosition = syncData.objectSync
+            val userJobPosition = syncData.objectSync!!
             if (!permissionService.existsPermission(userId = userJobPosition.userId, accessObjectUuid = userJobPosition.companyId)) {
                 permissionService.createPermission(
                     userId = userJobPosition.userId,
@@ -72,17 +70,8 @@ class UserJobPositionSyncEventHandler(
                 applicationEventPublisher.publishEvent(ReloadStatisticByCompanyId(userJobPosition.companyId))
             }
         } catch (ex: Exception) {
-            syncService.sendSyncError(
-                syncError = SyncError(
-                    service = syncData.service,
-                    updater = UpdaterEnum.CompanyService,
-                    syncId = syncData.syncId,
-                    exception = ex,
-                    indexObjectSync = syncData.indexObjectSync,
-                ),
-            )
+            sendError(syncData, ex)
         }
-        if (syncData.indexObjectSync == syncData.totalObjectSync)
-            syncService.completedObjectSync(syncData.syncId, syncData.service, ObjectSyncEnum.UserJobPosition)
+        objectSyncCompleted(syncData)
     }
 }

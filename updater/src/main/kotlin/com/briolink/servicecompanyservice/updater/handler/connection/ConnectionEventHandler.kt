@@ -3,15 +3,13 @@ package com.briolink.servicecompanyservice.updater.handler.connection
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
 import com.briolink.event.annotation.EventHandlers
-import com.briolink.lib.sync.enumeration.UpdaterEnum
-import com.briolink.lib.sync.model.SyncError
+import com.briolink.lib.sync.SyncEventHandler
+import com.briolink.lib.sync.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.PermissionRightEnum
 import com.briolink.servicecompanyservice.common.service.PermissionService
 import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandlerService
 import com.briolink.servicecompanyservice.updater.service.SyncService
-import org.springframework.context.ApplicationEventPublisher
 
 @EventHandlers(
     EventHandler("ConnectionCreatedEvent", "1.0"),
@@ -75,16 +73,14 @@ class CompanyConnectionDeletedEventHandler(
 @EventHandler("ConnectionSyncEvent", "1.0")
 class ConnectionSyncEventHandler(
     private val connectionHandlerService: ConnectionHandlerService,
-    private val syncService: SyncService,
     private val permissionService: PermissionService,
-    private val applicationEventPublisher: ApplicationEventPublisher
-) : IEventHandler<ConnectionSyncEvent> {
+    syncService: SyncService,
+) : SyncEventHandler<ConnectionSyncEvent>(ObjectSyncEnum.Connection, syncService) {
     override fun handle(event: ConnectionSyncEvent) {
         val syncData = event.data
-        if (syncData.indexObjectSync.toInt() == 1)
-            syncService.startSync(syncData.syncId, syncData.service)
+        if (!objectSyncStarted(syncData)) return
         try {
-            val connection = syncData.objectSync
+            val connection = syncData.objectSync!!
             if (connection.status != ConnectionStatus.Rejected) {
                 (connection.participantFrom.companyRole.type == ConnectionCompanyRoleType.Seller).let {
                     if (it)
@@ -108,17 +104,8 @@ class ConnectionSyncEventHandler(
                 connectionHandlerService.delete(connection.id)
             }
         } catch (ex: Exception) {
-            syncService.sendSyncError(
-                syncError = SyncError(
-                    service = syncData.service,
-                    updater = UpdaterEnum.CompanyService,
-                    syncId = syncData.syncId,
-                    exception = ex,
-                    indexObjectSync = syncData.indexObjectSync,
-                ),
-            )
+            sendError(syncData, ex)
         }
-        if (syncData.indexObjectSync == syncData.totalObjectSync)
-            syncService.completedObjectSync(syncData.syncId, syncData.service, ObjectSyncEnum.Connection)
+        objectSyncCompleted(syncData)
     }
 }

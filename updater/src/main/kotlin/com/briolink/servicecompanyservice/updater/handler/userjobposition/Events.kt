@@ -1,14 +1,14 @@
 package com.briolink.servicecompanyservice.updater.handler.userjobposition
 
 import com.briolink.event.Event
-import com.briolink.lib.sync.ISyncData
-import com.briolink.lib.sync.enumeration.ServiceEnum
+import com.briolink.lib.sync.SyncData
+import com.briolink.lib.sync.SyncEvent
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import java.util.UUID
 
 data class UserJobPositionCreatedEvent(override val data: UserJobPositionEventData) : Event<UserJobPositionEventData>("1.0")
-data class UserJobPositionSyncEvent(override val data: UserJobPositionEventSyncData) : Event<UserJobPositionEventSyncData>("1.0")
+data class UserJobPositionSyncEvent(override val data: SyncData<UserJobPositionEventData>) : SyncEvent<UserJobPositionEventData>("1.0")
 
 data class UserJobPositionEventData(
     @JsonProperty
@@ -26,16 +26,3 @@ data class UserJobPositionEventData(
     @JsonProperty
     val userId: UUID,
 )
-
-data class UserJobPositionEventSyncData(
-    @JsonProperty
-    override val indexObjectSync: Long,
-    @JsonProperty
-    override val service: ServiceEnum,
-    @JsonProperty
-    override val syncId: Int,
-    @JsonProperty
-    override val totalObjectSync: Long,
-    @JsonProperty
-    override val objectSync: UserJobPositionEventData,
-) : ISyncData<UserJobPositionEventData>

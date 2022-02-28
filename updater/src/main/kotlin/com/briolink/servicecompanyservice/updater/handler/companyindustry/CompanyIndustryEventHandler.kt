@@ -2,62 +2,33 @@ package com.briolink.servicecompanyservice.updater.handler.companyindustry
 
 import com.briolink.event.IEventHandler
 import com.briolink.event.annotation.EventHandler
-import com.briolink.lib.sync.enumeration.UpdaterEnum
-import com.briolink.lib.sync.model.SyncError
-import com.briolink.servicecompanyservice.common.jpa.enumeration.ObjectSyncEnum
-import com.briolink.servicecompanyservice.common.jpa.read.entity.IndustryReadEntity
-import com.briolink.servicecompanyservice.common.jpa.read.repository.IndustryReadRepository
+import com.briolink.lib.sync.SyncEventHandler
+import com.briolink.lib.sync.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.updater.service.SyncService
-import org.springframework.transaction.annotation.Transactional
 
-@Transactional
 @EventHandler("IndustryCreatedEvent", "1.0")
 class CompanyIndustryCreatedEventHandler(
-    private val industryReadRepository: IndustryReadRepository,
+    private val companyIndustryHandlerService: CompanyIndustryHandlerService,
 ) : IEventHandler<IndustryCreatedEvent> {
     override fun handle(event: IndustryCreatedEvent) {
-        industryReadRepository.save(
-            IndustryReadEntity(
-                id = event.data.id,
-                name = event.data.name,
-            ),
-        )
+        companyIndustryHandlerService.createOrUpdate(event.data)
     }
 }
 
 @EventHandler("IndustrySyncEvent", "1.0")
-@Transactional
 class IndustrySyncEventHandler(
-    private val industryReadRepository: IndustryReadRepository,
-    private val syncService: SyncService,
-) : IEventHandler<IndustrySyncEvent> {
+    private val companyIndustryHandlerService: CompanyIndustryHandlerService,
+    syncService: SyncService,
+) : SyncEventHandler<IndustrySyncEvent>(ObjectSyncEnum.CompanyIndustry, syncService) {
     override fun handle(event: IndustrySyncEvent) {
         val syncData = event.data
-        if (syncData.indexObjectSync.toInt() == 1)
-            syncService.startSync(syncData.syncId, syncData.service)
+        if (!objectSyncStarted(syncData)) return
         try {
-            industryReadRepository.save(
-                IndustryReadEntity(
-                    id = syncData.objectSync.id,
-                    name = syncData.objectSync.name,
-                ),
-            )
+            val objectSync = syncData.objectSync!!
+            companyIndustryHandlerService.createOrUpdate(objectSync)
         } catch (ex: Exception) {
-            syncService.sendSyncError(
-                syncError = SyncError(
-                    service = syncData.service,
-                    updater = UpdaterEnum.CompanyService,
-                    syncId = syncData.syncId,
-                    exception = ex,
-                    indexObjectSync = syncData.indexObjectSync,
-                ),
-            )
+            sendError(syncData, ex)
         }
-        println("Syncindex : " + syncData.indexObjectSync)
-        println("Total : " + syncData.totalObjectSync)
-        if (syncData.indexObjectSync == syncData.totalObjectSync) {
-            println("COMPLETED COMPANY Industry")
-            syncService.completedObjectSync(syncData.syncId, syncData.service, ObjectSyncEnum.CompanyIndustry)
-        }
+        objectSyncCompleted(syncData)
     }
 }
