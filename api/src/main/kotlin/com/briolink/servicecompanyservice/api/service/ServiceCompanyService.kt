@@ -1,6 +1,10 @@
 package com.briolink.servicecompanyservice.api.service
 
 import com.briolink.event.publisher.EventPublisher
+import com.briolink.lib.sync.SyncData
+import com.briolink.lib.sync.SyncUtil
+import com.briolink.lib.sync.enumeration.ServiceEnum
+import com.briolink.lib.sync.model.PeriodDateTime
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceDeletedData
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceHideData
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
@@ -57,11 +61,11 @@ class ServiceCompanyService(
             ServiceWriteEntity(
                 companyId = companyId,
                 name = name,
-                created = created,
                 slug = StringUtil.slugify("$nameCompany $name ", true),
                 description = description,
                 price = price,
             ).apply {
+                created?.let { this.created = created }
                 this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
             },
         ).let {
@@ -173,9 +177,31 @@ class ServiceCompanyService(
 
     fun countByCompanyId(companyId: UUID): Long = serviceCompanyWriteRepository.countByCompanyId(companyId)
 
-    fun publishSyncEvent() {
-        serviceCompanyWriteRepository.findAllNotDeleted().forEach {
-            eventPublisher.publishAsync(CompanyServiceSyncEvent(it.toDomain()))
+    private fun publishCompanyServiceSyncEvent(
+        syncId: Int,
+        objectIndex: Long,
+        totalObjects: Long,
+        entity: ServiceWriteEntity?
+    ) {
+        eventPublisher.publishAsync(
+            CompanyServiceSyncEvent(
+                SyncData(
+                    objectIndex = objectIndex,
+                    totalObjects = totalObjects,
+                    objectSync = entity?.toDomain(),
+                    syncId = syncId,
+                    service = ServiceEnum.CompanyService,
+                ),
+            ),
+        )
+    }
+
+    fun publishSyncEvent(syncId: Int, period: PeriodDateTime? = null) {
+        SyncUtil.publishSyncEvent(period, serviceCompanyWriteRepository) { indexElement, totalElements, entity ->
+            publishCompanyServiceSyncEvent(
+                syncId, indexElement, totalElements,
+                entity as ServiceWriteEntity?,
+            )
         }
     }
 }

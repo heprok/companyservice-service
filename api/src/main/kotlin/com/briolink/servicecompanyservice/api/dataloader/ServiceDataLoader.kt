@@ -38,7 +38,7 @@ class ServiceDataLoader(
                 val randomCompany = companyList.random()
                 val nameService = listName.random()
                 val slug = StringUtil.slugify(randomCompany.name + " " + nameService, false)
-                if (!serviceWriteRepository.existsBySlug(slug))
+                if (!serviceWriteRepository.existsBySlug(slug) && !serviceWriteRepository.existsByNameAndCompanyId(nameService, randomCompany.id)) // ktlint-disable max-line-length
                     serviceCompanyService.create(
                         companyId = randomCompany.id,
                         logo = URL("https://placeimg.com/640/640/tech"),

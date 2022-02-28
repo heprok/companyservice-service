@@ -10,5 +10,9 @@ spring:
     show-sql: true
 location-service:
   api:
-    url: http://192.168.0.23:8070/
+    url: http://192.168.0.60:8070/
+    version: 1
+sync-service:
+  api:
+    url: http://192.168.0.60:8400/
     version: 1

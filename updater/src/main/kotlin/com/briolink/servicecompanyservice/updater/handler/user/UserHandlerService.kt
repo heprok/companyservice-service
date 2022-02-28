@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 class UserHandlerService(
     private val userReadRepository: UserReadRepository
 ) {
-    fun createOrUpdate(user: User): UserReadEntity {
+    fun createOrUpdate(user: UserEventData): UserReadEntity {
         userReadRepository.findById(user.id).orElse(UserReadEntity(user.id)).apply {
             this.data = UserReadEntity.Data(
                 firstName = user.firstName,

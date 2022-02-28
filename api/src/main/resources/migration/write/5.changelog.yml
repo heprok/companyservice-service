@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: oleg@briolink.com
+      changes:
+        - addColumn:
+            schemaName: write
+            tableName: service
+            columns:
+              column:
+                name: changed
+                type: timestamp

@@ -6,7 +6,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
 
-data class CompanyService(
+data class CompanyServiceEventData(
     @JsonProperty
     val id: UUID,
     @JsonProperty
@@ -27,6 +27,8 @@ data class CompanyService(
     val lastUsed: LocalDate? = null,
     @JsonProperty
     val hidden: Boolean,
+    @JsonProperty
+    val deleted: Boolean,
 ) : Domain
 
 data class CompanyServiceDeletedData(

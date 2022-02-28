@@ -1,12 +1,13 @@
 package com.briolink.servicecompanyservice.updater.handler.companyservice
 
-import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyService
+import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceEventData
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 import javax.persistence.EntityNotFoundException
 
 @Transactional
@@ -16,7 +17,7 @@ class CompanyServiceHandlerService(
     private val serviceReadRepository: ServiceReadRepository,
 ) {
 
-    fun createOrUpdate(serviceCompany: CompanyService) {
+    fun createOrUpdate(serviceCompany: CompanyServiceEventData) {
         val company = companyReadRepository.findById(serviceCompany.companyId)
             .orElseThrow { throw EntityNotFoundException(serviceCompany.companyId.toString() + " company not found") }
         serviceReadRepository.findById(serviceCompany.id)
@@ -59,5 +60,9 @@ class CompanyServiceHandlerService(
             slug = company.data.slug,
             logo = company.data.logo?.toString(),
         )
+    }
+
+    fun deleteById(id: UUID) {
+        serviceReadRepository.deleteById(id)
     }
 }
