@@ -1,11 +1,12 @@
 package com.briolink.servicecompanyservice.api.service
 
 import com.briolink.event.publisher.EventPublisher
+import com.briolink.lib.sync.SyncData
+import com.briolink.lib.sync.SyncUtil
 import com.briolink.lib.sync.enumeration.ServiceEnum
 import com.briolink.lib.sync.model.PeriodDateTime
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceDeletedData
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceHideData
-import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceSyncEventData
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceCreatedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDeletedEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceHideEvent
@@ -22,7 +23,6 @@ import com.briolink.servicecompanyservice.common.jpa.runAfterTxCommit
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
 import com.briolink.servicecompanyservice.common.util.StringUtil
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -177,32 +177,30 @@ class ServiceCompanyService(
 
     fun countByCompanyId(companyId: UUID): Long = serviceCompanyWriteRepository.countByCompanyId(companyId)
 
+    private fun publishCompanyServiceSyncEvent(
+        syncId: Int,
+        objectIndex: Long,
+        totalObjects: Long,
+        entity: ServiceWriteEntity?
+    ) {
+        eventPublisher.publishAsync(
+            CompanyServiceSyncEvent(
+                SyncData(
+                    objectIndex = objectIndex,
+                    totalObjects = totalObjects,
+                    objectSync = entity?.toDomain(),
+                    syncId = syncId,
+                    service = ServiceEnum.CompanyService,
+                ),
+            ),
+        )
+    }
+
     fun publishSyncEvent(syncId: Int, period: PeriodDateTime? = null) {
-        var pageRequest = PageRequest.of(0, 200)
-        var page = if (period == null) serviceCompanyWriteRepository.findAll(pageRequest)
-        else serviceCompanyWriteRepository.findByCreatedOrChangedBetween(period.startInstants, period.endInstant, pageRequest)
-        var indexElement = 0
-        while (!page.isEmpty) {
-            pageRequest = pageRequest.next()
-            page.content.forEach {
-                indexElement += 1
-                eventPublisher.publish(
-                    CompanyServiceSyncEvent(
-                        CompanyServiceSyncEventData(
-                            service = ServiceEnum.CompanyService,
-                            indexObjectSync = indexElement.toLong(),
-                            totalObjectSync = page.totalElements,
-                            syncId = syncId,
-                            objectSync = it.toDomain(),
-                        ),
-                    ),
-                )
-            }
-            page = if (period == null) serviceCompanyWriteRepository.findAll(pageRequest)
-            else serviceCompanyWriteRepository.findByCreatedOrChangedBetween(
-                period.startInstants,
-                period.endInstant,
-                pageRequest,
+        SyncUtil.publishSyncEvent(period, serviceCompanyWriteRepository) { indexElement, totalElements, entity ->
+            publishCompanyServiceSyncEvent(
+                syncId, indexElement, totalElements,
+                entity as ServiceWriteEntity?,
             )
         }
     }

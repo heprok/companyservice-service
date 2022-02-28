@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.common.jpa.write.repository
 
+import com.briolink.lib.sync.BaseTimeMarkRepository
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -9,7 +10,7 @@ import java.time.Instant
 import java.util.Optional
 import java.util.UUID
 
-interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
+interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID>, BaseTimeMarkRepository<ServiceWriteEntity> {
     fun findBySlug(slug: String): Optional<ServiceWriteEntity>
     fun existsBySlug(slug: String): Boolean
 
@@ -23,7 +24,7 @@ interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID> {
     fun findAllNotDeleted(): List<ServiceWriteEntity>
 
     @Query("SELECT s from ServiceWriteEntity s WHERE s.created BETWEEN ?1 AND ?2 OR s.changed BETWEEN ?1 AND ?2")
-    fun findByCreatedOrChangedBetween(
+    override fun findByPeriod(
         start: Instant,
         end: Instant,
         pageable: Pageable
