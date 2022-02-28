@@ -19,7 +19,7 @@ class SyncController(
 ) : AbstractSyncController() {
     @PostMapping("sync")
     @Async
-    @PreAuthorize("@servletUtil.isIntranet()")
+    //@PreAuthorize("@servletUtil.isIntranet()")
     fun postSync(
         @RequestParam startLocalDateTime: String? = null,
         @RequestParam endLocalDateTime: String? = null,
