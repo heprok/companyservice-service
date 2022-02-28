@@ -28,7 +28,6 @@ class SyncController(
         return super.sync(startLocalDateTime, endLocalDateTime, syncId)
     }
 
-    @Async
     override fun publishSyncEvent(syncId: Int, period: PeriodDateTime?) {
         companyServiceService.publishSyncEvent(syncId, period)
     }
