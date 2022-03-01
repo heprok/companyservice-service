@@ -65,7 +65,7 @@ class ServiceCompanyService(
                 description = description,
                 price = price,
             ).apply {
-                created?.let { this.created = created }
+                if(created != null ) this.created = created
                 this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
             },
         ).let {
