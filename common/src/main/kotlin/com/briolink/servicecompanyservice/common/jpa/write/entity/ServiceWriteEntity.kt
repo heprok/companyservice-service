@@ -42,12 +42,12 @@ class ServiceWriteEntity(
 
     @Type(type = "pg-uuid")
     @Column(name = "deleted_by")
-    var deletedBy: UUID? = null
+    var deletedBy: UUID? = null,
 
-) : BaseWriteEntity() {
     @CreationTimestamp
     @Column(name = "created", nullable = false)
-    lateinit var created: Instant
+    var created: Instant = Instant.now()
+) : BaseWriteEntity() {
 
     @UpdateTimestamp
     @Column(name = "changed")
