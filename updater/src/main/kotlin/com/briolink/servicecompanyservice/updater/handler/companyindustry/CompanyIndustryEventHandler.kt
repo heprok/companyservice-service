@@ -1,7 +1,7 @@
 package com.briolink.servicecompanyservice.updater.handler.companyindustry
 
-import com.briolink.event.IEventHandler
-import com.briolink.event.annotation.EventHandler
+import com.briolink.lib.event.IEventHandler
+import com.briolink.lib.event.annotation.EventHandler
 import com.briolink.lib.sync.SyncEventHandler
 import com.briolink.lib.sync.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.updater.service.SyncService

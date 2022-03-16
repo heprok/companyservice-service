@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilderFactory
 import com.blazebit.persistence.PagedList
 import com.blazebit.persistence.ParameterHolder
 import com.blazebit.persistence.WhereBuilder
-import com.briolink.event.publisher.EventPublisher
+import com.briolink.lib.event.publisher.EventPublisher
 import com.briolink.lib.location.model.LocationId
 import com.briolink.servicecompanyservice.api.types.Collaborator
 import com.briolink.servicecompanyservice.api.types.ConnectionFilter

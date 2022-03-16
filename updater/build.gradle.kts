@@ -1,4 +1,6 @@
 plugins {
+    application
+
     id("org.springframework.boot")
 
     kotlin("jvm")
@@ -20,14 +22,13 @@ dependencies {
     // FasterXML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    // postgtrsql JDBC Driver
-    runtimeOnly("org.postgresql:postgresql:${Versions.POSTGRESQL}")
-
     // Kotlin
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
 
+    // PostgreSQL JDBC Driver
+    runtimeOnly("org.postgresql:postgresql")
+
     // kotlin-logging
     implementation("io.github.microutils:kotlin-logging-jvm:${Versions.KOTLIN_LOGGING_JVM}")
-
 }
