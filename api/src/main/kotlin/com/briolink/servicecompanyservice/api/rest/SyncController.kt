@@ -6,6 +6,7 @@ import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.Async
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,7 +20,7 @@ class SyncController(
 ) : AbstractSyncController() {
     @PostMapping("sync")
     @Async
-    //@PreAuthorize("@servletUtil.isIntranet()")
+    // @PreAuthorize("@servletUtil.isIntranet()")
     fun postSync(
         @RequestParam startLocalDateTime: String? = null,
         @RequestParam endLocalDateTime: String? = null,
