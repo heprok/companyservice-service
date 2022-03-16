@@ -20,7 +20,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         """
         SELECT cast(company_industry.id as varchar), company_industry.name FROM read.company_industry as company_industry
             WHERE
-                (:query is null or company_industry.name @@to_tsquery( quote_literal( quote_literal( :query ) ) || ':*' ) = true) 
+                (:query is null or company_industry.name @@to_tsquery( quote_literal( quote_literal( :query ) ) || ':*' ) = true)
                 AND EXISTS (
                 SELECT 1 FROM
                     read.connection as connection
@@ -28,7 +28,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
                     (
                     ((connection.participant_from_role_type = 1 AND connection.participant_from_company_id = :companyId) OR
                     (connection.participant_to_role_type = 1 AND connection.participant_to_company_id = :companyId)) AND
-                    connection.service_id = :serviceId AND 
+                    connection.service_id = :serviceId AND
                     connection.company_industry_id = company_industry.id)
                     LIMIT 1
                 ) LIMIT 10
@@ -45,7 +45,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
         """
         SELECT cast(company.id as varchar), company.name FROM read.company as company
             WHERE
-                (:query is null or company.name @@to_tsquery( quote_literal( quote_literal( :query ) ) || ':*' ) = true) 
+                (:query is null or company.name @@to_tsquery( quote_literal( quote_literal( :query ) ) || ':*' ) = true)
                 AND EXISTS (
                 SELECT 1 FROM
                     read.connection as connection
@@ -183,7 +183,7 @@ interface ConnectionReadRepository : JpaRepository<ConnectionReadEntity, UUID> {
                            '{participantTo,company,name}', :name, text
                    )
                else data end
-           WHERE 
+           WHERE
             (u.participantFromCompanyId = :companyId) or
             (u.participantToCompanyId = :companyId)""",
     )

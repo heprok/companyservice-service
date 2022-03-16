@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.updater.handler.company
 
-import com.briolink.event.Event
+import com.briolink.lib.event.Event
 import com.briolink.lib.location.model.LocationId
 import com.briolink.lib.sync.SyncData
 import com.briolink.lib.sync.SyncEvent

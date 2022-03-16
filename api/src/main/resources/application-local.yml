@@ -9,10 +9,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: https://auth.dev.briolink.com/auth/realms/briolink/protocol/openid-connect/certs
-app:
-  app-endpoints:
-    locationservice:
+          jwk-set-uri: https://auth.dev.briolink.com/realms/briolink/protocol/openid-connect/certs
 dgs:
   graphql:
     introspection:

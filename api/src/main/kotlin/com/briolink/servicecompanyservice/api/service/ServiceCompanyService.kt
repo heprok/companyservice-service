@@ -16,7 +16,6 @@ import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTyp
 import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
 import com.briolink.servicecompanyservice.common.jpa.runAfterTxCommit
@@ -42,7 +41,6 @@ class ServiceCompanyService(
     private val serviceCompanyWriteRepository: ServiceWriteRepository,
     private val serviceCompanyReadRepository: ServiceReadRepository,
     private val companyReadRepository: CompanyReadRepository,
-    private val connectionReadRepository: ConnectionReadRepository
 ) {
     val SERVICE_PROFILE_IMAGE_PATH = "uploads/companyservice/profile-image"
     fun create(
@@ -65,7 +63,7 @@ class ServiceCompanyService(
                 description = description,
                 price = price,
             ).apply {
-                if(created != null ) this.created = created
+                if (created != null) this.created = created
                 this.logo = logo ?: fileImage?.let { awsS3Service.uploadImage(SERVICE_PROFILE_IMAGE_PATH, it) }
             },
         ).let {
