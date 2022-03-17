@@ -1,6 +1,10 @@
 package com.briolink.servicecompanyservice.api.service
 
-import com.briolink.event.publisher.EventPublisher
+import com.briolink.lib.event.publisher.EventPublisher
+import com.briolink.lib.permission.enumeration.AccessObjectTypeEnum
+import com.briolink.lib.permission.enumeration.PermissionRightEnum
+import com.briolink.lib.permission.model.UserPermissionRights
+import com.briolink.lib.permission.service.PermissionService
 import com.briolink.lib.sync.SyncData
 import com.briolink.lib.sync.SyncUtil
 import com.briolink.lib.sync.enumeration.ServiceEnum
@@ -12,12 +16,9 @@ import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceDelete
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceHideEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceSyncEvent
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceUpdatedEvent
-import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ServiceReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.UserPermissionRoleReadRepository
 import com.briolink.servicecompanyservice.common.jpa.runAfterTxCommit
 import com.briolink.servicecompanyservice.common.jpa.write.entity.ServiceWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.ServiceWriteRepository
@@ -35,12 +36,12 @@ import javax.persistence.EntityNotFoundException
 @Service
 @Transactional
 class ServiceCompanyService(
-    val eventPublisher: EventPublisher,
-    private val userPermissionRoleReadRepository: UserPermissionRoleReadRepository,
+    private val eventPublisher: EventPublisher,
     private val awsS3Service: AwsS3Service,
     private val serviceCompanyWriteRepository: ServiceWriteRepository,
     private val serviceCompanyReadRepository: ServiceReadRepository,
     private val companyReadRepository: CompanyReadRepository,
+    private val permissionService: PermissionService,
 ) {
     val SERVICE_PROFILE_IMAGE_PATH = "uploads/companyservice/profile-image"
     fun create(
@@ -101,15 +102,6 @@ class ServiceCompanyService(
     }
 
     fun getServiceBySlug(slug: String): Optional<ServiceReadEntity> = serviceCompanyReadRepository.findBySlug(slug)
-
-    // TODO Выгесьи в сервис и изменить на company service
-    fun getPermission(serviceId: UUID, userId: UUID): UserPermissionRoleTypeEnum? {
-        return userPermissionRoleReadRepository.getUserPermissionRole(
-            accessObjectUuid = serviceId,
-            accessObjectType = AccessObjectTypeEnum.Company.value,
-            userId = userId,
-        )?.role
-    }
 
     fun uploadProfileImage(id: UUID, image: MultipartFile?): URL? {
         val serviceWrite =
@@ -173,6 +165,37 @@ class ServiceCompanyService(
         return serviceCompanyWriteRepository.findByCompanyIdAndName(companyId = companyId, name = name)
     }
 
+    fun isHavePermission(companyId: UUID, userId: UUID, permissionRight: PermissionRightEnum, serviceId: UUID? = null): Boolean {
+        return if (permissionService.isHavePermission(
+                userId = userId,
+                accessObjectId = companyId,
+                accessObjectType = AccessObjectTypeEnum.Company,
+                permissionRight = permissionRight,
+            )
+        ) true else serviceId?.let {
+            permissionService.isHavePermission(
+                userId = userId,
+                accessObjectId = it,
+                accessObjectType = AccessObjectTypeEnum.CompanyService,
+                permissionRight = permissionRight,
+            )
+        } ?: false
+    }
+
+    fun getPermissionRight(companyId: UUID, userId: UUID, serviceId: UUID? = null): UserPermissionRights? {
+        return permissionService.getUserPermissionRights(
+            userId,
+            companyId,
+            AccessObjectTypeEnum.Company,
+        ) ?: serviceId?.let {
+            permissionService.getUserPermissionRights(
+                userId,
+                it,
+                AccessObjectTypeEnum.CompanyService,
+            )
+        }
+    }
+
     fun countByCompanyId(companyId: UUID): Long = serviceCompanyWriteRepository.countByCompanyId(companyId)
 
     private fun publishCompanyServiceSyncEvent(
@@ -202,4 +225,6 @@ class ServiceCompanyService(
             )
         }
     }
+
+    fun getCompanyIdByServiceId(serviceId: UUID): UUID? = serviceCompanyWriteRepository.getCompanyIdByServiceId(serviceId)
 }

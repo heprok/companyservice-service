@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.api.event
 
-import com.briolink.event.publisher.EventStoreWriter
+import com.briolink.lib.event.publisher.EventStoreWriter
 import com.briolink.servicecompanyservice.common.jpa.write.entity.EventStoreWriteEntity
 import com.briolink.servicecompanyservice.common.jpa.write.repository.EventStoreWriteRepository
 import org.springframework.stereotype.Component

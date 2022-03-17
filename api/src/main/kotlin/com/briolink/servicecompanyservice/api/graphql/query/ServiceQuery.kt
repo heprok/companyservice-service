@@ -1,12 +1,12 @@
 package com.briolink.servicecompanyservice.api.graphql.query
 
 import com.briolink.servicecompanyservice.api.graphql.fromEntity
+import com.briolink.servicecompanyservice.api.graphql.fromModel
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
-import com.briolink.servicecompanyservice.api.types.PermissionRole
 import com.briolink.servicecompanyservice.api.types.Service
 import com.briolink.servicecompanyservice.api.types.ServiceAndUserRole
+import com.briolink.servicecompanyservice.api.types.UserPermission
 import com.briolink.servicecompanyservice.api.util.SecurityUtil
-import com.briolink.servicecompanyservice.common.jpa.enumeration.UserPermissionRoleTypeEnum
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
@@ -22,14 +22,17 @@ class ServiceQuery(
     @PreAuthorize("isAuthenticated()")
     fun getService(@InputArgument("slug") slug: String): ServiceAndUserRole {
         val service = serviceCompanyService.getServiceBySlug(slug).orElseThrow { throw DgsEntityNotFoundException() }
-        val role = serviceCompanyService.getPermission(service.companyId, SecurityUtil.currentUserAccountId)
+
+        val role = service?.let {
+            serviceCompanyService.getPermissionRight(
+                userId = SecurityUtil.currentUserAccountId,
+                companyId = service.companyId,
+                serviceId = service.id,
+            )
+        }
         return ServiceAndUserRole(
             service = Service.fromEntity(service),
-            role = when (role) {
-                UserPermissionRoleTypeEnum.Employee -> PermissionRole.Employee
-                UserPermissionRoleTypeEnum.Owner -> PermissionRole.Owner
-                else -> null
-            },
+            userPermission = role?.let { UserPermission.fromModel(role) },
         )
     }
 
