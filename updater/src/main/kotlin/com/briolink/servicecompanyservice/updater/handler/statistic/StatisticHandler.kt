@@ -1,7 +1,7 @@
 package com.briolink.servicecompanyservice.updater.handler.statistic
 
-import com.briolink.event.IEventHandler
-import com.briolink.event.annotation.EventHandler
+import com.briolink.lib.event.IEventHandler
+import com.briolink.lib.event.annotation.EventHandler
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.updater.ReloadStatisticByServiceId

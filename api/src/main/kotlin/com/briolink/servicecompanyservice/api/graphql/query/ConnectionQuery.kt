@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql.query
 
+import com.briolink.lib.permission.enumeration.PermissionRightEnum
 import com.briolink.servicecompanyservice.api.graphql.fromEntity
 import com.briolink.servicecompanyservice.api.service.ConnectionService
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
@@ -10,9 +11,6 @@ import com.briolink.servicecompanyservice.api.types.ConnectionList
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
 import com.briolink.servicecompanyservice.api.types.Industry
 import com.briolink.servicecompanyservice.api.util.SecurityUtil
-import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.PermissionRightEnum
-import com.briolink.servicecompanyservice.common.service.PermissionService
 import com.briolink.servicecompanyservice.common.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
@@ -23,8 +21,7 @@ import java.util.UUID
 @DgsComponent
 class ConnectionQuery(
     private val connectionService: ConnectionService,
-    private val serviceCompanyService: ServiceCompanyService,
-    private val permissionService: PermissionService
+    private val serviceCompanyService: ServiceCompanyService
 ) {
     @DgsQuery
     @PreAuthorize("isAuthenticated()")
@@ -39,11 +36,11 @@ class ConnectionQuery(
         return if (connectionService.existsConnectionByService(serviceId = UUID.fromString(serviceId))
         ) {
             val securityFilter = if (
-                permissionService.isHavePermission(
+                serviceCompanyService.isHavePermission(
                     companyId = UUID.fromString(companyId),
                     userId = SecurityUtil.currentUserAccountId,
-                    accessObjectType = AccessObjectTypeEnum.Company,
-                    permissionRight = PermissionRightEnum.ConnectionCrud,
+                    permissionRight = PermissionRightEnum.IsCanEditProject,
+                    serviceId = UUID.fromString(serviceId),
                 )
             ) filter else filter.copy(isHidden = false)
 

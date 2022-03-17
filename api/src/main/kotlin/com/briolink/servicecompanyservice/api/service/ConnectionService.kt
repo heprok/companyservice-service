@@ -9,19 +9,14 @@ import com.briolink.lib.location.model.LocationId
 import com.briolink.servicecompanyservice.api.types.Collaborator
 import com.briolink.servicecompanyservice.api.types.ConnectionFilter
 import com.briolink.servicecompanyservice.api.types.ConnectionSort
-import com.briolink.servicecompanyservice.api.util.SecurityUtil
 import com.briolink.servicecompanyservice.common.domain.v1_0.Statistic
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticRefreshEvent
-import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.CompanyRoleTypeEnum
 import com.briolink.servicecompanyservice.common.jpa.enumeration.ConnectionStatusEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.PermissionRightEnum
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
-import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.runAfterTxCommit
-import com.briolink.servicecompanyservice.common.service.PermissionService
 import org.springframework.stereotype.Service
 import java.util.UUID
 import javax.persistence.EntityManager
@@ -29,10 +24,8 @@ import javax.persistence.EntityManager
 @Service
 class ConnectionService(
     private val connectionReadRepository: ConnectionReadRepository,
-    private val permissionService: PermissionService,
     private val entityManager: EntityManager,
     private val eventPublisher: EventPublisher,
-    private val serviceReadRepository: ServiceReadRepository,
     private val criteriaBuilderFactory: CriteriaBuilderFactory
 ) {
     fun findAll(
@@ -136,21 +129,12 @@ class ConnectionService(
         ).map { CompanyReadEntity.Industry(it.id, it.name) }
 
     fun hiddenConnectionAndServiceId(serviceId: UUID, connectionId: UUID, hidden: Boolean): Boolean {
-        if (permissionService.isHavePermission(
-                companyId = serviceReadRepository.getCompanyId(serviceId),
-                userId = SecurityUtil.currentUserAccountId,
-                permissionRight = PermissionRightEnum.ConnectionCrud,
-                accessObjectType = AccessObjectTypeEnum.Company,
-            )
-        ) {
-            connectionReadRepository.hiddenByConnectionIdAndServiceId(
-                serviceId = serviceId,
-                connectionId = connectionId,
-                hidden = hidden,
-            )
-            runAfterTxCommit { eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(serviceId))) }
-            return true
-        }
-        return false
+        connectionReadRepository.hiddenByConnectionIdAndServiceId(
+            serviceId = serviceId,
+            connectionId = connectionId,
+            hidden = hidden,
+        )
+        runAfterTxCommit { eventPublisher.publishAsync(CompanyServiceStatisticRefreshEvent(Statistic(serviceId))) }
+        return true
     }
 }
