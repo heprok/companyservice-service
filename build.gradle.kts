@@ -94,9 +94,10 @@ subprojects {
         mavenLocal()
         // Internal Gitlab library IDs
         setOf(
-            29889174, // BL Event lib
-            33422039, // BL Location lib
-            33688770, // BL Sync lib
+            29889174, // BL Event
+            33422039, // BL Location
+            33688770, // BL Sync
+            32844103, // BL Permission
         ).forEach {
             maven {
                 url = uri("https://gitlab.com/api/v4/projects/$it/packages/maven")
