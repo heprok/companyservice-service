@@ -5,7 +5,7 @@ import com.briolink.lib.event.annotation.EventHandler
 import com.briolink.lib.event.annotation.EventHandlers
 import com.briolink.lib.sync.SyncEventHandler
 import com.briolink.lib.sync.enumeration.ObjectSyncEnum
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionHandlerService
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectHandlerService
 import com.briolink.servicecompanyservice.updater.service.SyncService
 
 @EventHandlers(
@@ -14,12 +14,12 @@ import com.briolink.servicecompanyservice.updater.service.SyncService
 )
 class UserEventHandler(
     private val UserHandlerService: UserHandlerService,
-    private val connectionHandlerService: ConnectionHandlerService
+    private val projectHandlerService: ProjectHandlerService
 ) : IEventHandler<UserEvent> {
     override fun handle(event: UserEvent) {
         UserHandlerService.createOrUpdate(event.data).also {
             if (event.name == "UserUpdatedEvent") {
-                connectionHandlerService.updateUser(it)
+                projectHandlerService.updateUser(it)
             }
         }
     }
@@ -28,7 +28,7 @@ class UserEventHandler(
 @EventHandler("UserSyncEvent", "1.0")
 class UserSyncEventHandler(
     private val userHandlerService: UserHandlerService,
-    private val connectionHandlerService: ConnectionHandlerService,
+    private val projectHandlerService: ProjectHandlerService,
     syncService: SyncService,
 ) : SyncEventHandler<UserSyncEvent>(ObjectSyncEnum.User, syncService) {
     override fun handle(event: UserSyncEvent) {
@@ -37,7 +37,7 @@ class UserSyncEventHandler(
         try {
             val objectSync = syncData.objectSync!!
             userHandlerService.createOrUpdate(objectSync).also {
-                connectionHandlerService.updateUser(it)
+                projectHandlerService.updateUser(it)
             }
         } catch (ex: Exception) {
             sendError(syncData, ex)

@@ -5,13 +5,13 @@ import com.briolink.servicecompanyservice.common.jpa.read.repository.CompanyRead
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ConnectionReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.ServiceReadRepository
 import com.briolink.servicecompanyservice.common.jpa.read.repository.UserReadRepository
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionCompanyRole
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionCompanyRoleType
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionEventData
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionHandlerService
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionParticipant
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionService
-import com.briolink.servicecompanyservice.updater.handler.connection.ConnectionStatus
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectCompanyRole
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectCompanyRoleType
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectEventData
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectHandlerService
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectParticipant
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectService
+import com.briolink.servicecompanyservice.updater.handler.project.ProjectStatus
 import org.springframework.core.annotation.Order
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Component
@@ -26,7 +26,7 @@ class ConnectionDataLoader(
     private var userReadRepository: UserReadRepository,
     private var companyReadRepository: CompanyReadRepository,
     private var serviceReadRepository: ServiceReadRepository,
-    private var connectionServiceHandler: ConnectionHandlerService,
+    private var connectionServiceHandler: ProjectHandlerService,
 ) : DataLoader() {
     override fun loadData() {
         if (
@@ -38,14 +38,14 @@ class ConnectionDataLoader(
             val listCompany = companyReadRepository.findAll()
             val listUser = userReadRepository.findAll()
             val listConnectionRole = listOf(
-                ConnectionCompanyRole(UUID.randomUUID(), "Customer", ConnectionCompanyRoleType.Seller),
-                ConnectionCompanyRole(UUID.randomUUID(), "Supplier", ConnectionCompanyRoleType.Buyer),
-                ConnectionCompanyRole(UUID.randomUUID(), "Investor", ConnectionCompanyRoleType.Seller),
-                ConnectionCompanyRole(UUID.randomUUID(), "Investor", ConnectionCompanyRoleType.Buyer),
-                ConnectionCompanyRole(UUID.randomUUID(), "Client", ConnectionCompanyRoleType.Buyer),
-                ConnectionCompanyRole(UUID.randomUUID(), "Vendor", ConnectionCompanyRoleType.Seller),
+                ProjectCompanyRole(UUID.randomUUID(), "Customer", ProjectCompanyRoleType.Seller),
+                ProjectCompanyRole(UUID.randomUUID(), "Supplier", ProjectCompanyRoleType.Buyer),
+                ProjectCompanyRole(UUID.randomUUID(), "Investor", ProjectCompanyRoleType.Seller),
+                ProjectCompanyRole(UUID.randomUUID(), "Investor", ProjectCompanyRoleType.Buyer),
+                ProjectCompanyRole(UUID.randomUUID(), "Client", ProjectCompanyRoleType.Buyer),
+                ProjectCompanyRole(UUID.randomUUID(), "Vendor", ProjectCompanyRoleType.Seller),
             )
-            val connectionStatusList = listOf(ConnectionStatus.Verified, ConnectionStatus.Pending, ConnectionStatus.InProgress)
+            val projectStatusLists = listOf(ProjectStatus.Verified, ProjectStatus.Pending, ProjectStatus.InProgress)
             for (i in 1..COUNT_CONNECTION) {
                 val from = listCompany.random()
                 val to = listCompany.random().let {
@@ -54,13 +54,13 @@ class ConnectionDataLoader(
                     } else it
                 }
                 val listServiceByCompanyFrom = serviceReadRepository.findByCompanyId(from.id)
-                val services = mutableListOf<ConnectionService>()
+                val services = mutableListOf<ProjectService>()
                 for (j in 0..Random.nextInt(1, 4)) {
                     val startCollab = Year.of(Random.nextInt(2010, 2021))
                     val endCollab = Year.of(Random.nextInt(startCollab.value, 2021))
                     services.add(
                         listServiceByCompanyFrom.random().let {
-                            ConnectionService(
+                            ProjectService(
                                 id = it.id,
                                 serviceId = it.id,
                                 serviceName = it.data.name,
@@ -73,24 +73,24 @@ class ConnectionDataLoader(
                 try {
 
                     connectionServiceHandler.createOrUpdate(
-                        ConnectionEventData(
+                        ProjectEventData(
                             id = UUID.randomUUID(),
-                            participantFrom = ConnectionParticipant(
+                            participantFrom = ProjectParticipant(
                                 userId = listUser.random().id,
                                 userJobPositionTitle = "developer",
                                 companyId = from.id,
                                 companyRole = listConnectionRole.shuffled()
-                                    .find { connectionRoleReadEntity -> connectionRoleReadEntity.type == ConnectionCompanyRoleType.Seller }!!, // ktlint-disable max-line-length
+                                    .find { connectionRoleReadEntity -> connectionRoleReadEntity.type == ProjectCompanyRoleType.Seller }!!, // ktlint-disable max-line-length
                             ),
-                            participantTo = ConnectionParticipant(
+                            participantTo = ProjectParticipant(
                                 userId = listUser.random().id,
                                 userJobPositionTitle = "developer",
                                 companyId = to.id,
                                 companyRole = listConnectionRole.shuffled()
-                                    .find { connectionRoleReadEntity -> connectionRoleReadEntity.type == ConnectionCompanyRoleType.Buyer }!!, // ktlint-disable max-line-length
+                                    .find { connectionRoleReadEntity -> connectionRoleReadEntity.type == ProjectCompanyRoleType.Buyer }!!, // ktlint-disable max-line-length
                             ),
                             services = ArrayList(services),
-                            status = connectionStatusList.random(),
+                            status = projectStatusLists.random(),
                             created = randomInstant(2010, 2020),
                         ),
                         false,
