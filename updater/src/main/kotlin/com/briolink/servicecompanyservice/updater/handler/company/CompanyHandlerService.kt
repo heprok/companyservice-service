@@ -17,7 +17,10 @@ class CompanyHandlerService(
 ) {
 
     fun createOrUpdate(entityPrevCompany: CompanyReadEntity? = null, companyEventData: CompanyEventData): CompanyReadEntity {
-        val company = entityPrevCompany ?: CompanyReadEntity(companyEventData.id)
+        val company = entityPrevCompany ?: CompanyReadEntity(companyEventData.id).apply {
+            name = companyEventData.name
+            data = CompanyReadEntity.Data("")
+        }
         company.apply {
             name = companyEventData.name
             data = CompanyReadEntity.Data(

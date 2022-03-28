@@ -1,13 +1,16 @@
 package com.briolink.servicecompanyservice.api.graphql.mutation
 
+import com.briolink.lib.permission.enumeration.PermissionRightEnum
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.BaseResult
 import com.briolink.servicecompanyservice.api.types.CreateServiceInput
 import com.briolink.servicecompanyservice.api.types.CreateServiceResult
+import com.briolink.servicecompanyservice.api.types.Error
 import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.ServiceResultData
 import com.briolink.servicecompanyservice.api.types.UpdateServiceInput
 import com.briolink.servicecompanyservice.api.types.UpdateServiceResult
+import com.briolink.servicecompanyservice.api.util.SecurityUtil
 import com.briolink.servicecompanyservice.api.util.StringUtil
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
@@ -27,6 +30,15 @@ class ServiceMutation(
         @InputArgument("id") id: String,
         @InputArgument("image") image: MultipartFile?
     ): Image? {
+        val companyId = serviceCompanyService.getCompanyIdByServiceId(UUID.fromString(id)) ?: throw DgsEntityNotFoundException()
+        if (!serviceCompanyService.isHavePermission(
+                companyId = companyId,
+                userId = SecurityUtil.currentUserAccountId,
+                permissionRight = PermissionRightEnum.IsCanEditCompanyService,
+                serviceId = UUID.fromString(id),
+            )
+        ) return null
+
         return Image(serviceCompanyService.uploadProfileImage(UUID.fromString(id), image))
     }
 
@@ -36,6 +48,13 @@ class ServiceMutation(
         @InputArgument("companyId") companyId: String,
         @InputArgument("input") input: CreateServiceInput
     ): CreateServiceResult {
+        if (!serviceCompanyService.isHavePermission(
+                companyId = UUID.fromString(companyId),
+                userId = SecurityUtil.currentUserAccountId,
+                permissionRight = PermissionRightEnum.IsCanEditCompanyService,
+            )
+        ) return CreateServiceResult(userErrors = listOf(Error(code = "403 Permission denied")))
+
         val entity = serviceCompanyService.create(
             companyId = UUID.fromString(companyId),
             price = input.price,
@@ -99,12 +118,21 @@ class ServiceMutation(
         @InputArgument("id") id: String,
         @InputArgument("input") input: UpdateServiceInput
     ): UpdateServiceResult {
+        val companyId = serviceCompanyService.getCompanyIdByServiceId(UUID.fromString(id)) ?: throw DgsEntityNotFoundException()
+
+        if (!serviceCompanyService.isHavePermission(
+                companyId = companyId,
+                userId = SecurityUtil.currentUserAccountId,
+                permissionRight = PermissionRightEnum.IsCanEditCompanyService,
+                serviceId = UUID.fromString(id),
+            )
+        ) return UpdateServiceResult(userErrors = listOf(Error(code = "403 Permission denied")))
+
         serviceCompanyService.update(
             id = UUID.fromString(id),
             price = input.price,
             description = input.description,
-        ) ?: throw DgsEntityNotFoundException()
-
+        )
         return UpdateServiceResult(
             success = true,
             userErrors = listOf(),

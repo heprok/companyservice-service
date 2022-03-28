@@ -31,4 +31,7 @@ interface ServiceWriteRepository : JpaRepository<ServiceWriteEntity, UUID>, Base
     ): Page<ServiceWriteEntity>
 
     fun existsByNameAndCompanyId(name: String, companyId: UUID): Boolean
+
+    @Query("SELECT s.companyId FROM ServiceWriteEntity s WHERE s.deleted is null AND s.id = ?1")
+    fun getCompanyIdByServiceId(serviceId: UUID): UUID?
 }

@@ -1,14 +1,13 @@
 package com.briolink.servicecompanyservice.updater.handler.connection
 
-import com.briolink.event.IEventHandler
-import com.briolink.event.annotation.EventHandler
-import com.briolink.event.annotation.EventHandlers
+import com.briolink.lib.event.IEventHandler
+import com.briolink.lib.event.annotation.EventHandler
+import com.briolink.lib.event.annotation.EventHandlers
+import com.briolink.lib.permission.enumeration.AccessObjectTypeEnum
+import com.briolink.lib.permission.enumeration.PermissionRightEnum
+import com.briolink.lib.permission.service.PermissionService
 import com.briolink.lib.sync.SyncEventHandler
 import com.briolink.lib.sync.enumeration.ObjectSyncEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.AccessObjectTypeEnum
-import com.briolink.servicecompanyservice.common.jpa.enumeration.PermissionRightEnum
-import com.briolink.servicecompanyservice.common.service.PermissionService
-import com.briolink.servicecompanyservice.updater.handler.company.CompanyHandlerService
 import com.briolink.servicecompanyservice.updater.service.SyncService
 
 @EventHandlers(
@@ -17,7 +16,6 @@ import com.briolink.servicecompanyservice.updater.service.SyncService
     EventHandler("CompanyConnectionEvent", "1.0"),
 )
 class ConnectionEventHandler(
-    private val companyHandlerService: CompanyHandlerService,
     private val connectionHandlerService: ConnectionHandlerService,
     private val permissionService: PermissionService,
 ) : IEventHandler<ConnectionEvent> {
@@ -28,23 +26,21 @@ class ConnectionEventHandler(
                 if (it)
                     !permissionService.isHavePermission(
                         userId = connection.participantFrom.userId,
-                        companyId = connection.participantFrom.companyId,
-                        AccessObjectTypeEnum.Company,
-                        PermissionRightEnum.ConnectionCrud,
+                        accessObjectId = connection.participantFrom.companyId,
+                        accessObjectType = AccessObjectTypeEnum.Company,
+                        permissionRight = PermissionRightEnum.IsCanCreateProject,
                     )
                 else
                     !permissionService.isHavePermission(
                         userId = connection.participantTo.userId,
-                        companyId = connection.participantTo.companyId,
-                        AccessObjectTypeEnum.Company,
-                        PermissionRightEnum.ConnectionCrud,
+                        accessObjectId = connection.participantTo.companyId,
+                        accessObjectType = AccessObjectTypeEnum.Company,
+                        permissionRight = PermissionRightEnum.IsCanCreateProject,
                     )
             }.also { isHiddenConnection ->
                 connectionHandlerService.createOrUpdate(connection, isHiddenConnection)
             }
-        } else if (connection.status == ConnectionStatus.Rejected) {
-            connectionHandlerService.delete(connection.id)
-        }
+        } else connectionHandlerService.delete(connection.id)
     }
 }
 
@@ -86,16 +82,16 @@ class ConnectionSyncEventHandler(
                     if (it)
                         !permissionService.isHavePermission(
                             userId = connection.participantFrom.userId,
-                            companyId = connection.participantFrom.companyId,
-                            AccessObjectTypeEnum.Company,
-                            PermissionRightEnum.ConnectionCrud,
+                            accessObjectId = connection.participantFrom.companyId,
+                            accessObjectType = AccessObjectTypeEnum.Company,
+                            permissionRight = PermissionRightEnum.IsCanCreateProject,
                         )
                     else
                         !permissionService.isHavePermission(
                             userId = connection.participantTo.userId,
-                            companyId = connection.participantTo.companyId,
-                            AccessObjectTypeEnum.Company,
-                            PermissionRightEnum.ConnectionCrud,
+                            accessObjectId = connection.participantTo.companyId,
+                            accessObjectType = AccessObjectTypeEnum.Company,
+                            permissionRight = PermissionRightEnum.IsCanCreateProject,
                         )
                 }.also { isHiddenConnection ->
                     connectionHandlerService.createOrUpdate(connection, isHiddenConnection)

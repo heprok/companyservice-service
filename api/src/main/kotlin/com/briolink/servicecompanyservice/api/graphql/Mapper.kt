@@ -1,5 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql
 
+import com.briolink.lib.permission.model.UserPermissionRights
 import com.briolink.servicecompanyservice.api.types.Company
 import com.briolink.servicecompanyservice.api.types.Connection
 import com.briolink.servicecompanyservice.api.types.ConnectionCompanyRole
@@ -9,8 +10,11 @@ import com.briolink.servicecompanyservice.api.types.ConnectionService
 import com.briolink.servicecompanyservice.api.types.ConnectionStatus
 import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.Industry
+import com.briolink.servicecompanyservice.api.types.PermissionRight
+import com.briolink.servicecompanyservice.api.types.PermissionRole
 import com.briolink.servicecompanyservice.api.types.Service
 import com.briolink.servicecompanyservice.api.types.User
+import com.briolink.servicecompanyservice.api.types.UserPermission
 import com.briolink.servicecompanyservice.common.jpa.read.entity.CompanyReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionReadEntity
 import com.briolink.servicecompanyservice.common.jpa.read.entity.ConnectionRoleReadEntity
@@ -72,6 +76,11 @@ fun Company.Companion.fromEntity(entity: CompanyReadEntity) = Company(
     name = entity.name,
     logo = entity.data.logo?.let { Image(url = entity.data.logo) },
     location = entity.data.location?.toString(),
+)
+
+fun UserPermission.Companion.fromModel(model: UserPermissionRights) = UserPermission(
+    role = PermissionRole.valueOf(model.permissionRole.name),
+    rights = model.permissionRights.map { PermissionRight.valueOf(it.name) },
 )
 
 fun Connection.Companion.fromEntity(entity: ConnectionReadEntity) = Connection(

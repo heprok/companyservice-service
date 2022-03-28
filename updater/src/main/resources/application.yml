@@ -39,3 +39,7 @@ sync-service:
   api:
     url: http://sync-service.${env.spring_profiles_active}.svc.cluster.local/
     version: 1
+permission-service:
+  api:
+    url: http://permission-service.${env.spring_profiles_active}.svc.cluster.local/
+    version: 1

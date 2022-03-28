@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.updater.handler.statistic
 
-import com.briolink.event.publisher.EventPublisher
+import com.briolink.lib.event.publisher.EventPublisher
 import com.briolink.servicecompanyservice.common.domain.v1_0.CompanyServiceStatistic
 import com.briolink.servicecompanyservice.common.event.v1_0.CompanyServiceStatisticEvent
 import com.briolink.servicecompanyservice.common.jpa.enumeration.CompanyRoleTypeEnum
