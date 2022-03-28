@@ -27,7 +27,6 @@ import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
 import com.vladmihalcea.hibernate.type.util.ObjectMapperWrapper
 import graphql.schema.DataFetchingEnvironment
-import org.springframework.security.access.prepost.PreAuthorize
 import java.util.Objects
 import java.util.UUID
 import java.util.function.Function
@@ -67,7 +66,6 @@ class StatisticQuery(
         if (raw != null) ObjectMapperWrapper.INSTANCE.objectMapper.readValue(raw, type) else null
 
     @DgsQuery
-    @PreAuthorize("isAuthenticated()")
     fun getCharts(@InputArgument serviceId: String, dfe: DataFetchingEnvironment): ServiceCharts {
         val cbf = criteriaBuilderFactory.create(entityManager, Tuple::class.java)
         val cb = cbf.from(StatisticReadEntity::class.java)

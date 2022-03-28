@@ -19,11 +19,10 @@ class ServiceQuery(
     private val serviceCompanyService: ServiceCompanyService
 ) {
     @DgsQuery
-    @PreAuthorize("isAuthenticated()")
-    fun getService(@InputArgument("slug") slug: String): ServiceAndUserRole {
+    fun getService(@InputArgument slug: String): ServiceAndUserRole {
         val service = serviceCompanyService.getServiceBySlug(slug).orElseThrow { throw DgsEntityNotFoundException() }
 
-        val role = service?.let {
+        val role = if (SecurityUtil.isGuest) null else service?.let {
             serviceCompanyService.getPermissionRight(
                 userId = SecurityUtil.currentUserAccountId,
                 companyId = service.companyId,
@@ -32,18 +31,18 @@ class ServiceQuery(
         }
         return ServiceAndUserRole(
             service = Service.fromEntity(service),
-            userPermission = role?.let { UserPermission.fromModel(role) },
+            userPermission = role?.let { UserPermission.fromModel(role) } ?: UserPermission(null, listOf()),
         )
     }
 
     @DgsQuery
     @PreAuthorize("@servletUtil.isIntranet()")
-    fun getServiceById(@InputArgument("id") id: String): Service =
+    fun getServiceById(@InputArgument id: String): Service =
         serviceCompanyService.findById(UUID.fromString(id)).orElseThrow { throw DgsEntityNotFoundException() }
             .let { Service.fromEntity(it) }
 
     @DgsQuery
     @PreAuthorize("@servletUtil.isIntranet()")
-    fun countByCompanyId(@InputArgument("companyId") companyId: String): Int =
+    fun countByCompanyId(@InputArgument companyId: String): Int =
         serviceCompanyService.countByCompanyId(UUID.fromString(companyId)).toInt()
 }
