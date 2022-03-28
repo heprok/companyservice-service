@@ -12,7 +12,7 @@ type Service {
 
 type ServiceAndUserRole {
     service: Service!
-    userPermission: UserPermission
+    userPermission: UserPermission!
 }
 
 type ServiceResultData {
