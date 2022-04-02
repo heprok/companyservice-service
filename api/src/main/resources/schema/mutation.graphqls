@@ -7,5 +7,5 @@ type Mutation{
     hiddenConnection(connectionId: ID!, serviceId: ID!, hidden: Boolean!): Boolean!
     # Service
     deleteServiceLocal(serviceId: ID!, userId: ID!) : BaseResult
-    hideServiceLocal(serviceId: ID!) : BaseResult
+    hideServiceLocal(serviceId: ID!, hidden: Boolean = true) : BaseResult
 }

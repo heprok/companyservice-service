@@ -139,10 +139,10 @@ class ServiceCompanyService(
             }
     }
 
-    fun hide(id: UUID) {
+    fun toggleVisibility(id: UUID, hidden: Boolean) {
         serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
             .apply {
-                this.hidden = true
+                this.hidden = hidden
                 serviceCompanyWriteRepository.save(this)
                 runAfterTxCommit {
                     eventPublisher.publishAsync(
@@ -150,7 +150,7 @@ class ServiceCompanyService(
                             CompanyServiceHideData(
                                 id = id,
                                 companyId = this.companyId,
-                                hidden = true,
+                                hidden = hidden,
                                 slug = slug,
                             ),
                         ),

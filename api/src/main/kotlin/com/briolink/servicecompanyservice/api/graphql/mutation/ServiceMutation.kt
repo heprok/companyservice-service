@@ -104,11 +104,12 @@ class ServiceMutation(
     }
 
     @DgsMutation
-    @PreAuthorize("@servletUtil.isIntranet()")
+    // @PreAuthorize("@servletUtil.isIntranet()")
     fun hideServiceLocal(
-        @InputArgument("serviceId") serviceId: String
+        @InputArgument serviceId: String,
+        @InputArgument hidden: Boolean = true
     ): BaseResult {
-        serviceCompanyService.hide(UUID.fromString(serviceId))
+        serviceCompanyService.toggleVisibility(UUID.fromString(serviceId), hidden)
         return BaseResult(success = true)
     }
 
