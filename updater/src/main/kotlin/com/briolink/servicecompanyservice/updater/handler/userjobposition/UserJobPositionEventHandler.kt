@@ -4,7 +4,6 @@ import com.briolink.lib.event.IEventHandler
 import com.briolink.lib.event.annotation.EventHandler
 import com.briolink.lib.event.annotation.EventHandlers
 import com.briolink.lib.permission.enumeration.AccessObjectTypeEnum
-import com.briolink.lib.permission.enumeration.PermissionRightEnum
 import com.briolink.lib.permission.enumeration.PermissionRoleEnum
 import com.briolink.lib.permission.exception.exist.PermissionRoleExistException
 import com.briolink.lib.permission.service.PermissionService
@@ -30,11 +29,10 @@ class UserJobPositionCreatedEventHandler(
 ) : IEventHandler<UserJobPositionCreatedEvent> {
     override fun handle(event: UserJobPositionCreatedEvent) {
         val userJobPosition = event.data
-        if (!permissionService.isHavePermission(
+        if (!permissionService.checkPermission(
                 userId = userJobPosition.userId,
-                accessObjectType = AccessObjectTypeEnum.Company,
                 accessObjectId = userJobPosition.companyId,
-                permissionRight = PermissionRightEnum.IsCanCreateProject
+                right = "CreateProject@Company"
             )
         ) {
             try {
@@ -67,11 +65,10 @@ class UserJobPositionSyncEventHandler(
         if (!objectSyncStarted(syncData)) return
         try {
             val userJobPosition = syncData.objectSync!!
-            if (!permissionService.isHavePermission(
+            if (!permissionService.checkPermission(
                     userId = userJobPosition.userId,
-                    accessObjectType = AccessObjectTypeEnum.Company,
                     accessObjectId = userJobPosition.companyId,
-                    permissionRight = PermissionRightEnum.IsCanCreateProject
+                    right = "CreateProject@Company"
                 )
             ) {
                 try {

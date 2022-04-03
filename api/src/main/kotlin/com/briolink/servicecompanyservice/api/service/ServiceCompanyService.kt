@@ -2,7 +2,7 @@ package com.briolink.servicecompanyservice.api.service
 
 import com.briolink.lib.event.publisher.EventPublisher
 import com.briolink.lib.permission.enumeration.AccessObjectTypeEnum
-import com.briolink.lib.permission.enumeration.PermissionRightEnum
+import com.briolink.lib.permission.model.PermissionRight
 import com.briolink.lib.permission.model.UserPermissionRights
 import com.briolink.lib.permission.service.PermissionService
 import com.briolink.lib.sync.SyncData
@@ -139,10 +139,10 @@ class ServiceCompanyService(
             }
     }
 
-    fun hide(id: UUID) {
+    fun toggleVisibility(id: UUID, hidden: Boolean) {
         serviceCompanyWriteRepository.findById(id).orElseThrow { throw EntityNotFoundException("service with $id not found") }
             .apply {
-                this.hidden = true
+                this.hidden = hidden
                 serviceCompanyWriteRepository.save(this)
                 runAfterTxCommit {
                     eventPublisher.publishAsync(
@@ -150,7 +150,7 @@ class ServiceCompanyService(
                             CompanyServiceHideData(
                                 id = id,
                                 companyId = this.companyId,
-                                hidden = true,
+                                hidden = hidden,
                                 slug = slug,
                             ),
                         ),
@@ -165,19 +165,17 @@ class ServiceCompanyService(
         return serviceCompanyWriteRepository.findByCompanyIdAndName(companyId = companyId, name = name)
     }
 
-    fun isHavePermission(companyId: UUID, userId: UUID, permissionRight: PermissionRightEnum, serviceId: UUID? = null): Boolean {
-        return if (permissionService.isHavePermission(
+    fun isHavePermission(companyId: UUID, userId: UUID, right: PermissionRight, serviceId: UUID? = null): Boolean {
+        return if (permissionService.checkPermission(
                 userId = userId,
                 accessObjectId = companyId,
-                accessObjectType = AccessObjectTypeEnum.Company,
-                permissionRight = permissionRight,
+                right = right.action + "@Company",
             )
         ) true else serviceId?.let {
-            permissionService.isHavePermission(
+            permissionService.checkPermission(
                 userId = userId,
                 accessObjectId = it,
-                accessObjectType = AccessObjectTypeEnum.CompanyService,
-                permissionRight = permissionRight,
+                right = right.action + "@Companyservice",
             )
         } ?: false
     }

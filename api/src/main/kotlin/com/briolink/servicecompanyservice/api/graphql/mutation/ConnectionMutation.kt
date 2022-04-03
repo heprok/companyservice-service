@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql.mutation
 
-import com.briolink.lib.permission.enumeration.PermissionRightEnum
+import com.briolink.lib.permission.model.PermissionRight
 import com.briolink.servicecompanyservice.api.service.ConnectionService
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.util.SecurityUtil
@@ -27,7 +27,7 @@ class ConnectionMutation(
         if (!serviceCompanyService.isHavePermission(
                 companyId = companyId,
                 userId = SecurityUtil.currentUserAccountId,
-                permissionRight = PermissionRightEnum.IsCanEditProject,
+                right = PermissionRight("Company", "EditProject"),
             )
         ) return false
 
