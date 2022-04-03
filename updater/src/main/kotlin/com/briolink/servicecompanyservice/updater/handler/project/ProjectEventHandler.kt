@@ -3,8 +3,6 @@ package com.briolink.servicecompanyservice.updater.handler.project
 import com.briolink.lib.event.IEventHandler
 import com.briolink.lib.event.annotation.EventHandler
 import com.briolink.lib.event.annotation.EventHandlers
-import com.briolink.lib.permission.enumeration.AccessObjectTypeEnum
-import com.briolink.lib.permission.enumeration.PermissionRightEnum
 import com.briolink.lib.permission.service.PermissionService
 import com.briolink.lib.sync.SyncEventHandler
 import com.briolink.lib.sync.enumeration.ObjectSyncEnum
@@ -23,18 +21,16 @@ class ProjectEventHandler(
         if (project.status != ProjectStatus.Rejected) {
             (project.participantFrom.companyRole.type == ProjectCompanyRoleType.Seller).let {
                 if (it)
-                    !permissionService.isHavePermission(
+                    !permissionService.checkPermission(
                         userId = project.participantFrom.userId,
                         accessObjectId = project.participantFrom.companyId,
-                        accessObjectType = AccessObjectTypeEnum.Company,
-                        permissionRight = PermissionRightEnum.IsCanCreateProject,
+                        right = "CreateProject@Company",
                     )
                 else
-                    !permissionService.isHavePermission(
+                    !permissionService.checkPermission(
                         userId = project.participantTo.userId,
                         accessObjectId = project.participantTo.companyId,
-                        accessObjectType = AccessObjectTypeEnum.Company,
-                        permissionRight = PermissionRightEnum.IsCanCreateProject,
+                        right = "CreateProject@Company",
                     )
             }.also { isHiddenConnection ->
                 projectHandlerService.createOrUpdate(project, isHiddenConnection)
@@ -79,18 +75,16 @@ class ProjectSyncEventHandler(
             if (connection.status != ProjectStatus.Rejected) {
                 (connection.participantFrom.companyRole.type == ProjectCompanyRoleType.Seller).let {
                     if (it)
-                        !permissionService.isHavePermission(
+                        !permissionService.checkPermission(
                             userId = connection.participantFrom.userId,
                             accessObjectId = connection.participantFrom.companyId,
-                            accessObjectType = AccessObjectTypeEnum.Company,
-                            permissionRight = PermissionRightEnum.IsCanCreateProject,
+                            right = "CreateProject@Company",
                         )
                     else
-                        !permissionService.isHavePermission(
+                        !permissionService.checkPermission(
                             userId = connection.participantTo.userId,
                             accessObjectId = connection.participantTo.companyId,
-                            accessObjectType = AccessObjectTypeEnum.Company,
-                            permissionRight = PermissionRightEnum.IsCanCreateProject,
+                            right = "CreateProject@Company",
                         )
                 }.also { isHiddenConnection ->
                     projectHandlerService.createOrUpdate(connection, isHiddenConnection)

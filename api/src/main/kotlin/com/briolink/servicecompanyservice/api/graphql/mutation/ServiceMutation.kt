@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql.mutation
 
-import com.briolink.lib.permission.enumeration.PermissionRightEnum
+import com.briolink.lib.permission.model.PermissionRight
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
 import com.briolink.servicecompanyservice.api.types.BaseResult
 import com.briolink.servicecompanyservice.api.types.CreateServiceInput
@@ -34,7 +34,7 @@ class ServiceMutation(
         if (!serviceCompanyService.isHavePermission(
                 companyId = companyId,
                 userId = SecurityUtil.currentUserAccountId,
-                permissionRight = PermissionRightEnum.IsCanEditCompanyService,
+                right = PermissionRight("Company", "EditCompanyService"),
                 serviceId = UUID.fromString(id),
             )
         ) return null
@@ -51,7 +51,7 @@ class ServiceMutation(
         if (!serviceCompanyService.isHavePermission(
                 companyId = UUID.fromString(companyId),
                 userId = SecurityUtil.currentUserAccountId,
-                permissionRight = PermissionRightEnum.IsCanEditCompanyService,
+                right = PermissionRight("Company", "EditCompanyService"),
             )
         ) return CreateServiceResult(userErrors = listOf(Error(code = "403 Permission denied")))
 
@@ -104,7 +104,7 @@ class ServiceMutation(
     }
 
     @DgsMutation
-    // @PreAuthorize("@servletUtil.isIntranet()")
+    @PreAuthorize("@servletUtil.isIntranet()")
     fun hideServiceLocal(
         @InputArgument serviceId: String,
         @InputArgument hidden: Boolean = true
@@ -124,7 +124,7 @@ class ServiceMutation(
         if (!serviceCompanyService.isHavePermission(
                 companyId = companyId,
                 userId = SecurityUtil.currentUserAccountId,
-                permissionRight = PermissionRightEnum.IsCanEditCompanyService,
+                right = PermissionRight("Company", "EditCompanyService"),
                 serviceId = UUID.fromString(id),
             )
         ) return UpdateServiceResult(userErrors = listOf(Error(code = "403 Permission denied")))

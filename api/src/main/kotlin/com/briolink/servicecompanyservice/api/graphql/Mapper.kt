@@ -10,7 +10,6 @@ import com.briolink.servicecompanyservice.api.types.ConnectionService
 import com.briolink.servicecompanyservice.api.types.ConnectionStatus
 import com.briolink.servicecompanyservice.api.types.Image
 import com.briolink.servicecompanyservice.api.types.Industry
-import com.briolink.servicecompanyservice.api.types.PermissionRight
 import com.briolink.servicecompanyservice.api.types.PermissionRole
 import com.briolink.servicecompanyservice.api.types.Service
 import com.briolink.servicecompanyservice.api.types.User
@@ -80,7 +79,7 @@ fun Company.Companion.fromEntity(entity: CompanyReadEntity) = Company(
 
 fun UserPermission.Companion.fromModel(model: UserPermissionRights) = UserPermission(
     role = PermissionRole.valueOf(model.permissionRole.name),
-    rights = model.permissionRights.map { PermissionRight.valueOf(it.name) },
+    rights = model.permissionRights.map { it.toString() },
 )
 
 fun Connection.Companion.fromEntity(entity: ConnectionReadEntity) = Connection(

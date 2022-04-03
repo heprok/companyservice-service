@@ -1,6 +1,6 @@
 package com.briolink.servicecompanyservice.api.graphql.query
 
-import com.briolink.lib.permission.enumeration.PermissionRightEnum
+import com.briolink.lib.permission.model.PermissionRight
 import com.briolink.servicecompanyservice.api.graphql.fromEntity
 import com.briolink.servicecompanyservice.api.service.ConnectionService
 import com.briolink.servicecompanyservice.api.service.ServiceCompanyService
@@ -37,7 +37,7 @@ class ConnectionQuery(
                 serviceCompanyService.isHavePermission(
                         companyId = UUID.fromString(companyId),
                         userId = SecurityUtil.currentUserAccountId,
-                        permissionRight = PermissionRightEnum.IsCanEditProject,
+                        right = PermissionRight("Company", "EditProject"),
                         serviceId = UUID.fromString(serviceId),
                     )
             ) filter else filter.copy(isHidden = false)
