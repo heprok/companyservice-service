@@ -9,8 +9,8 @@ import com.briolink.lib.sync.enumeration.ObjectSyncEnum
 import com.briolink.servicecompanyservice.updater.service.SyncService
 
 @EventHandlers(
-    EventHandler("ConnectionCreatedEvent", "1.0"),
-    EventHandler("ConnectionUpdatedEvent", "1.0")
+    EventHandler("ProjectCreatedEvent", "1.0"),
+    EventHandler("ProjectUpdatedEvent", "1.0")
 )
 class ProjectEventHandler(
     private val projectHandlerService: ProjectHandlerService,
